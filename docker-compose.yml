@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  mysql:
+    build:
+      context: ./mysql
+      dockerfile: Dockerfile
+    ports:
+      - "3308:3306"
+    volumes:
+      - "data_volume:/var/lib/mysql"
+    environment:
+      MYSQL_PASSWORD: "root"
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_DATABASE: "ootw"
+
+volumes:
+  data_volume:
