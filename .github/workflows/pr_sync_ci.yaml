@@ -1,3 +1,4 @@
+---
 name: Spring Boot Gradle Test Workflow
 
 on: pull_request
