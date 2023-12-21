@@ -1,6 +1,8 @@
 name: Spring Boot Gradle Test Workflow
 on:
-  - pull_request
+  pull_request:
+    branches:
+      - master
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,16 +17,16 @@ jobs:
           mysql user: ${{secrets.TEST_DB_USERNAME}}
           mysql password: ${{secrets.TEST_DB_PASSWORD}}
 
-      # run 명령어로 schema 만드는 명령어 실행
-      - name: Init Schema
-        run: mysql -h 127.0.0.1 -u ${{secrets.TEST_DB_USERNAME}} -p=${{secrets.TEST_DB_PASSWORD}} < ./mysql/schema.sql
-
       # java 설치
       - name: Set up JDK 17
         uses: actions/setup-java@v4.0.0
         with:
           java-version: '17'
           distribution: 'liberica'
+
+      # run 명령어로 schema 만드는 명령어 실행
+      - name: Init Schema
+        run: mysql -h 127.0.0.1 -u ${{secrets.TEST_DB_USERNAME}} -p=${{secrets.TEST_DB_PASSWORD}} < ./mysql/schema.sql
 
       # 환경 변수 적용
       - name: Configure application.yaml under test directory
