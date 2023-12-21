@@ -17,7 +17,7 @@ jobs:
 
       # run 명령어로 schema 만드는 명령어 실행
       - name: Init Schema
-        run: mysql -u ${{secrets.TEST_DB_USERNAME}} -p=${{secrets.TEST_DB_PASSWORD}} < ../.././mysql/schema.sql
+        run: mysql -u ${{secrets.TEST_DB_USERNAME}} -p=${{secrets.TEST_DB_PASSWORD}} < ./mysql/schema.sql
 
       # java 설치
       - name: Set up JDK 17
