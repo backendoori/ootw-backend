@@ -39,10 +39,6 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # gradle 권한 추가
-      - name: Grant execute permission for mysql
-        run: sudo chmod -R 755 /var/lib/mysql/
-
       # run 명령어로 schema 만드는 명령어 실행
       - name: Into Schema
         run: mysql -h localhost -P 3306 -u ${{secrets.TEST_DB_USERNAME}} -p${{secrets.TEST_DB_PASSWORD}} --protocol=tcp < ./mysql/schema.sql
@@ -50,7 +46,3 @@ jobs:
       # 프로젝트 빌드
       - name: Build with Gradle
         run: ./gradlew clean build
-
-      # 테스트 실행
-      - name: Run Tests
-        run: ./gradlew test
