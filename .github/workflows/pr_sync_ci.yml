@@ -10,10 +10,9 @@ jobs:
       - name: Repository checkout
         uses: actions/checkout@v2
 
-      - name: Set up MySQL
-        uses: mirromutth/mysql-action@v1.1
+      - uses: shogo82148/actions-setup-mysql@v1
         with:
-          mysql database: ${{secrets.TEST_DATABASE}}
+          mysql-version: "8.0"
           mysql user: ${{secrets.TEST_DB_USERNAME}}
           mysql password: ${{secrets.TEST_DB_PASSWORD}}
 
