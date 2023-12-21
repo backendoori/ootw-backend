@@ -13,6 +13,7 @@ jobs:
       - uses: shogo82148/actions-setup-mysql@v1
         with:
           mysql-version: "8.0"
+          user: ${{secrets.TEST_DB_USERNAME}}
           password: ${{secrets.TEST_DB_PASSWORD}}
 
 
@@ -25,7 +26,7 @@ jobs:
 
       # run 명령어로 schema 만드는 명령어 실행
       - name: Init Schema
-        run: mysql -u root -p=${{secrets.TEST_DB_PASSWORD}}
+        run: sudo mysql -u ${{secrets.TEST_DB_USERNAME}} -p=${{secrets.TEST_DB_PASSWORD}}
 
 
       # 환경 변수 적용
