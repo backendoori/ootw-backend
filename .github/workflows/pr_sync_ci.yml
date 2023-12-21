@@ -24,13 +24,13 @@ jobs:
           java-version: '17'
           distribution: 'liberica'
 
-#      # run 명령어로 schema 만드는 명령어 실행
-#      - name: Into Schema
-#        run: mysql -h 127.0.0.1 -u ${{secrets.TEST_DB_USERNAME}} -p=${{secrets.TEST_DB_PASSWORD}}
-#
-#      # init schema
-#      - name: init schema
-#        run:  < ./mysql/schema.sql
+      # run 명령어로 schema 만드는 명령어 실행
+      - name: Into Schema
+        run: mysql -u ${{secrets.TEST_DB_USERNAME}} -p=${{secrets.TEST_DB_PASSWORD}}
+
+      # init schema
+      - name: init schema
+        run:  < ./mysql/schema.sql
 
       # 환경 변수 적용
       - name: Configure application.yaml under test directory
