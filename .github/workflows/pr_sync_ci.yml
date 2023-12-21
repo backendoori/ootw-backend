@@ -17,8 +17,10 @@ jobs:
           mysql user: ${{secrets.TEST_DB_USERNAME}}
           mysql password: ${{secrets.TEST_DB_PASSWORD}}
 
-      - name: go into docker container
-        run: docker exec -it sweet_hoover /bin/bash
+      - name: Get Docker Container Name
+        run: |
+            CONTAINER_NAME=$(docker ps --format "{{.Names}}" | grep 'mysql')
+            echo "CONTAINER_NAME=$CONTAINER_NAME" >> $GITHUB_ENV
 
       # java 설치
       - name: Set up JDK 17
@@ -27,6 +29,9 @@ jobs:
           java-version: '17'
           distribution: 'liberica'
 
+      - name: go into docker container
+        run: docker exec -it $CONTAINER_NAME /bin/bash
+        
       # run 명령어로 schema 만드는 명령어 실행
       - name: Init Schema
         run: mysql -u ${{secrets.TEST_DB_USERNAME}} -p=${{secrets.TEST_DB_PASSWORD}} < ./mysql/schema.sql
