@@ -11,11 +11,12 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up MySQL
-        uses: mirromutth/mysql-action@v1.1
+        uses: shogo82148/actions-setup-mysql@v1
         with:
-          mysql database: ${{secrets.TEST_DATABASE}}
-          mysql user: ${{secrets.TEST_DB_USERNAME}}
-          mysql password: ${{secrets.TEST_DB_PASSWORD}}
+          mysql-version: "8.0"
+          root-password: ${{secrets.TEST_DB_PASSWORD}}
+          user: ${{secrets.TEST_DB_USERNAME}}
+          password: ${{secrets.TEST_DB_PASSWORD}}
 
       # java 설치
       - name: Set up JDK 17
