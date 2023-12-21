@@ -42,6 +42,10 @@
 
     <!-- Checks for whitespace                               -->
     <!-- See http://checkstyle.org/checks/whitespace/index.html -->
+    <module name="FileTabCharacter">
+        <property name="eachLine" value="true"/>
+    </module>
+
     <module name="LineLength">
         <property name="fileExtensions" value="java"/>
         <property name="max" value="120"/>
