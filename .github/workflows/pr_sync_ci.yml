@@ -17,9 +17,9 @@ jobs:
           mysql user: ${{secrets.TEST_DB_USERNAME}}
           mysql password: ${{secrets.TEST_DB_PASSWORD}}
 
-      - name: chekcking docker container
-        run: docker ps -al
-        
+      - name: go into docker container
+        run: docker exec -it sweet_hoover /bin/bash
+
       # java 설치
       - name: Set up JDK 17
         uses: actions/setup-java@v4.0.0
@@ -28,12 +28,9 @@ jobs:
           distribution: 'liberica'
 
       # run 명령어로 schema 만드는 명령어 실행
-      - name: Into Schema
-        run: mysql -h 127.0.0.1 -u root -p
+      - name: Init Schema
+        run: mysql -u ${{secrets.TEST_DB_USERNAME}} -p=${{secrets.TEST_DB_PASSWORD}} < ./mysql/schema.sql
 
-      # init schema
-      - name: init schema
-        run:  < ./mysql/schema.sql
 
       # 환경 변수 적용
       - name: Configure application.yaml under test directory
