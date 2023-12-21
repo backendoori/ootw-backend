@@ -26,8 +26,8 @@ jobs:
 
       # run 명령어로 schema 만드는 명령어 실행
       - name: Init Schema
-        run: mysql -h 127.0.0.1 -u ${{secrets.TEST_DB_USERNAME}} -p=${{secrets.TEST_DB_PASSWORD}}
-          
+        run: mysql -h 127.0.0.1 -P 3306 -u ${{secrets.TEST_DB_USERNAME}} -p${{secrets.TEST_DB_PASSWORD}}
+
           # 환경 변수 적용
       - name: Configure application.yaml under test directory
         uses: microsoft/variable-substitution@v1
