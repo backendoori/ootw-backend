@@ -45,10 +45,7 @@ jobs:
 
       # run 명령어로 schema 만드는 명령어 실행
       - name: Into Schema
-        run: mysql -h localhost -P 3306 -u ${{secrets.TEST_DB_USERNAME}} -p${{secrets.TEST_DB_PASSWORD}} --protocol=tcp
-
-      - name: Init Schema
-        run: source ./mysql/schema.sql
+        run: mysql -h localhost -P 3306 -u ${{secrets.TEST_DB_USERNAME}} -p${{secrets.TEST_DB_PASSWORD}} --protocol=tcp < ./mysql/schema.sql
 
       # 프로젝트 빌드
       - name: Build with Gradle
