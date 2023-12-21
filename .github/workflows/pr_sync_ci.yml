@@ -10,11 +10,12 @@ jobs:
       - name: Repository checkout
         uses: actions/checkout@v2
 
-      - uses: shogo82148/actions-setup-mysql@v1
+      - name: Set up MySQL
+        uses: mirromutth/mysql-action@v1.1
         with:
-          mysql-version: "8.0"
-          root-password: ${{secrets.TEST_DB_PASSWORD}}
-
+          mysql database: ${{secrets.TEST_DATABASE}}
+          mysql user: ${{secrets.TEST_DB_USERNAME}}
+          mysql password: ${{secrets.TEST_DB_PASSWORD}}
 
       # java 설치
       - name: Set up JDK 17
@@ -25,10 +26,9 @@ jobs:
 
       # run 명령어로 schema 만드는 명령어 실행
       - name: Init Schema
-        run: mysql -u root -p
-
-
-      # 환경 변수 적용
+        run: mysql -h 127.0.0.1 -u ${{secrets.TEST_DB_USERNAME}} -p=${{secrets.TEST_DB_PASSWORD}}
+          
+          # 환경 변수 적용
       - name: Configure application.yaml under test directory
         uses: microsoft/variable-substitution@v1
         with:
