@@ -17,6 +17,9 @@ jobs:
           mysql user: ${{secrets.TEST_DB_USERNAME}}
           mysql password: ${{secrets.TEST_DB_PASSWORD}}
 
+      - name: chekcking docker container
+        run: docker ps -al
+        
       # java 설치
       - name: Set up JDK 17
         uses: actions/setup-java@v4.0.0
