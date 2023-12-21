@@ -13,8 +13,8 @@ jobs:
       - uses: shogo82148/actions-setup-mysql@v1
         with:
           mysql-version: "8.0"
-          mysql user: ${{secrets.TEST_DB_USERNAME}}
-          mysql password: ${{secrets.TEST_DB_PASSWORD}}
+          user: ${{secrets.TEST_DB_USERNAME}}
+          password: ${{secrets.TEST_DB_PASSWORD}}
 
 
       # java 설치
