@@ -24,7 +24,7 @@ jobs:
           java-version: '17'
           distribution: 'liberica'
 
-          # 환경 변수 적용
+      # 환경 변수 적용
       - name: Configure application.yaml under test directory
         uses: microsoft/variable-substitution@v1
         with:
@@ -37,6 +37,10 @@ jobs:
       # gradle 권한 추가
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+
+      # gradle 권한 추가
+      - name: Grant execute permission for mysql
+        run: chmod 777 /var/run/mysqld/
 
       # run 명령어로 schema 만드는 명령어 실행
       - name: Init Schema
