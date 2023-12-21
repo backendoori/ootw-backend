@@ -1,6 +1,6 @@
 name: Spring Boot Gradle Test Workflow
 
-on: [ pull_request ]
+on: pull_request
 
 jobs:
   build:
