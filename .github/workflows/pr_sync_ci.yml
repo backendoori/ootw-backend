@@ -40,7 +40,7 @@ jobs:
 
       # gradle 권한 추가
       - name: Grant execute permission for mysql
-        run: chmod 777 /var/run/mysqld/
+        run: chmod 777 /var/run/mysqld
 
       # run 명령어로 schema 만드는 명령어 실행
       - name: Init Schema
