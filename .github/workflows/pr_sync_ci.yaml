@@ -1,23 +1,22 @@
 name: Spring Boot Gradle Test Workflow
-
-on: [ pull_request ]
-
+on:
+  pull_request:
+    branches:
+      - main
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Repository checkout
         uses: actions/checkout@v2
 
-      - name: Setup MySQL
-        uses: mirromutth/mysql-action@v1.1
+      - name: Set up MySQL
+        uses: shogo82148/actions-setup-mysql@v1
         with:
-          mysql database: ${{secrets.TEST_DATABASE}}
-          mysql user: ${{secrets.TEST_DB_USERNAME}}
-          mysql password: ${{secrets.TEST_DB_PASSWORD}}
-      # run 명령어로 schema 만드는 명령어 실행
-        run: mysql -u ${{secrets.TEST_DB_USERNAME}} -p=${{secrets.TEST_DB_PASSWORD}} < ../.././mysql/schema.sql
+          mysql-version: "8.0"
+          root-password: ${{secrets.TEST_DB_PASSWORD}}
+          user: ${{secrets.TEST_DB_USERNAME}}
+          password: ${{secrets.TEST_DB_PASSWORD}}
 
       # java 설치
       - name: Set up JDK 17
@@ -40,10 +39,10 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      # run 명령어로 schema 만드는 명령어 실행
+      - name: Into Schema
+        run: mysql -h localhost -P 3306 -u ${{secrets.TEST_DB_USERNAME}} -p${{secrets.TEST_DB_PASSWORD}} --protocol=tcp < ./mysql/schema.sql
+
       # 프로젝트 빌드
       - name: Build with Gradle
         run: ./gradlew clean build
-
-      # 테스트 실행
-      - name: Run Tests
-        run: ./gradlew test
