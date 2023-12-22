@@ -83,14 +83,14 @@ jacocoTestCoverageVerification {
             }
         }
     }
-
     dependsOn jacocoTestReport
 }
 
 checkstyle  {
-	toolVersion = "10.12.5"
-	configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
-	configProperties = [
-			"org.checkstyle.google.suppressionfilter.config"     : "suppressions.xml",
-			"org.checkstyle.google.suppressionxpathfilter.config": "suppressions.xml"]
+    toolVersion = "10.12.5"
+    configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
+    configProperties = [
+            "org.checkstyle.google.suppressionfilter.config"     : "suppressions.xml",
+            "org.checkstyle.google.suppressionxpathfilter.config": "suppressions.xml"
+    ]
 }
