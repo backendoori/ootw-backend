@@ -13,6 +13,15 @@ services:
       MYSQL_PASSWORD: "root"
       MYSQL_ROOT_PASSWORD: "root"
       MYSQL_DATABASE: "ootw"
+  minio:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+      - "9099:9099"
+    environment:
+      MINIO_ROOT_USER: IamUser
+      MINIO_ROOT_PASSWORD: IamPassword
+    command: server --address ":9099" --console-address ":9000" /data
 
 volumes:
   data_volume:
