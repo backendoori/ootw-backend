@@ -1,4 +1,4 @@
-package com.backendoori.ootw;
+package com.backendoori.ootw.repository;
 
 import com.backendoori.ootw.domain.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
