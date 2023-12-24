@@ -1,0 +1,23 @@
+### 게시글 생성
+POST http://localhost:8080/api/v1/posts
+Content-Type: application/json
+Accept: application/json
+
+{
+  "userId": 12,
+  "title": "일교차가 심할 때 좋은 코디",
+  "content": "일교차가 심할 땐 목도리 필수! 가디건도 챙기면 좋아요!",
+  "image": null
+}
+
+
+### 게시글 목록 조회(deafult: created_at 최신순)
+GET http://localhost:8080/api/v1/posts
+Content-Type: application/json
+Accept: application/json
+
+
+### 게시글 단건 조회
+GET http://localhost:8080/api/v1/posts/1
+Content-Type: application/json
+Accept: application/json
