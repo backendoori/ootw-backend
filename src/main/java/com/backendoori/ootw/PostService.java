@@ -3,6 +3,7 @@ package com.backendoori.ootw;
 import java.util.NoSuchElementException;
 import com.backendoori.ootw.domain.Post;
 import com.backendoori.ootw.domain.User;
+import com.backendoori.ootw.dto.PostDetailInfo;
 import com.backendoori.ootw.dto.PostSaveRequest;
 import com.backendoori.ootw.dto.PostSaveResponse;
 import com.backendoori.ootw.repository.PostRepository;
@@ -28,6 +29,15 @@ public class PostService {
 
         Post savedPost = postRepository.save(Post.from(user, request));
         return PostSaveResponse.from(savedPost);
+    }
+
+    @Transactional(readOnly = true)
+    public PostDetailInfo getDatailByPostId(Long postId) {
+        Post post = postRepository.findByIdWithEntityGraph(postId)
+            .orElseThrow(() ->
+                new NoSuchElementException("해당하는 게시글이 없습니다.")
+            );
+        return PostDetailInfo.from(post);
     }
 
 }
