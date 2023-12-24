@@ -1,6 +1,7 @@
 package com.backendoori.ootw;
 
 import java.net.URI;
+import com.backendoori.ootw.dto.PostDetailInfo;
 import com.backendoori.ootw.dto.PostSaveRequest;
 import com.backendoori.ootw.dto.PostSaveResponse;
 import jakarta.validation.Valid;
@@ -8,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +31,13 @@ public class PostController {
         return ResponseEntity.created(URI.create("/api/v1/posts/" + response.getPostId()))
             .contentType(MediaType.APPLICATION_JSON)
             .body(response);
+    }
+
+    @GetMapping("/{postId}")
+    public ResponseEntity<PostDetailInfo> save(@PathVariable("postId") Long postId) {
+        return ResponseEntity.ok()
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(postService.getDatailByPostId(postId));
     }
 
     // TODO: BindingResult 예외, 그 외 예외에 대한 응답 처리할 수 있도록 구체화
