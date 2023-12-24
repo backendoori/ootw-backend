@@ -1,5 +1,6 @@
 package com.backendoori.ootw.domain;
 
+import com.backendoori.ootw.dto.PostSaveRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -36,5 +37,16 @@ public class Post extends BaseEntity {
 
     @Column(name = "image")
     private String image;
+
+    private Post(User user, String title, String content, String image) {
+        this.user = user;
+        this.title = title;
+        this.content = content;
+        this.image = image;
+    }
+
+    public static Post from(User user, PostSaveRequest request) {
+        return new Post(user, request.title(), request.content(), request.image());
+    }
 
 }
