@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +28,15 @@ public class PostController {
         return ResponseEntity.created(URI.create("/api/v1/posts/" + response.getPostId()))
             .contentType(MediaType.APPLICATION_JSON)
             .body(response);
+    }
+
+    // TODO: BindingResult 예외, 그 외 예외에 대한 응답 처리할 수 있도록 구체화
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ExceptionResponse<Exception>> handleException(
+        Exception e
+    ) {
+        return ResponseEntity.internalServerError()
+            .body(ExceptionResponse.from(e));
     }
 
 }
