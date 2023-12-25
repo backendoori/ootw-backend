@@ -2,7 +2,7 @@ package com.backendoori.ootw.config;
 
 import com.backendoori.ootw.security.ExceptionHandlerConfigurer;
 import com.backendoori.ootw.security.HttpRequestsConfigurer;
-import com.backendoori.ootw.security.JwtSecurityFilter;
+import com.backendoori.ootw.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,8 +18,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtSecurityFilter jwtSecurityFilter;
     private final HttpRequestsConfigurer httpRequestsConfigurer;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final ExceptionHandlerConfigurer exceptionHandlerConfigurer;
 
     @Bean
@@ -29,7 +29,7 @@ public class SecurityConfig {
             .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(httpRequestsConfigurer)
             .exceptionHandling(exceptionHandlerConfigurer)
-            .addFilterBefore(jwtSecurityFilter, UsernamePasswordAuthenticationFilter.class);
+            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
     }
