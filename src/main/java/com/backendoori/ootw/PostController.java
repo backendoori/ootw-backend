@@ -1,6 +1,7 @@
 package com.backendoori.ootw;
 
 import java.net.URI;
+import java.util.List;
 import com.backendoori.ootw.dto.PostDetailInfo;
 import com.backendoori.ootw.dto.PostSaveRequest;
 import com.backendoori.ootw.dto.PostSaveResponse;
@@ -38,6 +39,13 @@ public class PostController {
         return ResponseEntity.ok()
             .contentType(MediaType.APPLICATION_JSON)
             .body(postService.getDatailByPostId(postId));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<PostDetailInfo>> readAll() {
+        return ResponseEntity.ok()
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(postService.getAll());
     }
 
     // TODO: BindingResult 예외, 그 외 예외에 대한 응답 처리할 수 있도록 구체화
