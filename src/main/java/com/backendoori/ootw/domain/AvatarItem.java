@@ -1,5 +1,6 @@
 package com.backendoori.ootw.domain;
 
+import com.backendoori.ootw.dto.AvatarAppearanceRequestDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -32,5 +33,15 @@ public class AvatarItem {
 
     @Column(name = "sex", nullable = false, columnDefinition = "tinyint")
     private boolean sex;
+
+    private AvatarItem (String image, String type, boolean sex){
+        this.image = image;
+        this.type = Type.valueOf(type);
+        this.sex = sex;
+    }
+
+    public static AvatarItem create(AvatarAppearanceRequestDto requestDto, String url) {
+        return new AvatarItem(url, requestDto.type(), requestDto.sex());
+    }
 
 }
