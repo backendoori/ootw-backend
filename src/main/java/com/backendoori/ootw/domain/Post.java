@@ -1,7 +1,9 @@
 package com.backendoori.ootw.domain;
 
 import com.backendoori.ootw.dto.PostSaveRequest;
+import com.backendoori.ootw.dto.WeatherInfo;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -38,15 +40,19 @@ public class Post extends BaseEntity {
     @Column(name = "image")
     private String image;
 
-    private Post(User user, String title, String content, String image) {
+    @Embedded
+    private Weather weather;
+
+    private Post(User user, String title, String content, String image, WeatherInfo weather) {
         this.user = user;
         this.title = title;
         this.content = content;
         this.image = image;
+        this.weather = Weather.from(weather);
     }
 
     public static Post from(User user, PostSaveRequest request) {
-        return new Post(user, request.title(), request.content(), request.image());
+        return new Post(user, request.title(), request.content(), request.image(), request.weather());
     }
 
 }
