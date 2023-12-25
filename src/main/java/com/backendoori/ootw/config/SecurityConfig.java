@@ -1,0 +1,37 @@
+package com.backendoori.ootw.config;
+
+import com.backendoori.ootw.security.ExceptionHandlerConfigurer;
+import com.backendoori.ootw.security.HttpRequestsConfigurer;
+import com.backendoori.ootw.security.JwtSecurityFilter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+@Configuration
+@EnableWebSecurity
+@RequiredArgsConstructor
+public class SecurityConfig {
+
+    private final JwtSecurityFilter jwtSecurityFilter;
+    private final HttpRequestsConfigurer httpRequestsConfigurer;
+    private final ExceptionHandlerConfigurer exceptionHandlerConfigurer;
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
+        httpSecurity
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(httpRequestsConfigurer)
+            .exceptionHandling(exceptionHandlerConfigurer)
+            .addFilterBefore(jwtSecurityFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return httpSecurity.build();
+    }
+
+}
