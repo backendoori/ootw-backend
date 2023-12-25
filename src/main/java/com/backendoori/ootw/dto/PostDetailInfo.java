@@ -17,6 +17,7 @@ public class PostDetailInfo {
     private final String image;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
+    private final WeatherInfo weather;
 
     public static PostDetailInfo from(Post post) {
         return new PostDetailInfo(
@@ -26,7 +27,8 @@ public class PostDetailInfo {
             post.getContent(),
             post.getImage(),
             post.getCreatedAt(),
-            post.getUpdatedAt()
+            post.getUpdatedAt(),
+            WeatherInfo.from(post.getWeather())
         );
     }
 

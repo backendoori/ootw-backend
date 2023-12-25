@@ -7,13 +7,18 @@ import jakarta.validation.constraints.Size;
 public record PostSaveRequest(
     @NotNull
     Long userId,
+
     @NotBlank
     @Size(max = 30)
     String title,
+
     @NotBlank
     @Size(max = 500)
     String content,
-    String image
+
+    String image,
+
+    WeatherInfo weather
 ) {
 
 }
