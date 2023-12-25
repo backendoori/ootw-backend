@@ -1,6 +1,6 @@
 package com.backendoori.ootw.dto;
 
-import com.backendoori.ootw.domain.Weather;
+import com.backendoori.ootw.domain.weather.Weather;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;

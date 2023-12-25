@@ -1,5 +1,6 @@
 package com.backendoori.ootw.domain;
 
+import com.backendoori.ootw.domain.weather.Weather;
 import com.backendoori.ootw.dto.PostSaveRequest;
 import com.backendoori.ootw.dto.WeatherInfo;
 import jakarta.persistence.Column;

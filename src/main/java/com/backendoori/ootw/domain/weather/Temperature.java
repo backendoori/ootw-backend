@@ -1,4 +1,4 @@
-package com.backendoori.ootw.domain;
+package com.backendoori.ootw.domain.weather;
 
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;

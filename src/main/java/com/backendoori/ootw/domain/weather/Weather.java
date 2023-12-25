@@ -1,4 +1,4 @@
-package com.backendoori.ootw.domain;
+package com.backendoori.ootw.domain.weather;
 
 import com.backendoori.ootw.dto.WeatherInfo;
 import jakarta.persistence.AttributeOverride;
