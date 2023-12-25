@@ -3,7 +3,6 @@ package com.backendoori.ootw.controller;
 import com.backendoori.ootw.domain.AvatarItem;
 import com.backendoori.ootw.dto.AvatarAppearanceRequestDto;
 import com.backendoori.ootw.service.AvatarAppearanceService;
-import com.backendoori.ootw.service.ImageService;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
