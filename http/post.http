@@ -4,10 +4,17 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "userId": 12,
+  "userId": 1,
   "title": "일교차가 심할 때 좋은 코디",
   "content": "일교차가 심할 땐 목도리 필수! 가디건도 챙기면 좋아요!",
-  "image": null
+  "image": null,
+  "weather": {
+    "currentTemperature": 0.0,
+    "dayMinTemperature": -899.99,
+    "dayMaxTemperature": 899.99,
+    "skyCode": 1,
+    "ptyCode": 1
+  }
 }
 
 
