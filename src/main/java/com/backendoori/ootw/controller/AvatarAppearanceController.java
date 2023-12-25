@@ -1,9 +1,14 @@
 package com.backendoori.ootw.controller;
 
+import com.backendoori.ootw.domain.AvatarItem;
+import com.backendoori.ootw.dto.AvatarAppearanceRequestDto;
+import com.backendoori.ootw.service.AvatarAppearanceService;
 import com.backendoori.ootw.service.ImageService;
+import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,12 +17,13 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class AvatarAppearanceController {
 
-    private final ImageService imageService;
+    private final AvatarAppearanceService appearanceService;
 
-    // TODO: 추후 아바타 이미지를 업로드하고 저장하는 로직으로 변경
     @PostMapping("/api/v1/image")
-    public ResponseEntity<String> uploadImage(@RequestPart("file")MultipartFile file){
-        return ResponseEntity.ok(imageService.uploadImage(file));
+    public ResponseEntity<Void> uploadImage(@RequestPart("file")MultipartFile file,
+                                              @RequestBody AvatarAppearanceRequestDto requestDto){
+        AvatarItem avatarItem = appearanceService.uploadItem(file, requestDto);
+        return ResponseEntity.created(URI.create("/avatar-image/" + avatarItem)).build();
     }
 
 }
