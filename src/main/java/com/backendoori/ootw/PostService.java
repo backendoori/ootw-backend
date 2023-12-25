@@ -1,5 +1,6 @@
 package com.backendoori.ootw;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import com.backendoori.ootw.domain.Post;
 import com.backendoori.ootw.domain.User;
@@ -33,11 +34,18 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public PostDetailInfo getDatailByPostId(Long postId) {
-        Post post = postRepository.findByIdWithEntityGraph(postId)
+        Post post = postRepository.findByIdWithUser(postId)
             .orElseThrow(() ->
                 new NoSuchElementException("해당하는 게시글이 없습니다.")
             );
         return PostDetailInfo.from(post);
     }
 
+    @Transactional(readOnly = true)
+    public List<PostDetailInfo> getAll() {
+        return postRepository.findAllWithUser()
+            .stream()
+            .map(PostDetailInfo::from)
+            .toList();
+    }
 }
