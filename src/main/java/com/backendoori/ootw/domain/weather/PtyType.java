@@ -22,7 +22,7 @@ public enum PtyType {
         return Arrays.stream(values())
             .filter(skyType -> skyType.isCodeMatch(code))
             .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("강수상태 코드가 유효하지 않은 번호입니다."));
+            .orElseThrow(() -> new IllegalArgumentException("강수 형태 코드가 유효하지 않은 번호입니다."));
     }
 
     private boolean isCodeMatch(Integer code) {
