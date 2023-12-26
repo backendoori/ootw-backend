@@ -14,11 +14,10 @@ jobs:
 #          sudo chmod +x /usr/local/bin/docker-compose
 
       - name: checking pwd
-<<<<<<< HEAD
         run: pwd
-=======
-        run: echo pwd
->>>>>>> 15b573af29af9394eb01e8a6914ca86b962d7013
+
+      - name: checking ls
+        run: ls
 
       # Build and start container
       - name: Build and Start Container
