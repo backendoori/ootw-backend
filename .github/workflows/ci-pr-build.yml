@@ -2,21 +2,25 @@ name: Spring Boot Gradle Test Workflow
 on:
   pull_request:
     branches:
-      - main
+      - merge
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Repository checkout
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - name: Set up MySQL
-        uses: shogo82148/actions-setup-mysql@v1
+      - name: Configure docker-compose.yml
+        uses: microsoft/variable-substitution@v1
         with:
-          mysql-version: "8.0"
-          root-password: ${{secrets.TEST_DB_PASSWORD}}
-          user: ${{secrets.TEST_DB_USERNAME}}
-          password: ${{secrets.TEST_DB_PASSWORD}}
+          files: ./docker-compose.yml
+        env:
+          services.mysql.environment.MYSQL_DATABASE: ${{ secrets.TEST_DATABASE }}
+          services.mysql.environment.MYSQL_ROOT_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
+
+      # Build and start container
+      - name: Build and Start Container
+        run: docker-compose up -d
 
       # java 설치
       - name: Set up JDK 17
@@ -31,7 +35,7 @@ jobs:
         with:
           files: ./src/main/resources/application.yaml
         env:
-          spring.datasource.url: jdbc:mysql://localhost:3306/${{ secrets.TEST_DATABASE }}
+          spring.datasource.url: jdbc:mysql://localhost:3308/${{ secrets.TEST_DATABASE }}
           spring.datasource.username: ${{ secrets.TEST_DB_USERNAME }}
           spring.datasource.password: ${{ secrets.TEST_DB_PASSWORD }}
 
