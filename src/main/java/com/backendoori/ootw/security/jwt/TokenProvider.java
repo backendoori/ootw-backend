@@ -39,6 +39,7 @@ public class TokenProvider {
         this.secretKey = Keys.hmacShaKeyFor(keyBytes);
         this.jwtParser = Jwts.parser()
             .verifyWith(secretKey)
+            .requireIssuer(issuer)
             .build();
     }
 
