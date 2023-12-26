@@ -3,10 +3,12 @@ package com.backendoori.ootw.dto;
 import java.time.LocalDateTime;
 import com.backendoori.ootw.domain.Post;
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
+@EqualsAndHashCode
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class PostDetailInfo {
 
