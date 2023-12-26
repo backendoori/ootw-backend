@@ -1,4 +1,4 @@
-package service;
+package com.backendoori.ootw;
 
 import java.util.List;
 import java.util.NoSuchElementException;
