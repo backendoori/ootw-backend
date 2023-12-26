@@ -19,6 +19,7 @@ class PostTest {
 
     private static final Long USER_ID = 1L;
     private static final WeatherInfo WEATHER_INFO = new WeatherInfo(0.0, -10.0, 10.0, 1, 1);
+    private static final WeatherInfo INVALID_WEATHER_INFO = new WeatherInfo(-900.0, -10.0, 10.0, 1, 1);
     private static final User MOCK_USER = mock(User.class);
 
     private static Stream<Arguments> provideInvalidInfo() {
@@ -38,7 +39,9 @@ class PostTest {
             Arguments.of("content가 500자를 넘는 경우",
                 new PostSaveRequest(USER_ID, "Test Title", "T".repeat(501), null, WEATHER_INFO)),
             Arguments.of("weather가 null인 경우",
-                new PostSaveRequest(USER_ID, "Test Title", "Test Content", null, null))
+                new PostSaveRequest(USER_ID, "Test Title", "Test Content", null, null)),
+            Arguments.of("weather가 유효하지 않은 값인 경우",
+                new PostSaveRequest(USER_ID, "Test Title", "Test Content", null, INVALID_WEATHER_INFO))
         );
     }
 
