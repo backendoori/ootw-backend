@@ -8,12 +8,15 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+// TODO: 저 3개의 Temperature를 여기에 넣는 것이 나은 선택인가...
 @Getter
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Weather {
 
     @Embedded
@@ -36,23 +39,13 @@ public class Weather {
     @Column(name = "pty_type")
     private PtyType ptyType;
 
-    protected Weather(Double currentTemperature, Double dayMaxTemperature, Double dayMinTemperature, SkyType skyType,
-                      PtyType ptyType) {
-        this.currentTemperature = new Temperature(currentTemperature);
-        this.dayMinTemperature = new Temperature(dayMinTemperature);
-        this.dayMaxTemperature = new Temperature(dayMaxTemperature);
-        this.skyType = skyType;
-        this.ptyType = ptyType;
-    }
-
     public static Weather from(WeatherInfo weatherInfo) {
-        return new Weather(
-            weatherInfo.currentTemperature(),
-            weatherInfo.dayMaxTemperature(),
-            weatherInfo.dayMinTemperature(),
-            SkyType.getByCode(weatherInfo.skyCode()),
-            PtyType.getByCode(weatherInfo.ptyCode())
-        );
+        Temperature currentTemperature = Temperature.of(weatherInfo.currentTemperature());
+        Temperature dayMinTemperature = Temperature.of(weatherInfo.dayMinTemperature());
+        Temperature dayMaxTemperature = Temperature.of(weatherInfo.dayMaxTemperature());
+        SkyType skyType = SkyType.getByCode(weatherInfo.skyCode());
+        PtyType ptyType = PtyType.getByCode(weatherInfo.ptyCode());
+        return new Weather(currentTemperature, dayMinTemperature, dayMaxTemperature, skyType, ptyType);
     }
 
 }
