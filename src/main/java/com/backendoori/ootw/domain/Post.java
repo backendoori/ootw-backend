@@ -1,8 +1,8 @@
 package com.backendoori.ootw.domain;
 
+import java.util.Objects;
 import com.backendoori.ootw.domain.weather.Weather;
 import com.backendoori.ootw.dto.PostSaveRequest;
-import com.backendoori.ootw.dto.WeatherInfo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -44,16 +44,34 @@ public class Post extends BaseEntity {
     @Embedded
     private Weather weather;
 
-    private Post(User user, String title, String content, String image, WeatherInfo weather) {
+    private Post(User user, PostSaveRequest request) {
+        validateUser(user);
+        validatePostSaveRequest(request);
         this.user = user;
-        this.title = title;
-        this.content = content;
-        this.image = image;
-        this.weather = Weather.from(weather);
+        this.title = request.title();
+        this.content = request.content();
+        this.image = request.image();
+        this.weather = Weather.from(request.weather());
     }
 
     public static Post from(User user, PostSaveRequest request) {
-        return new Post(user, request.title(), request.content(), request.image(), request.weather());
+        return new Post(user, request);
+    }
+
+    private static void validateUser(User user) {
+        if (Objects.isNull(user)) {
+            throw new IllegalArgumentException("게시글 생성 요청 사용자가 null이어서는 안됩니다.");
+        }
+    }
+
+    // TODO: Validator 클래스를 독립적으로 만드는 것이 나을까..?
+    private static void validatePostSaveRequest(PostSaveRequest request) {
+        if (Objects.isNull(request)
+            || Objects.isNull(request.title())
+            || Objects.isNull(request.content())
+            || Objects.isNull(request.weather())) {
+            throw new IllegalArgumentException("게시글 생성 요청 정보가 null이어서는 안됩니다.");
+        }
     }
 
 }
