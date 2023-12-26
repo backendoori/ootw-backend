@@ -8,5 +8,9 @@ spring:
     hibernate:
       ddl-auto: validate
     open-in-view: false
+jwt:
+  issuer: ootw
+  base64-secret:
+  token-validity-in-seconds: 86400 # 24 * 60 * 60
 server:
   port: 8080
