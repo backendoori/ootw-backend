@@ -64,29 +64,27 @@ public class Post extends BaseEntity {
 
     // TODO: Validator 클래스를 독립적으로 만드는 것이 나을까..?
     private static void validateUser(User user) {
-        if (Objects.isNull(user)) {
-            throw new IllegalArgumentException("게시글 생성 요청 사용자가 null이어서는 안됩니다.");
-        }
+        Assert.isTrue(!Objects.isNull(user), "게시글 생성 요청 사용자가 null이어서는 안됩니다.");
     }
 
     private static void validatePostSaveRequest(PostSaveRequest request) {
-        Assert.isNull(request, "게시글 생성 요청 정보가 null이어서는 안됩니다.");
-        Assert.isNull(request.userId(), "게시글 작성자 ID가 null이어서는 안됩니다.");
-        Assert.isNull(request.weather(), "게시글 기온/날씨 정보가 null이어서는 안됩니다.");
+        Assert.isTrue(!Objects.isNull(request), "게시글 생성 요청 정보가 null이어서는 안됩니다.");
+        Assert.isTrue(!Objects.isNull(request.userId()), "게시글 작성자 ID가 null이어서는 안됩니다.");
+        Assert.isTrue(!Objects.isNull(request.weather()), "게시글 기온/날씨 정보가 null이어서는 안됩니다.");
         validateTitle(request.title());
         validateContent(request.content());
     }
 
     private static void validateTitle(String title) {
-        Assert.isNull(title, "게시글 제목이 null이어서는 안됩니다.");
-        Assert.isTrue(title.isBlank(), "게시글 제목이 공백이어서는 안됩니다.");
-        Assert.isTrue(title.length() > MAX_TITLE_LENGTH, "게시글 제목은 30자 이내여야 합니다.");
+        Assert.isTrue(!Objects.isNull(title), "게시글 제목이 null이어서는 안됩니다.");
+        Assert.isTrue(!title.isBlank(), "게시글 제목이 공백이어서는 안됩니다.");
+        Assert.isTrue(!(title.length() > MAX_TITLE_LENGTH), "게시글 제목은 30자 이내여야 합니다.");
     }
 
     private static void validateContent(String content) {
-        Assert.isNull(content, "게시글 내용이 null이어서는 안됩니다.");
-        Assert.isTrue(content.isBlank(), "게시글 내용이 공백이어서는 안됩니다.");
-        Assert.isTrue(content.length() > MAX_CONTENT_LENGTH, "게시글 내용은 500자 이내여야 합니다.");
+        Assert.isTrue(!Objects.isNull(content), "게시글 내용이 null이어서는 안됩니다.");
+        Assert.isTrue(!content.isBlank(), "게시글 내용이 공백이어서는 안됩니다.");
+        Assert.isTrue(!(content.length() > MAX_CONTENT_LENGTH), "게시글 내용은 500자 이내여야 합니다.");
     }
 
 }

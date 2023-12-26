@@ -55,8 +55,8 @@ public class Weather {
 
     private static void validateCurrentAndDayTemperatures(Temperature currentTemperature, Temperature dayMinTemperature,
                                                           Temperature dayMaxTemperature) {
-        Assert.isTrue(!(dayMinTemperature.getValue() <= currentTemperature.getValue()
-            && currentTemperature.getValue() <= dayMaxTemperature.getValue()), "현재 기온, 일 최저 기온, 일 최고 기온 값이 적절하지 않습니다.");
+        Assert.isTrue(dayMinTemperature.getValue() <= currentTemperature.getValue()
+            && currentTemperature.getValue() <= dayMaxTemperature.getValue(), "현재 기온, 일 최저 기온, 일 최고 기온 값이 적절하지 않습니다.");
     }
 
 }
