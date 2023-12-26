@@ -2,13 +2,17 @@ package com.backendoori.ootw;
 
 import java.net.URI;
 import java.util.List;
+import java.util.NoSuchElementException;
+import com.backendoori.ootw.ExceptionResponse.FieldErrorDetail;
 import com.backendoori.ootw.dto.PostDetailInfo;
 import com.backendoori.ootw.dto.PostSaveRequest;
 import com.backendoori.ootw.dto.PostSaveResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -48,12 +52,35 @@ public class PostController {
             .body(postService.getAll());
     }
 
-    // TODO: BindingResult 예외, 그 외 예외에 대한 응답 처리할 수 있도록 구체화
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ExceptionResponse<Exception>> handleException(
+    public ResponseEntity<ExceptionResponse<String>> handleException(
         Exception e
     ) {
         return ResponseEntity.internalServerError()
+            .body(ExceptionResponse.from(e));
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public <T extends Exception> ResponseEntity<ExceptionResponse<String>> handleRuntimeException(
+        T e
+    ) {
+        return ResponseEntity.badRequest()
+            .body(ExceptionResponse.from(e));
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<ExceptionResponse<String>> handleNoSuchElementException(
+        NoSuchElementException e
+    ) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(ExceptionResponse.from(e));
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ExceptionResponse<List<FieldErrorDetail>>> handleMethodArgumentNotValidException(
+        MethodArgumentNotValidException e
+    ) {
+        return ResponseEntity.badRequest()
             .body(ExceptionResponse.from(e));
     }
 
