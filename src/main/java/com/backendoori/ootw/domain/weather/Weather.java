@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.util.Assert;
 
 // TODO: 저 3개의 Temperature를 여기에 넣는 것이 나은 선택인가...
 @Getter
@@ -54,11 +55,8 @@ public class Weather {
 
     private static void validateCurrentAndDayTemperatures(Temperature currentTemperature, Temperature dayMinTemperature,
                                                           Temperature dayMaxTemperature) {
-        if (dayMaxTemperature.getValue() < dayMinTemperature.getValue()
-            || dayMaxTemperature.getValue() < currentTemperature.getValue()
-            || currentTemperature.getValue() < dayMinTemperature.getValue()) {
-            throw new IllegalArgumentException("현재 기온, 일 최저 기온, 일 최고 기온 값이 적절하지 않습니다.");
-        }
+        Assert.isTrue(!(dayMinTemperature.getValue() <= currentTemperature.getValue()
+            && currentTemperature.getValue() <= dayMaxTemperature.getValue()), "현재 기온, 일 최저 기온, 일 최고 기온 값이 적절하지 않습니다.");
     }
 
 }

@@ -1,12 +1,12 @@
 package com.backendoori.ootw.domain.weather;
 
-import java.util.Objects;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.util.Assert;
 
 @Getter
 @Embeddable
@@ -20,12 +20,8 @@ public class Temperature {
     private Double value;
 
     public static void validate(Double value) {
-        if (Objects.isNull(value)) {
-            throw new IllegalArgumentException("기온 값은 null이 될 수 없습니다.");
-        }
-        if (MIN_VALUE >= value || value >= MAX_VALUE) {
-            throw new IllegalArgumentException("기온 값은 -900 이하, 900 이상이 될 수 없습니다.");
-        }
+        Assert.isNull(value, "기온 값은 null이 될 수 없습니다.");
+        Assert.isTrue(!(MIN_VALUE < value && value < MAX_VALUE), "기온 값은 -900 이하, 900 이상이 될 수 없습니다.");
     }
 
     public static Temperature of(Double value) {
