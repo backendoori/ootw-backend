@@ -27,7 +27,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class PostServiceTest {
 
-    private final User savedUser = new User("user@email.com", "password", "nickname", null);
+    User savedUser;
 
     @Autowired
     private PostService postService;
@@ -38,18 +38,13 @@ class PostServiceTest {
     @Autowired
     private UserRepository userRepository;
 
-    private PostSaveRequest makePostSaveRequest() {
-        WeatherDto weatherDto =
-            new WeatherDto(0.0, -10.0, 10.0, 1, 1);
-
-        return new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", null, weatherDto);
-    }
-
     @BeforeEach
     void setUp() {
         postRepository.deleteAll();
         userRepository.deleteAll();
-        userRepository.save(savedUser);
+
+        User user = new User("user@email.com", "password", "nickname", null);
+        savedUser = userRepository.save(user);
     }
 
     @Nested
@@ -60,17 +55,20 @@ class PostServiceTest {
         @DisplayName("게시글 저장에 성공한다.")
         void saveSuccess() {
             // given
-            PostSaveRequest postSaveRequest = makePostSaveRequest();
+            WeatherDto weatherDto =
+                new WeatherDto(0.0, -10.0, 10.0, 1, 1);
+            PostSaveRequest request =
+                new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", null, weatherDto);
 
             // when
-            PostSaveResponse postSaveResponse = postService.save(postSaveRequest);
+            PostSaveResponse postSaveResponse = postService.save(request);
 
             //then
             assertAll(
-                () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("title", postSaveRequest.title()),
-                () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("content", postSaveRequest.content()),
-                () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("image", postSaveRequest.image()),
-                () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("weather", postSaveRequest.weather())
+                () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("title", request.title()),
+                () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("content", request.content()),
+                () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("image", request.image()),
+                () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("weather", request.weather())
             );
         }
 
@@ -113,12 +111,14 @@ class PostServiceTest {
     @DisplayName("게시글 단건 조회하기")
     class GetDatailByPostId {
 
-        PostSaveResponse savedPostInfo;
+        PostSaveResponse savedPost;
 
         @BeforeEach
         void setUp() {
-            PostSaveRequest postSaveRequest = makePostSaveRequest();
-            savedPostInfo = postService.save(postSaveRequest);
+            WeatherDto weatherDto =
+                new WeatherDto(0.0, -10.0, 10.0, 1, 1);
+            savedPost = postService.save(
+                new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", null, weatherDto));
         }
 
         @Test
@@ -128,23 +128,23 @@ class PostServiceTest {
             WriterDto savedPostWriter = WriterDto.from(savedUser);
 
             // when
-            PostReadResponse postDetailInfo = postService.getDatailByPostId(savedPostInfo.getPostId());
+            PostReadResponse postDetailInfo = postService.getDatailByPostId(savedPost.getPostId());
 
             // then
             assertAll(
-                () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("postId", savedPostInfo.getPostId()),
+                () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("postId", savedPost.getPostId()),
                 () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("writer", savedPostWriter),
-                () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("title", savedPostInfo.getTitle()),
-                () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("content", savedPostInfo.getContent()),
-                () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("image", savedPostInfo.getImage()),
+                () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("title", savedPost.getTitle()),
+                () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("content", savedPost.getContent()),
+                () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("image", savedPost.getImage()),
                 // TODO: LocalDateTime 자릿수 에러 발생
-                //  [savedPostInfo.getCreatedAt()] 2023-12-26T20:16:41.890478800
+                //  [savedPost.getCreatedAt()] 2023-12-26T20:16:41.890478800
                 //  [postDetailInfo.createdAt()] 2023-12-26T20:16:41.890479
                 // () -> assertThat(postDetailInfo)
-                //     .hasFieldOrPropertyWithValue("createdAt", savedPostInfo.getCreatedAt()),
+                //    .hasFieldOrPropertyWithValue("createdAt", savedPost.getCreatedAt()),
                 // () -> assertThat(postDetailInfo)
-                //     .hasFieldOrPropertyWithValue("updatedAt", savedPostInfo.getUpdatedAt()),
-                () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("weather", savedPostInfo.getWeather())
+                //    .hasFieldOrPropertyWithValue("updatedAt", savedPost.getUpdatedAt()),
+                () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("weather", savedPost.getWeather())
             );
         }
 
@@ -153,7 +153,7 @@ class PostServiceTest {
         void getDatailByPostIdFailNotSavedPost() {
             // given, when. then
             assertThrows(NoSuchElementException.class,
-                () -> postService.getDatailByPostId(savedPostInfo.getPostId() + 1));
+                () -> postService.getDatailByPostId(savedPost.getPostId() + 1));
         }
 
     }
@@ -162,13 +162,18 @@ class PostServiceTest {
     @DisplayName("게시글 목록 조회하기")
     class GetAll {
 
-        private static final Integer SAVED_COUNT = 10;
+        static final Integer SAVE_COUNT = 10;
 
         @BeforeEach
         void setUp() {
-            PostSaveRequest postSaveRequest = makePostSaveRequest();
-            for (int i = 0; i < SAVED_COUNT; i++) {
-                postService.save(postSaveRequest);
+
+            WeatherDto weatherDto =
+                new WeatherDto(0.0, -10.0, 10.0, 1, 1);
+            PostSaveRequest request =
+                new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", null, weatherDto);
+
+            for (int i = 0; i < SAVE_COUNT; i++) {
+                postService.save(request);
             }
         }
 
@@ -189,7 +194,7 @@ class PostServiceTest {
 
             // then
             assertAll(
-                () -> assertThat(posts.size()).isEqualTo(SAVED_COUNT),
+                () -> assertThat(posts.size()).isEqualTo(SAVE_COUNT),
                 () -> assertThat(posts).isEqualTo(expectedSortedPosts)
             );
         }
