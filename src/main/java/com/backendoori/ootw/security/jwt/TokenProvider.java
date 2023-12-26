@@ -1,4 +1,4 @@
-package com.backendoori.ootw.security;
+package com.backendoori.ootw.security.jwt;
 
 import javax.crypto.SecretKey;
 import java.util.Collections;

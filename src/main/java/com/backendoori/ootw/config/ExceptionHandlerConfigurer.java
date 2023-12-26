@@ -1,4 +1,4 @@
-package com.backendoori.ootw.security;
+package com.backendoori.ootw.config;
 
 import java.io.IOException;
 import jakarta.servlet.http.HttpServletRequest;

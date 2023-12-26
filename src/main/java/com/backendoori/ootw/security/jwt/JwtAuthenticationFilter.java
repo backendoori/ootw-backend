@@ -1,4 +1,4 @@
-package com.backendoori.ootw.security;
+package com.backendoori.ootw.security.jwt;
 
 import java.io.IOException;
 import java.util.Objects;
