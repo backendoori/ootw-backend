@@ -72,6 +72,8 @@ class PostTest {
         // given, when, then
         assertThrows(IllegalArgumentException.class,
             () -> Post.from(MOCK_USER, postSaveRequest));
+
+        // TODO: 에러 메시지 검증
     }
 
 }
