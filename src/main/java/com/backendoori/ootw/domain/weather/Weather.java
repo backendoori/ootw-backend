@@ -23,23 +23,23 @@ import org.springframework.util.Assert;
 public class Weather {
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "current_temperature"))
+    @AttributeOverride(name = "value", column = @Column(name = "current_temperature", nullable = false))
     private Temperature currentTemperature;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "day_min_temperature"))
+    @AttributeOverride(name = "value", column = @Column(name = "day_min_temperature", nullable = false))
     private Temperature dayMinTemperature;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "day_max_temperature"))
+    @AttributeOverride(name = "value", column = @Column(name = "day_max_temperature", nullable = false))
     private Temperature dayMaxTemperature;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "sky_type")
+    @Column(name = "sky_type", nullable = false)
     private SkyType skyType;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "pty_type")
+    @Column(name = "pty_type", nullable = false)
     private PtyType ptyType;
 
     // TODO: dto에서 생성 vs  vs ModelMapper 사용
