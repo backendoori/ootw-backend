@@ -14,7 +14,6 @@ import com.backendoori.ootw.dto.PostWriterInfo;
 import com.backendoori.ootw.dto.WeatherInfo;
 import com.backendoori.ootw.repository.PostRepository;
 import com.backendoori.ootw.repository.UserRepository;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -53,19 +52,13 @@ class PostServiceTest {
         userRepository.save(savedUser);
     }
 
-    @AfterEach
-    void tearDown() {
-        postRepository.deleteAll();
-        userRepository.deleteAll();
-    }
-
     @Nested
     @DisplayName("게시글 저장하기")
-    class SavePost {
+    class Save {
 
         @Test
         @DisplayName("게시글 저장에 성공한다.")
-        void savePostSuccess() {
+        void saveSuccess() {
             // given
             PostSaveRequest postSaveRequest = makePostSaveRequest();
 
@@ -83,7 +76,7 @@ class PostServiceTest {
 
         @Test
         @DisplayName("저장된 유저가 아닌 경우 게시글 저장에 실패한다.")
-        void savePostFailNotSavedUser() {
+        void saveFailNotSavedUser() {
             // given
             Long notSavedUserId = 100L;
             WeatherInfo weatherInfo =
@@ -101,7 +94,7 @@ class PostServiceTest {
         @ValueSource(doubles = {-900.0, 900.0})
         @NullSource
         @DisplayName("유효하지 않은 값(현재 기온)이 들어갈 경우 게시글 저장에 실패한다.")
-        void savePostFailInvalidValue(Double currentTemperature) {
+        void saveFailInvalidValue(Double currentTemperature) {
             // given
             WeatherInfo weatherInfo =
                 new WeatherInfo(currentTemperature, -10.0, 10.0, 1, 1);
