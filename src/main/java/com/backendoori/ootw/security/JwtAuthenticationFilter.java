@@ -1,6 +1,7 @@
 package com.backendoori.ootw.security;
 
 import java.io.IOException;
+import java.util.Objects;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -27,11 +28,11 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
         throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
-        String jwt = resolveToken(httpServletRequest);
+        String token = resolveToken(httpServletRequest);
 
-        if (tokenProvider.validateToken(jwt)) {
+        if (Objects.nonNull(token) && tokenProvider.validateToken(token)) {
             SecurityContext context = SecurityContextHolder.getContext();
-            Authentication authentication = tokenProvider.getAuthentication(jwt);
+            Authentication authentication = tokenProvider.getAuthentication(token);
 
             context.setAuthentication(authentication);
         }
