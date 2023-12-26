@@ -16,7 +16,7 @@ public class PostSaveResponse {
     private final String image;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
-    private final WeatherInfo weather;
+    private final WeatherDto weather;
 
     public static PostSaveResponse from(Post savedPost) {
         return new PostSaveResponse(
@@ -26,7 +26,7 @@ public class PostSaveResponse {
             savedPost.getImage(),
             savedPost.getCreatedAt(),
             savedPost.getUpdatedAt(),
-            WeatherInfo.from(savedPost.getWeather())
+            WeatherDto.from(savedPost.getWeather())
         );
     }
 

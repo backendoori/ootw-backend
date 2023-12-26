@@ -13,24 +13,24 @@ import lombok.RequiredArgsConstructor;
 public class PostDetailInfo {
 
     private final Long postId;
-    private final PostWriterInfo writer;
+    private final WriterDto writer;
     private final String title;
     private final String content;
     private final String image;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
-    private final WeatherInfo weather;
+    private final WeatherDto weather;
 
     public static PostDetailInfo from(Post post) {
         return new PostDetailInfo(
             post.getId(),
-            PostWriterInfo.from(post.getUser()),
+            WriterDto.from(post.getUser()),
             post.getTitle(),
             post.getContent(),
             post.getImage(),
             post.getCreatedAt(),
             post.getUpdatedAt(),
-            WeatherInfo.from(post.getWeather())
+            WeatherDto.from(post.getWeather())
         );
     }
 

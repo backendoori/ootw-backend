@@ -1,26 +1,26 @@
 package com.backendoori.ootw.dto;
 
 import com.backendoori.ootw.domain.weather.Weather;
-import jakarta.validation.constraints.DecimalMax;
-import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 
-public record WeatherInfo(
+public record WeatherDto(
     @NotNull
-    @DecimalMin(value = "-900.0", inclusive = false)
-    @DecimalMax(value = "900.0", inclusive = false)
+    @Min(value = -900)
+    @Max(value = 900)
     Double currentTemperature,
 
     @NotNull
-    @DecimalMin(value = "-900.0", inclusive = false)
-    @DecimalMax(value = "900.0", inclusive = false)
+    @Min(value = -900)
+    @Max(value = 900)
     Double dayMinTemperature,
 
     @NotNull
-    @DecimalMin(value = "-900.0", inclusive = false)
-    @DecimalMax(value = "900.0", inclusive = false)
+    @Min(value = -900)
+    @Max(value = 900)
     Double dayMaxTemperature,
 
     @NotNull
@@ -32,8 +32,8 @@ public record WeatherInfo(
     Integer ptyCode
 ) {
 
-    public static WeatherInfo from(Weather weather) {
-        return new WeatherInfo(
+    public static WeatherDto from(Weather weather) {
+        return new WeatherDto(
             weather.getCurrentTemperature().getValue(),
             weather.getDayMinTemperature().getValue(),
             weather.getDayMaxTemperature().getValue(),

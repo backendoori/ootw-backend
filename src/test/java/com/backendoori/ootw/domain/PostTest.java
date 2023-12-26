@@ -8,7 +8,7 @@ import static org.mockito.Mockito.mock;
 import java.util.stream.Stream;
 import com.backendoori.ootw.domain.weather.Weather;
 import com.backendoori.ootw.dto.PostSaveRequest;
-import com.backendoori.ootw.dto.WeatherInfo;
+import com.backendoori.ootw.dto.WeatherDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,30 +18,30 @@ import org.junit.jupiter.params.provider.MethodSource;
 class PostTest {
 
     private static final Long USER_ID = 1L;
-    private static final WeatherInfo WEATHER_INFO = new WeatherInfo(0.0, -10.0, 10.0, 1, 1);
-    private static final WeatherInfo INVALID_WEATHER_INFO = new WeatherInfo(-900.0, -10.0, 10.0, 1, 1);
+    private static final WeatherDto WEATHER_DTO = new WeatherDto(0.0, -10.0, 10.0, 1, 1);
+    private static final WeatherDto INVALID_WEATHER_DTO = new WeatherDto(-900.0, -10.0, 10.0, 1, 1);
     private static final User MOCK_USER = mock(User.class);
 
     private static Stream<Arguments> provideInvalidInfo() {
         return Stream.of(
             Arguments.of("userId가 null인 경우",
-                new PostSaveRequest(null, "Test Title", "Test Content", null, WEATHER_INFO)),
+                new PostSaveRequest(null, "Test Title", "Test Content", null, WEATHER_DTO)),
             Arguments.of("title이 null인 경우",
-                new PostSaveRequest(USER_ID, null, "Test Content", null, WEATHER_INFO)),
+                new PostSaveRequest(USER_ID, null, "Test Content", null, WEATHER_DTO)),
             Arguments.of("title이 공백인 경우",
-                new PostSaveRequest(USER_ID, " ", "Test Content", null, WEATHER_INFO)),
+                new PostSaveRequest(USER_ID, " ", "Test Content", null, WEATHER_DTO)),
             Arguments.of("title이 30자를 넘는 경우",
-                new PostSaveRequest(USER_ID, "T".repeat(31), "Test Content", null, WEATHER_INFO)),
+                new PostSaveRequest(USER_ID, "T".repeat(31), "Test Content", null, WEATHER_DTO)),
             Arguments.of("content가 null인 경우",
-                new PostSaveRequest(USER_ID, "Test Title", null, null, WEATHER_INFO)),
+                new PostSaveRequest(USER_ID, "Test Title", null, null, WEATHER_DTO)),
             Arguments.of("content가 공백인 경우",
-                new PostSaveRequest(USER_ID, "Test Title", " ", null, WEATHER_INFO)),
+                new PostSaveRequest(USER_ID, "Test Title", " ", null, WEATHER_DTO)),
             Arguments.of("content가 500자를 넘는 경우",
-                new PostSaveRequest(USER_ID, "Test Title", "T".repeat(501), null, WEATHER_INFO)),
+                new PostSaveRequest(USER_ID, "Test Title", "T".repeat(501), null, WEATHER_DTO)),
             Arguments.of("weather가 null인 경우",
                 new PostSaveRequest(USER_ID, "Test Title", "Test Content", null, null)),
             Arguments.of("weather가 유효하지 않은 값인 경우",
-                new PostSaveRequest(USER_ID, "Test Title", "Test Content", null, INVALID_WEATHER_INFO))
+                new PostSaveRequest(USER_ID, "Test Title", "Test Content", null, INVALID_WEATHER_DTO))
         );
     }
 
@@ -50,7 +50,7 @@ class PostTest {
     void createPostSuccess() {
         // given
         PostSaveRequest request =
-            new PostSaveRequest(USER_ID, "Test Title", "Test Content", null, WEATHER_INFO);
+            new PostSaveRequest(USER_ID, "Test Title", "Test Content", null, WEATHER_DTO);
 
         // when
         Post createdPost = Post.from(MOCK_USER, request);
@@ -61,7 +61,7 @@ class PostTest {
             () -> assertThat(createdPost).hasFieldOrPropertyWithValue("title", request.title()),
             () -> assertThat(createdPost).hasFieldOrPropertyWithValue("content", request.content()),
             () -> assertThat(createdPost).hasFieldOrPropertyWithValue("image", request.image()),
-            () -> assertThat(createdPost).hasFieldOrPropertyWithValue("weather", Weather.from(WEATHER_INFO))
+            () -> assertThat(createdPost).hasFieldOrPropertyWithValue("weather", Weather.from(WEATHER_DTO))
         );
     }
 

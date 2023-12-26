@@ -1,6 +1,6 @@
 package com.backendoori.ootw.domain.weather;
 
-import com.backendoori.ootw.dto.WeatherInfo;
+import com.backendoori.ootw.dto.WeatherDto;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -41,13 +41,14 @@ public class Weather {
     @Column(name = "pty_type")
     private PtyType ptyType;
 
-    public static Weather from(WeatherInfo weatherInfo) {
-        Temperature currentTemperature = Temperature.of(weatherInfo.currentTemperature());
-        Temperature dayMinTemperature = Temperature.of(weatherInfo.dayMinTemperature());
-        Temperature dayMaxTemperature = Temperature.of(weatherInfo.dayMaxTemperature());
+    // TODO: dto에서 생성 vs  vs ModelMapper 사용
+    public static Weather from(WeatherDto weatherDto) {
+        Temperature currentTemperature = Temperature.of(weatherDto.currentTemperature());
+        Temperature dayMinTemperature = Temperature.of(weatherDto.dayMinTemperature());
+        Temperature dayMaxTemperature = Temperature.of(weatherDto.dayMaxTemperature());
         validateCurrentAndDayTemperatures(currentTemperature, dayMinTemperature, dayMaxTemperature);
-        SkyType skyType = SkyType.getByCode(weatherInfo.skyCode());
-        PtyType ptyType = PtyType.getByCode(weatherInfo.ptyCode());
+        SkyType skyType = SkyType.getByCode(weatherDto.skyCode());
+        PtyType ptyType = PtyType.getByCode(weatherDto.ptyCode());
         return new Weather(currentTemperature, dayMinTemperature, dayMaxTemperature, skyType, ptyType);
     }
 

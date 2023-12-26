@@ -9,14 +9,14 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @EqualsAndHashCode
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class PostWriterInfo {
+public class WriterDto {
 
     private final Long userId;
     private final String nickname;
     private final String image;
 
-    public static PostWriterInfo from(User user) {
-        return new PostWriterInfo(user.getId(), user.getNickname(), user.getImage());
+    public static WriterDto from(User user) {
+        return new WriterDto(user.getId(), user.getNickname(), user.getImage());
     }
 
 }

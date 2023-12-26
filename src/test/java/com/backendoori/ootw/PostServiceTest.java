@@ -10,8 +10,8 @@ import com.backendoori.ootw.domain.User;
 import com.backendoori.ootw.dto.PostDetailInfo;
 import com.backendoori.ootw.dto.PostSaveRequest;
 import com.backendoori.ootw.dto.PostSaveResponse;
-import com.backendoori.ootw.dto.PostWriterInfo;
-import com.backendoori.ootw.dto.WeatherInfo;
+import com.backendoori.ootw.dto.WeatherDto;
+import com.backendoori.ootw.dto.WriterDto;
 import com.backendoori.ootw.repository.PostRepository;
 import com.backendoori.ootw.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,10 +39,10 @@ class PostServiceTest {
     private UserRepository userRepository;
 
     private PostSaveRequest makePostSaveRequest() {
-        WeatherInfo weatherInfo =
-            new WeatherInfo(0.0, -10.0, 10.0, 1, 1);
+        WeatherDto weatherDto =
+            new WeatherDto(0.0, -10.0, 10.0, 1, 1);
 
-        return new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", null, weatherInfo);
+        return new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", null, weatherDto);
     }
 
     @BeforeEach
@@ -79,10 +79,10 @@ class PostServiceTest {
         void saveFailNotSavedUser() {
             // given
             Long notSavedUserId = 100L;
-            WeatherInfo weatherInfo =
-                new WeatherInfo(0.0, -10.0, 10.0, 1, 1);
+            WeatherDto weatherDto =
+                new WeatherDto(0.0, -10.0, 10.0, 1, 1);
             PostSaveRequest postSaveRequest =
-                new PostSaveRequest(notSavedUserId, "Test Title", "Test Content", null, weatherInfo);
+                new PostSaveRequest(notSavedUserId, "Test Title", "Test Content", null, weatherDto);
 
             // when, then
             assertThrows(NoSuchElementException.class,
@@ -96,10 +96,10 @@ class PostServiceTest {
         @DisplayName("유효하지 않은 값(현재 기온)이 들어갈 경우 게시글 저장에 실패한다.")
         void saveFailInvalidValue(Double currentTemperature) {
             // given
-            WeatherInfo weatherInfo =
-                new WeatherInfo(currentTemperature, -10.0, 10.0, 1, 1);
+            WeatherDto weatherDto =
+                new WeatherDto(currentTemperature, -10.0, 10.0, 1, 1);
             PostSaveRequest postSaveRequest =
-                new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", null, weatherInfo);
+                new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", null, weatherDto);
 
             // when, then
             assertThrows(IllegalArgumentException.class,
@@ -125,7 +125,7 @@ class PostServiceTest {
         @DisplayName("게시글 단건 조회에 성공한다.")
         void getDatailByPostIdSuccess() {
             // given
-            PostWriterInfo savedPostWriter = PostWriterInfo.from(savedUser);
+            WriterDto savedPostWriter = WriterDto.from(savedUser);
 
             // when
             PostDetailInfo postDetailInfo = postService.getDatailByPostId(savedPostInfo.getPostId());

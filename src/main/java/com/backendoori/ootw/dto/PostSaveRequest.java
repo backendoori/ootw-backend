@@ -18,7 +18,7 @@ public record PostSaveRequest(
 
     String image,
 
-    WeatherInfo weather
+    WeatherDto weather
 ) {
 
 }
