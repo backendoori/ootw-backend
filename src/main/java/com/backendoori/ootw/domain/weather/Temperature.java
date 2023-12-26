@@ -20,6 +20,9 @@ public class Temperature {
     }
 
     public static void validate(Double value) {
+        if (value == null) {
+            throw new IllegalArgumentException("온도 값은 null이 될 수 없습니다.");
+        }
         if (MIN_VALUE >= value || value >= MAX_VALUE) {
             throw new IllegalArgumentException("온도는 -900 이하, 900 이상이 될 수 없습니다.");
         }
