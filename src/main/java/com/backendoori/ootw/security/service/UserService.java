@@ -5,6 +5,9 @@ import com.backendoori.ootw.security.dto.LoginDto;
 import com.backendoori.ootw.security.dto.SignupDto;
 import com.backendoori.ootw.security.dto.TokenDto;
 import com.backendoori.ootw.security.dto.UserDto;
+import com.backendoori.ootw.security.exception.AlreadyExistEmailException;
+import com.backendoori.ootw.security.exception.IncorrectPasswordException;
+import com.backendoori.ootw.security.exception.NotExistUserException;
 import com.backendoori.ootw.security.jwt.TokenProvider;
 import com.backendoori.ootw.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +25,13 @@ public class UserService {
 
     @Transactional
     public UserDto signup(SignupDto signupDto) {
+        boolean isAlreadyExistEmail = userRepository.findByEmail(signupDto.email())
+            .isPresent();
+
+        if (isAlreadyExistEmail) {
+            throw new AlreadyExistEmailException();
+        }
+
         User user = User.builder()
             .email(signupDto.email())
             .password(signupDto.password())
@@ -36,10 +46,10 @@ public class UserService {
 
     public TokenDto login(LoginDto loginDto) {
         User user = userRepository.findByEmail(loginDto.email())
-            .orElseThrow();
+            .orElseThrow(NotExistUserException::new);
 
         if (!passwordEncoder.matches(loginDto.password(), user.getPassword())) {
-            throw new RuntimeException();
+            throw new IncorrectPasswordException();
         }
 
         String token = tokenProvider.createToken(user.getId());

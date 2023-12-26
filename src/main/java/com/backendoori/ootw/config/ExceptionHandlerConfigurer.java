@@ -22,7 +22,7 @@ public class ExceptionHandlerConfigurer implements Customizer<ExceptionHandlingC
 
     private void handleAuthenticationException(HttpServletRequest request, HttpServletResponse response,
                                                AuthenticationException authException) throws IOException {
-        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
     }
 
     private void handleAccessDeniedException(HttpServletRequest request, HttpServletResponse response,
