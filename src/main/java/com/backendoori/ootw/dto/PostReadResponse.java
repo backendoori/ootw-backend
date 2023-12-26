@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @EqualsAndHashCode
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class PostDetailInfo {
+public class PostReadResponse {
 
     private final Long postId;
     private final WriterDto writer;
@@ -21,8 +21,8 @@ public class PostDetailInfo {
     private final LocalDateTime updatedAt;
     private final WeatherDto weather;
 
-    public static PostDetailInfo from(Post post) {
-        return new PostDetailInfo(
+    public static PostReadResponse from(Post post) {
+        return new PostReadResponse(
             post.getId(),
             WriterDto.from(post.getUser()),
             post.getTitle(),

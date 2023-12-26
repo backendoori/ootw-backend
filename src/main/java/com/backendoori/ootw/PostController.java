@@ -3,7 +3,7 @@ package com.backendoori.ootw;
 import java.net.URI;
 import java.util.List;
 import java.util.NoSuchElementException;
-import com.backendoori.ootw.dto.PostDetailInfo;
+import com.backendoori.ootw.dto.PostReadResponse;
 import com.backendoori.ootw.dto.PostSaveRequest;
 import com.backendoori.ootw.dto.PostSaveResponse;
 import com.backendoori.ootw.exception.ExceptionResponse;
@@ -40,14 +40,14 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<PostDetailInfo> readDetailByPostId(@PathVariable("postId") Long postId) {
+    public ResponseEntity<PostReadResponse> readDetailByPostId(@PathVariable("postId") Long postId) {
         return ResponseEntity.ok()
             .contentType(MediaType.APPLICATION_JSON)
             .body(postService.getDatailByPostId(postId));
     }
 
     @GetMapping
-    public ResponseEntity<List<PostDetailInfo>> readAll() {
+    public ResponseEntity<List<PostReadResponse>> readAll() {
         return ResponseEntity.ok()
             .contentType(MediaType.APPLICATION_JSON)
             .body(postService.getAll());

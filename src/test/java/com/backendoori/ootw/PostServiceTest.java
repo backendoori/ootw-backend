@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.List;
 import java.util.NoSuchElementException;
 import com.backendoori.ootw.domain.User;
-import com.backendoori.ootw.dto.PostDetailInfo;
+import com.backendoori.ootw.dto.PostReadResponse;
 import com.backendoori.ootw.dto.PostSaveRequest;
 import com.backendoori.ootw.dto.PostSaveResponse;
 import com.backendoori.ootw.dto.WeatherDto;
@@ -128,7 +128,7 @@ class PostServiceTest {
             WriterDto savedPostWriter = WriterDto.from(savedUser);
 
             // when
-            PostDetailInfo postDetailInfo = postService.getDatailByPostId(savedPostInfo.getPostId());
+            PostReadResponse postDetailInfo = postService.getDatailByPostId(savedPostInfo.getPostId());
 
             // then
             assertAll(
@@ -176,8 +176,8 @@ class PostServiceTest {
         @DisplayName("게시글 목록 최신순(default) 조회에 성공한다.")
         void getAllSuccess() {
             // given, when
-            List<PostDetailInfo> posts = postService.getAll();
-            List<PostDetailInfo> expectedSortedPosts = posts.stream().sorted((post1, post2) -> {
+            List<PostReadResponse> posts = postService.getAll();
+            List<PostReadResponse> expectedSortedPosts = posts.stream().sorted((post1, post2) -> {
                 if (post1.getCreatedAt().isAfter(post2.getCreatedAt())) {
                     return -1;
                 }
