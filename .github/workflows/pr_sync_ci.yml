@@ -7,13 +7,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-
-      - name: checking pwd
-        run: pwd
+      - uses: actions/checkout@v3
 
       # Build and start container
       - name: Build and Start Container
-        run: ../docker-compose up -d
+        run: docker-compose up -d
 
       # java 설치
       - name: Set up JDK 17
