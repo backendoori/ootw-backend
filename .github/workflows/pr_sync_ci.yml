@@ -12,11 +12,11 @@ jobs:
       - name: Configure docker-compose.yml
         uses: microsoft/variable-substitution@v1
         with:
-          files: ./docker-compose.yaml
+          files: ./docker-compose.yml
         env:
-          services.environment.MYSQL_DATABASE: ${{ secrets.TEST_DATABASE }}
-          services.environment.MYSQL_PASSWORD: ${{ secrets.TEST_DB_USERNAME }}
-          services.environment.MYSQL_ROOT_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
+          services.mysql.environment.MYSQL_DATABASE: ${{ secrets.TEST_DATABASE }}
+          services.mysql.environment.MYSQL_PASSWORD: ${{ secrets.TEST_DB_USERNAME }}
+          services.mysql.environment.MYSQL_ROOT_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
 
       # Build and start container
       - name: Build and Start Container
