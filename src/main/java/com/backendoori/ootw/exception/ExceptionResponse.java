@@ -1,4 +1,4 @@
-package com.backendoori.ootw;
+package com.backendoori.ootw.exception;
 
 import java.util.List;
 import lombok.AccessLevel;
