@@ -43,9 +43,19 @@ public class Weather {
         Temperature currentTemperature = Temperature.of(weatherInfo.currentTemperature());
         Temperature dayMinTemperature = Temperature.of(weatherInfo.dayMinTemperature());
         Temperature dayMaxTemperature = Temperature.of(weatherInfo.dayMaxTemperature());
+        validateCurrentAndDayTemperatures(currentTemperature, dayMinTemperature, dayMaxTemperature);
         SkyType skyType = SkyType.getByCode(weatherInfo.skyCode());
         PtyType ptyType = PtyType.getByCode(weatherInfo.ptyCode());
         return new Weather(currentTemperature, dayMinTemperature, dayMaxTemperature, skyType, ptyType);
+    }
+
+    private static void validateCurrentAndDayTemperatures(Temperature currentTemperature, Temperature dayMinTemperature,
+                                                          Temperature dayMaxTemperature) {
+        if (dayMaxTemperature.getValue() < dayMinTemperature.getValue()
+            || dayMaxTemperature.getValue() < currentTemperature.getValue()
+            || currentTemperature.getValue() < dayMinTemperature.getValue()) {
+            throw new IllegalArgumentException("현재 기온, 일 최저 기온, 일 최고 기온 값이 적절하지 않습니다.");
+        }
     }
 
 }
