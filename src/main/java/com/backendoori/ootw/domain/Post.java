@@ -23,6 +23,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post extends BaseEntity {
 
+    private static final Integer MAX_TITLE_LENGTH = 30;
+    private static final Integer MAX_CONTENT_LENGTH = 500;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -58,19 +61,47 @@ public class Post extends BaseEntity {
         return new Post(user, request);
     }
 
+    // TODO: Validator 클래스를 독립적으로 만드는 것이 나을까..?
     private static void validateUser(User user) {
         if (Objects.isNull(user)) {
             throw new IllegalArgumentException("게시글 생성 요청 사용자가 null이어서는 안됩니다.");
         }
     }
 
-    // TODO: Validator 클래스를 독립적으로 만드는 것이 나을까..?
     private static void validatePostSaveRequest(PostSaveRequest request) {
-        if (Objects.isNull(request)
-            || Objects.isNull(request.title())
-            || Objects.isNull(request.content())
-            || Objects.isNull(request.weather())) {
+        if (Objects.isNull(request)) {
             throw new IllegalArgumentException("게시글 생성 요청 정보가 null이어서는 안됩니다.");
+        }
+
+        if (Objects.isNull(request.userId())) {
+            throw new IllegalArgumentException("게시글 작성자 ID가 null이어서는 안됩니다.");
+        }
+
+        if (Objects.isNull(request.weather())) {
+            throw new IllegalArgumentException("게시글 기온/날씨 정보가 null이어서는 안됩니다.");
+        }
+
+        validateTitle(request.title());
+        validateContent(request.content());
+    }
+
+    private static void validateTitle(String title) {
+        if (Objects.isNull(title) || title.isBlank()) {
+            throw new IllegalArgumentException("게시글 제목이 null이거나 공백이어서는 안됩니다.");
+        }
+
+        if (title.length() > MAX_TITLE_LENGTH) {
+            throw new IllegalArgumentException("게시글 제목은 30자 이내여야 합니다.");
+        }
+    }
+
+    private static void validateContent(String content) {
+        if (Objects.isNull(content) || content.isBlank()) {
+            throw new IllegalArgumentException("게시글 제목이 null이거나 공백이어서는 안됩니다.");
+        }
+
+        if (content.length() > MAX_CONTENT_LENGTH) {
+            throw new IllegalArgumentException("게시글 제목은 500자 이내여야 합니다.");
         }
     }
 
