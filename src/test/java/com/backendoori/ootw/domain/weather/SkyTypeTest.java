@@ -14,6 +14,7 @@ class SkyTypeTest {
     @ParameterizedTest(name = "하늘 상태 코드가 {0}인 경우 SkyType 반환에 실패한다.")
     @ValueSource(ints = {-1, 0, 100})
     void getByCodeWithInvalidCode(int code) {
+        // given, when, then
         assertThrows(IllegalArgumentException.class, () -> SkyType.getByCode(code));
     }
 
@@ -21,7 +22,10 @@ class SkyTypeTest {
     @ParameterizedTest(name = "하늘 상태 코드가 {0}인 경우 SkyType.{1} 반환에 성공한다.")
     @CsvSource(value = {"1:SUNNY", "3:CLOUDY", "4:OVERCAST"}, delimiter = ':')
     void getByCodeWithValidCode(int code, String typeName) {
+        // given, when
         SkyType retrievedType = SkyType.getByCode(code);
+
+        // then
         assertThat(retrievedType.name()).isEqualTo(typeName);
     }
 

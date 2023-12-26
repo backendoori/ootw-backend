@@ -14,6 +14,7 @@ class PtyTypeTest {
     @ParameterizedTest(name = "강수 형태 코드가 {0}인 경우 PtyType 반환에 실패한다.")
     @ValueSource(ints = {-1, 100})
     void getByCodeWithInvalidCode(int code) {
+        // given, when, then
         assertThrows(IllegalArgumentException.class, () -> PtyType.getByCode(code));
     }
 
@@ -21,7 +22,10 @@ class PtyTypeTest {
     @ParameterizedTest(name = "강수 형태 코드가 {0}인 경우 PtyType.{1} 반환에 성공한다.")
     @CsvSource(value = {"0:NONE", "1:RAIN", "2:RAIN_OR_SNOW", "3:SNOW", "4:SHOWER"}, delimiter = ':')
     void getByCodeWithValidCode(int code, String typeName) {
+        // given, when
         PtyType retrievedType = PtyType.getByCode(code);
+
+        // then
         assertThat(retrievedType.name()).isEqualTo(typeName);
     }
 
