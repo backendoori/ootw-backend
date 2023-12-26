@@ -25,7 +25,7 @@ public enum PtyType {
             .orElseThrow(() -> new IllegalArgumentException("강수상태 코드가 유효하지 않은 번호입니다."));
     }
 
-    public boolean isCodeMatch(Integer code) {
+    private boolean isCodeMatch(Integer code) {
         return Objects.equals(this.code, code);
     }
 
