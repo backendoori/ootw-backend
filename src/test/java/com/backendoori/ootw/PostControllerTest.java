@@ -9,9 +9,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import com.backendoori.ootw.domain.User;
+import com.backendoori.ootw.dto.PostReadResponse;
 import com.backendoori.ootw.dto.PostSaveRequest;
 import com.backendoori.ootw.dto.PostSaveResponse;
 import com.backendoori.ootw.dto.WeatherDto;
+import com.backendoori.ootw.exception.ExceptionResponse;
+import com.backendoori.ootw.exception.ExceptionResponse.FieldErrorDetail;
 import com.backendoori.ootw.repository.PostRepository;
 import com.backendoori.ootw.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -105,7 +108,7 @@ class PostControllerTest {
 
         @Test
         @DisplayName("유효하지 않은 요청 값(게시글 title)이 포함된 게시글 저장에 실패한다.")
-        void saveFailInvalidValue() throws Exception {
+        void saveFailByMethodArgumentNotValidException() throws Exception {
             // given
             WeatherDto weatherDto =
                 new WeatherDto(0.0, -10.0, 10.0, 1, 1);
@@ -113,12 +116,40 @@ class PostControllerTest {
                 new PostSaveRequest(savedUser.getId(), null, "Test Content", null, weatherDto);
 
             // when, then
-            mockMvc.perform(post("http://localhost:8080/api/v1/posts")
+            String response = mockMvc.perform(post("http://localhost:8080/api/v1/posts")
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsBytes(request)))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn()
+                .getResponse()
+                .getContentAsString(StandardCharsets.UTF_8);
+
+            ExceptionResponse<List<FieldErrorDetail>> exceptionResponse =
+                objectMapper.readValue(response, ExceptionResponse.class);
+            assertThat(exceptionResponse.error().size()).isEqualTo(1);
+        }
+
+        @Test
+        @DisplayName("유효하지 않은 요청 값(현재 기온)이 포함된 게시글 저장에 실패한다.")
+        void saveFailInvalidValueByIllegalArgumentException() throws Exception {
+            // given
+            WeatherDto weatherDto =
+                new WeatherDto(900.0, -10.0, 10.0, 1, 1);
+            PostSaveRequest request =
+                new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", null, weatherDto);
+
+            // when, then
+            String response = mockMvc.perform(post("http://localhost:8080/api/v1/posts")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsBytes(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn()
+                .getResponse()
+                .getContentAsString(StandardCharsets.UTF_8);
         }
 
     }
@@ -193,7 +224,7 @@ class PostControllerTest {
                 .getResponse()
                 .getContentAsString(StandardCharsets.UTF_8);
 
-            List posts = objectMapper.readValue(response, List.class);
+            List<PostReadResponse> posts = objectMapper.readValue(response, List.class);
             assertThat(posts.size()).isEqualTo(SAVE_COUNT);
 
         }
