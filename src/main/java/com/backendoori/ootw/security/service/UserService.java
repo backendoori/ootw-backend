@@ -34,7 +34,7 @@ public class UserService {
 
         User user = User.builder()
             .email(signupDto.email())
-            .password(signupDto.password())
+            .password(passwordEncoder.encode(signupDto.password()))
             .nickname(signupDto.nickname())
             .image(signupDto.image())
             .build();
