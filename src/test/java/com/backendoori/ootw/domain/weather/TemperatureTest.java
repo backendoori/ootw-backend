@@ -16,7 +16,7 @@ class TemperatureTest {
     @NullSource
     void validateWithInvalidTemperature(Double value) {
         // given, when, then
-        assertThrows(IllegalArgumentException.class, () -> new Temperature(value));
+        assertThrows(IllegalArgumentException.class, () -> Temperature.of(value));
     }
 
     @DisplayName("온도값이 유효한 경우")
@@ -24,7 +24,7 @@ class TemperatureTest {
     @ValueSource(doubles = {-899.99, -30.0, 0.0, 30.0, 899.99})
     void validateWithValidTemperature(Double value) {
         // given, when, then
-        assertDoesNotThrow(() -> new Temperature(value));
+        assertDoesNotThrow(() -> Temperature.of(value));
     }
 
 }
