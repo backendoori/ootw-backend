@@ -1,5 +1,6 @@
 package com.backendoori.ootw.domain.weather;
 
+import java.util.Objects;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -17,11 +18,11 @@ public class Temperature {
     private Double value;
 
     public static void validate(Double value) {
-        if (value == null) {
-            throw new IllegalArgumentException("온도 값은 null이 될 수 없습니다.");
+        if (Objects.isNull(value)) {
+            throw new IllegalArgumentException("기온 값은 null이 될 수 없습니다.");
         }
         if (MIN_VALUE >= value || value >= MAX_VALUE) {
-            throw new IllegalArgumentException("온도는 -900 이하, 900 이상이 될 수 없습니다.");
+            throw new IllegalArgumentException("기온 값은 -900 이하, 900 이상이 될 수 없습니다.");
         }
     }
 
