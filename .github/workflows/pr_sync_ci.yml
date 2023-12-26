@@ -15,9 +15,7 @@ jobs:
           files: ./docker-compose.yml
         env:
           services.mysql.environment.MYSQL_DATABASE: ${{ secrets.TEST_DATABASE }}
-          services.mysql.environment.MYSQL_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
           services.mysql.environment.MYSQL_ROOT_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
-          services.mysql.environment.MYSQL_ROOT_USER: ${{ secrets.TEST_DB_USERNAME }}
 
       # Build and start container
       - name: Build and Start Container
