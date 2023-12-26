@@ -13,7 +13,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 class WeatherTest {
 
-    private static Stream<WeatherInfo> provideValidWeatherInfo() {
+    private static Stream<WeatherInfo> provideValidInfo() {
         return Stream.of(
             new WeatherInfo(0.0, 0.0, 0.0, 1, 0),
             new WeatherInfo(-899.99, -899.99, -899.99, 3, 1),
@@ -22,7 +22,7 @@ class WeatherTest {
         );
     }
 
-    private static Stream<Arguments> provideInvalidWeatherInfo() {
+    private static Stream<Arguments> provideInvalidInfo() {
         return Stream.of(
             Arguments.of("하늘 상태 코드가 유효하지 않은 경우",
                 new WeatherInfo(0.0, 0.0, 0.0, 5, 1)),
@@ -42,9 +42,9 @@ class WeatherTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideValidWeatherInfo")
+    @MethodSource("provideValidInfo")
     @DisplayName("from 메서드로 유효한 WeatherInfo로부터 Weather를 생성하는 것에 성공한다.")
-    void createWeatherByFromWithValidValue(WeatherInfo weatherInfo) {
+    void createWeatherByFromValidValue(WeatherInfo weatherInfo) {
         // given
         SkyType weatherInfoSkyType = SkyType.getByCode(weatherInfo.skyCode());
         PtyType weatherInfoPtyType = PtyType.getByCode(weatherInfo.ptyCode());
@@ -67,10 +67,10 @@ class WeatherTest {
         );
     }
 
-    @ParameterizedTest(name = "{0}")
-    @MethodSource("provideInvalidWeatherInfo")
+    @ParameterizedTest(name = "[{index}] {0}")
+    @MethodSource("provideInvalidInfo")
     @DisplayName("from 메서드로 유효하지 않은 WeatherInfo로부터 Weather를 생성하는 것에 실패한다.")
-    void createWeatherByFromWithInvalidValue(String info, WeatherInfo weatherInfo) {
+    void createWeatherByFromInvalidValue(String info, WeatherInfo weatherInfo) {
         // given, when, then
         assertThrows(IllegalArgumentException.class,
             () -> Weather.from(weatherInfo));
