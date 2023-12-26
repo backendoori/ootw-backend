@@ -71,7 +71,6 @@ class WeatherTest {
     @MethodSource("provideInvalidWeatherInfo")
     @DisplayName("from 메서드로 유효하지 않은 WeatherInfo로부터 Weather를 생성하는 것에 실패한다.")
     void createWeatherByFromWithInvalidValue(String info, WeatherInfo weatherInfo) {
-
         // given, when, then
         assertThrows(IllegalArgumentException.class,
             () -> Weather.from(weatherInfo));
