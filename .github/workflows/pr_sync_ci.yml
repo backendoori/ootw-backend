@@ -16,6 +16,9 @@ jobs:
       - name: checking pwd
         run: echo "pwd"
 
+      - name: checking pwd
+        run: echo "pwd"
+
       # Build and start container
       - name: Build and Start Container
         run: docker-compose up -d
