@@ -44,7 +44,7 @@ class WeatherTest {
     @ParameterizedTest
     @MethodSource("provideValidInfo")
     @DisplayName("from 메서드로 유효한 WeatherInfo로부터 Weather를 생성하는 것에 성공한다.")
-    void createWeatherByFromValidValue(WeatherInfo weatherInfo) {
+    void createWeatherSuccess(WeatherInfo weatherInfo) {
         // given
         SkyType weatherInfoSkyType = SkyType.getByCode(weatherInfo.skyCode());
         PtyType weatherInfoPtyType = PtyType.getByCode(weatherInfo.ptyCode());
@@ -70,7 +70,7 @@ class WeatherTest {
     @ParameterizedTest(name = "[{index}] {0}")
     @MethodSource("provideInvalidInfo")
     @DisplayName("from 메서드로 유효하지 않은 WeatherInfo로부터 Weather를 생성하는 것에 실패한다.")
-    void createWeatherByFromInvalidValue(String info, WeatherInfo weatherInfo) {
+    void createWeatherFail(String info, WeatherInfo weatherInfo) {
         // given, when, then
         assertThrows(IllegalArgumentException.class,
             () -> Weather.from(weatherInfo));

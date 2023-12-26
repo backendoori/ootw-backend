@@ -47,7 +47,7 @@ class PostTest {
 
     @Test
     @DisplayName("from 메서드로 유효한 User, PostSaveRequest로부터 Post를 생성하는 것에 성공한다.")
-    void createPostByFromValidValue() {
+    void createPostSuccess() {
         // given
         PostSaveRequest request =
             new PostSaveRequest(USER_ID, "Test Title", "Test Content", null, WEATHER_INFO);
@@ -68,7 +68,7 @@ class PostTest {
     @ParameterizedTest(name = "[{index}] {0}")
     @MethodSource("provideInvalidInfo")
     @DisplayName("from 메서드로 유효하지 않은 User, PostSaveRequest로부터 Post를 생성하는 것에 실패한다.")
-    void createWeatherByFromInvalidValue(String info, PostSaveRequest postSaveRequest) {
+    void createPostFail(String info, PostSaveRequest postSaveRequest) {
         // given, when, then
         assertThrows(IllegalArgumentException.class,
             () -> Post.from(MOCK_USER, postSaveRequest));

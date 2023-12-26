@@ -14,7 +14,7 @@ class TemperatureTest {
     @ParameterizedTest(name = "{0}이 온도값인 경우 Temperature 생성에 실패한다.")
     @ValueSource(doubles = {-1000.0, -900.0, 900.0, 1000.0})
     @NullSource
-    void validateWithInvalidTemperature(Double value) {
+    void validateTemperatureFail(Double value) {
         // given, when, then
         assertThrows(IllegalArgumentException.class, () -> Temperature.of(value));
     }
@@ -22,7 +22,7 @@ class TemperatureTest {
     @DisplayName("온도값이 유효한 경우")
     @ParameterizedTest(name = "{0}이 온도값인 경우 Temperature 생성에 성공한다.")
     @ValueSource(doubles = {-899.99, -30.0, 0.0, 30.0, 899.99})
-    void validateWithValidTemperature(Double value) {
+    void validateTemperatureSuccess(Double value) {
         // given, when, then
         assertDoesNotThrow(() -> Temperature.of(value));
     }
