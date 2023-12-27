@@ -3,6 +3,9 @@ package com.backendoori.ootw.security.jwt;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import javax.crypto.SecretKey;
+import java.util.Base64;
+import java.util.Base64.Decoder;
+import java.util.Base64.Encoder;
 import java.util.Collection;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Encoders;
@@ -93,6 +96,36 @@ class TokenProviderTest {
             assertThat(isValidToken).isTrue();
         }
 
+        @DisplayName("잘못된 형식의 토큰은 false를 반환한다")
+        @Test
+        void failMalformed() {
+            long userId = faker.number().positive();
+
+            String token = tokenProvider.createToken(userId);
+            String Malformed = token.replace(".", "..");
+
+            // when
+            boolean isValidToken = tokenProvider.validateToken(Malformed);
+
+            // then
+            assertThat(isValidToken).isFalse();
+        }
+
+        @DisplayName("위조된 토큰은 false를 반환한다")
+        @Test
+        void failForged() {
+            long userId = faker.number().positive();
+
+            String token = tokenProvider.createToken(userId);
+            String forgedToken = forgeToken(token, userId);
+
+            // when
+            boolean isValidToken = tokenProvider.validateToken(forgedToken);
+
+            // then
+            assertThat(isValidToken).isFalse();
+        }
+
         @DisplayName("다른 issuer가 발급한 토큰은 false를 반환한다")
         @Test
         void failOtherIssuer() {
@@ -127,13 +160,28 @@ class TokenProviderTest {
             assertThat(isValidToken).isFalse();
         }
 
+        @DisplayName("지원하지 않는 방식의 토큰은 false를 반환한다")
+        @Test
+        void failUnsupported() {
+            // given
+            long userId = faker.number().positive();
+
+            String token = tokenProvider.createToken(userId);
+            String unSecuredToken = unSecuredToken(token);
+
+            // when
+            boolean isValidToken = tokenProvider.validateToken(unSecuredToken);
+
+            // then
+            assertThat(isValidToken).isFalse();
+        }
+
         @DisplayName("기간이 만료된 토큰은 false를 반환한다")
         @Test
         void failExpiredJwt() {
             // given
             tokenProvider = createTokenProvider(issuer, encodedKey, 0);
             long userId = faker.number().positive();
-
             String token = tokenProvider.createToken(userId);
 
             // when
@@ -157,6 +205,28 @@ class TokenProviderTest {
         JwtProperties jwtProperties = new JwtProperties(issuer, key, tokenValidityInSeconds);
 
         return new TokenProvider(jwtProperties);
+    }
+
+    private String forgeToken(String token, long originId) {
+        Decoder decoder = Base64.getUrlDecoder();
+        Encoder encoder = Base64.getUrlEncoder();
+
+        String[] chunks = token.split("\\.");
+        String payload = new String(decoder.decode(chunks[1]));
+        String forgedPayload = payload.replace(Long.toString(originId), Long.toString(originId + 1));
+        chunks[1] = encoder.encodeToString(forgedPayload.getBytes());
+
+        return String.join(".", chunks);
+    }
+
+    private String unSecuredToken(String token) {
+        Decoder decoder = Base64.getUrlDecoder();
+        Encoder encoder = Base64.getUrlEncoder();
+
+        String[] chunks = token.split("\\.");
+        chunks[0] = encoder.encodeToString("{\"alg\":\"none\"}".getBytes());
+
+        return String.join(".", chunks);
     }
 
 }
