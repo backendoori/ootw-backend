@@ -5,7 +5,7 @@ import com.backendoori.ootw.security.dto.SignupDto;
 import com.backendoori.ootw.security.dto.TokenDto;
 import com.backendoori.ootw.security.dto.UserDto;
 import com.backendoori.ootw.security.jwt.JwtAuthenticationFilter;
-import com.backendoori.ootw.security.service.UserService;
+import com.backendoori.ootw.security.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,11 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthenticationController {
 
-    private final UserService userService;
+    private final AuthenticationService authenticationService;
 
     @PostMapping("/signup")
     public ResponseEntity<UserDto> signup(@RequestBody SignupDto signupDto) {
-        UserDto userDto = userService.signup(signupDto);
+        UserDto userDto = authenticationService.signup(signupDto);
 
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(userDto);
@@ -32,7 +32,7 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<TokenDto> login(@RequestBody LoginDto loginDto) {
-        TokenDto tokenDto = userService.login(loginDto);
+        TokenDto tokenDto = authenticationService.login(loginDto);
         HttpHeaders httpHeaders = new HttpHeaders();
 
         httpHeaders.add(JwtAuthenticationFilter.TOKEN_HEADER,

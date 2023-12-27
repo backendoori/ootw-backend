@@ -27,7 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootTest()
 @TestInstance(Lifecycle.PER_CLASS)
-class UserServiceTest {
+class AuthenticationServiceTest {
 
     static Faker faker = new Faker();
 
@@ -36,7 +36,7 @@ class UserServiceTest {
     @Autowired
     PasswordEncoder passwordEncoder;
     @Autowired
-    UserService userService;
+    AuthenticationService authenticationService;
 
     @BeforeAll
     @AfterEach
@@ -55,7 +55,7 @@ class UserServiceTest {
             SignupDto signupDto = generateSignupDto();
 
             // when
-            ThrowingCallable signup = () -> userService.signup(signupDto);
+            ThrowingCallable signup = () -> authenticationService.signup(signupDto);
 
             // then
             assertThatNoException().isThrownBy(signup);
@@ -67,10 +67,10 @@ class UserServiceTest {
             // given
             SignupDto signupDto = generateSignupDto();
 
-            userService.signup(signupDto);
+            authenticationService.signup(signupDto);
 
             // when
-            ThrowingCallable signup = () -> userService.signup(signupDto);
+            ThrowingCallable signup = () -> authenticationService.signup(signupDto);
 
             // then
             assertThatExceptionOfType(AlreadyExistEmailException.class).isThrownBy(signup)
@@ -92,7 +92,7 @@ class UserServiceTest {
             LoginDto loginDto = new LoginDto(user.getEmail(), password);
 
             // when
-            TokenDto tokenDto = userService.login(loginDto);
+            TokenDto tokenDto = authenticationService.login(loginDto);
 
             // then
             assertThat(tokenDto.token()).isInstanceOf(String.class)
@@ -109,7 +109,7 @@ class UserServiceTest {
             LoginDto loginDto = new LoginDto(user.getEmail(), password + password);
 
             // when
-            ThrowingCallable login = () -> userService.login(loginDto);
+            ThrowingCallable login = () -> authenticationService.login(loginDto);
 
             // then
             assertThatExceptionOfType(NotExistUserException.class).isThrownBy(login)
@@ -125,7 +125,7 @@ class UserServiceTest {
             LoginDto loginDto = new LoginDto(user.getEmail(), password + password);
 
             // when
-            ThrowingCallable login = () -> userService.login(loginDto);
+            ThrowingCallable login = () -> authenticationService.login(loginDto);
 
             // then
             assertThatExceptionOfType(IncorrectPasswordException.class).isThrownBy(login)
