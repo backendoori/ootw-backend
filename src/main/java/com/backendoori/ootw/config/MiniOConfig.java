@@ -29,7 +29,7 @@ public class MiniOConfig {
     private String bucket;
 
     @Bean
-    public MinioClient minioClient() throws Exception{
+    public MinioClient minioClient() throws Exception {
         MinioClient minioClient = MinioClient.builder()
             .endpoint(url)
             .credentials(accessKey, accessSecret)

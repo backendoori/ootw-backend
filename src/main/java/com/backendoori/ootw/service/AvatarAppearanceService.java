@@ -14,6 +14,7 @@ public class AvatarAppearanceService {
 
     private final ImageService imageService;
     private final AvatarItemRepository avatarItemRepository;
+
     public AvatarAppearanceResponse uploadItem(MultipartFile file, AvatarAppearanceRequest requestDto) {
         String url = imageService.uploadImage(file);
         AvatarItem savedItem = avatarItemRepository.save(AvatarItem.create(requestDto, url));
