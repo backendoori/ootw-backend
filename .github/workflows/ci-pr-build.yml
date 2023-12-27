@@ -1,23 +1,26 @@
 name: Spring Boot Gradle Test Workflow
-
-on: [ pull_request ]
+on:
+  pull_request:
+    branches:
+      - merge
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Repository checkout
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - name: Setup MySQL
-        uses: mirromutth/mysql-action@v1.1
+      - name: Configure docker-compose.yml
+        uses: microsoft/variable-substitution@v1
         with:
-          mysql database: ${{secrets.TEST_DATABASE}}
-          mysql user: ${{secrets.TEST_DB_USERNAME}}
-          mysql password: ${{secrets.TEST_DB_PASSWORD}}
-      # run 명령어로 schema 만드는 명령어 실행
-        run: mysql -u ${{secrets.TEST_DB_USERNAME}} -p=${{secrets.TEST_DB_PASSWORD}} < ../.././mysql/schema.sql
+          files: ./docker-compose.yml
+        env:
+          services.mysql.environment.MYSQL_DATABASE: ${{ secrets.TEST_DATABASE }}
+          services.mysql.environment.MYSQL_ROOT_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
+
+      # Build and start container
+      - name: Build and Start Container
+        run: docker-compose up -d
 
       # java 설치
       - name: Set up JDK 17
@@ -32,7 +35,7 @@ jobs:
         with:
           files: ./src/main/resources/application.yaml
         env:
-          spring.datasource.url: jdbc:mysql://localhost:3306/${{ secrets.TEST_DATABASE }}
+          spring.datasource.url: jdbc:mysql://localhost:3308/${{ secrets.TEST_DATABASE }}
           spring.datasource.username: ${{ secrets.TEST_DB_USERNAME }}
           spring.datasource.password: ${{ secrets.TEST_DB_PASSWORD }}
 
@@ -40,10 +43,10 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
+      # run 명령어로 schema 만드는 명령어 실행
+      - name: Into Schema
+        run: mysql -h localhost -P 3306 -u ${{secrets.TEST_DB_USERNAME}} -p${{secrets.TEST_DB_PASSWORD}} --protocol=tcp < ./mysql/schema.sql
+
       # 프로젝트 빌드
       - name: Build with Gradle
         run: ./gradlew clean build
-
-      # 테스트 실행
-      - name: Run Tests
-        run: ./gradlew test

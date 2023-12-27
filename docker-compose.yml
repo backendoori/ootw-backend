@@ -13,6 +13,7 @@ services:
       MYSQL_PASSWORD: "root"
       MYSQL_ROOT_PASSWORD: "root"
       MYSQL_DATABASE: "ootw"
+      MYSQL_ROOT_USER: "root"
 
 volumes:
   data_volume:
