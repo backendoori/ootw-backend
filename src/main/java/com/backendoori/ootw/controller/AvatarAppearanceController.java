@@ -1,10 +1,11 @@
 package com.backendoori.ootw.controller;
 
 import com.backendoori.ootw.domain.AvatarItem;
-import com.backendoori.ootw.dto.AvatarAppearanceRequestDto;
+import com.backendoori.ootw.dto.AvatarAppearanceRequest;
+import com.backendoori.ootw.dto.AvatarAppearanceResponse;
 import com.backendoori.ootw.service.AvatarAppearanceService;
-import java.net.URI;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,10 +20,10 @@ public class AvatarAppearanceController {
     private final AvatarAppearanceService appearanceService;
 
     @PostMapping("/api/v1/image")
-    public ResponseEntity<Void> uploadImage(@RequestPart("file")MultipartFile file,
-                                              @RequestBody AvatarAppearanceRequestDto requestDto){
-        AvatarItem avatarItem = appearanceService.uploadItem(file, requestDto);
-        return ResponseEntity.created(URI.create("/avatar-image/" + avatarItem)).build();
+    public ResponseEntity<AvatarAppearanceResponse> uploadImage(@RequestPart("file")MultipartFile file,
+                                                                @RequestBody AvatarAppearanceRequest requestDto){
+        AvatarAppearanceResponse avatarItem = appearanceService.uploadItem(file, requestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(avatarItem);
     }
 
 }
