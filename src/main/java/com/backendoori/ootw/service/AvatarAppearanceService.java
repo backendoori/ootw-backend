@@ -1,7 +1,8 @@
 package com.backendoori.ootw.service;
 
 import com.backendoori.ootw.domain.AvatarItem;
-import com.backendoori.ootw.dto.AvatarAppearanceRequestDto;
+import com.backendoori.ootw.dto.AvatarAppearanceRequest;
+import com.backendoori.ootw.dto.AvatarAppearanceResponse;
 import com.backendoori.ootw.repository.AvatarItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,9 +14,10 @@ public class AvatarAppearanceService {
 
     private final ImageService imageService;
     private final AvatarItemRepository avatarItemRepository;
-    public AvatarItem uploadItem(MultipartFile file, AvatarAppearanceRequestDto requestDto) {
+    public AvatarAppearanceResponse uploadItem(MultipartFile file, AvatarAppearanceRequest requestDto) {
         String url = imageService.uploadImage(file);
-        return avatarItemRepository.save(AvatarItem.create(requestDto, url));
+        AvatarItem savedItem = avatarItemRepository.save(AvatarItem.create(requestDto, url));
+        return AvatarAppearanceResponse.from(savedItem);
     }
 
 }
