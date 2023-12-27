@@ -97,8 +97,8 @@ class TokenProviderTest {
         @Test
         void failOtherIssuer() {
             // given
-            TokenProvider otherTokenProvider =
-                createTokenProvider("Other" + issuer, encodedKey, tokenValidityInSeconds);
+            String otherIssuer = faker.name().firstName();
+            TokenProvider otherTokenProvider = createTokenProvider(otherIssuer, encodedKey, tokenValidityInSeconds);
             long userId = faker.number().positive();
 
             String otherToken = otherTokenProvider.createToken(userId);
@@ -110,9 +110,9 @@ class TokenProviderTest {
             assertThat(isValidToken).isFalse();
         }
 
-        @DisplayName("잘못된 signature의 토큰은 false를 반환한다")
+        @DisplayName("다른 키로 서명된 토큰은 false를 반환한다")
         @Test
-        void failInvalidSignature() {
+        void failSignedOtherKey() {
             // given
             String otherKey = encodeBytes(generateSecretKey().getEncoded());
             TokenProvider otherTokenProvider = createTokenProvider(issuer, otherKey, tokenValidityInSeconds);
