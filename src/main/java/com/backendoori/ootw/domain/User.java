@@ -33,4 +33,12 @@ public class User extends BaseEntity {
     @Column(name = "image")
     private String image;
 
+    // TODO: dto로만 User가 생성되게 아니면 아래처럼 그냥 생성자 생성되게 할지 정하기
+    public User(String email, String password, String nickname, String image) {
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+        this.image = image;
+    }
+
 }
