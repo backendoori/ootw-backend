@@ -1,6 +1,6 @@
 package com.backendoori.ootw.domain;
 
-import com.backendoori.ootw.dto.AvatarAppearanceRequestDto;
+import com.backendoori.ootw.dto.AvatarAppearanceRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -40,7 +40,7 @@ public class AvatarItem {
         this.sex = sex;
     }
 
-    public static AvatarItem create(AvatarAppearanceRequestDto requestDto, String url) {
+    public static AvatarItem create(AvatarAppearanceRequest requestDto, String url) {
         return new AvatarItem(url, requestDto.type(), requestDto.sex());
     }
 
