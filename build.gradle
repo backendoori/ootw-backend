@@ -66,6 +66,12 @@ jacocoTestCoverageVerification {
                 value = 'COVEREDRATIO'
                 minimum = 0.75
             }
+
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.90
+            }
         }
 
         rule {
@@ -75,12 +81,6 @@ jacocoTestCoverageVerification {
                 counter = 'LINE'
                 value = 'TOTALCOUNT'
                 maximum = 20
-            }
-
-            limit {
-                counter = 'BRANCH'
-                value = 'COVEREDRATIO'
-                minimum = 0.90
             }
         }
     }
