@@ -29,19 +29,16 @@ public class MiniOConfig {
     private String bucket;
 
     @Bean
-    public MinioClient minioClient() {
+    public MinioClient minioClient() throws Exception{
         MinioClient minioClient = MinioClient.builder()
-                .endpoint(url)
-                .credentials(accessKey, accessSecret)
-                .build();
-        try {
-            boolean found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucket).build());
-            if (!found) {
-                minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucket).build());
-            }
-        } catch (Exception e) {
-            log.warn("bucketError found : {}", e.getMessage(), e);
+            .endpoint(url)
+            .credentials(accessKey, accessSecret)
+            .build();
+        boolean found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucket).build());
+        if (!found) {
+            minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucket).build());
         }
+
         return minioClient;
     }
 
