@@ -1,6 +1,6 @@
 package com.backendoori.ootw.dto;
 
-public record AvatarAppearanceRequestDto (
+public record AvatarAppearanceRequest(
         String type,
         boolean sex
 ){
