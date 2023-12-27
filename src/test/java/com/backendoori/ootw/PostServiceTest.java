@@ -140,10 +140,10 @@ class PostServiceTest {
                 // TODO: LocalDateTime 자릿수 에러 발생
                 //  [savedPost.getCreatedAt()] 2023-12-26T20:16:41.890478800
                 //  [postDetailInfo.createdAt()] 2023-12-26T20:16:41.890479
-                // () -> assertThat(postDetailInfo)
-                //    .hasFieldOrPropertyWithValue("createdAt", savedPost.getCreatedAt()),
-                // () -> assertThat(postDetailInfo)
-                //    .hasFieldOrPropertyWithValue("updatedAt", savedPost.getUpdatedAt()),
+                () -> assertThat(postDetailInfo)
+                    .hasFieldOrPropertyWithValue("createdAt", savedPost.getCreatedAt()),
+                () -> assertThat(postDetailInfo)
+                    .hasFieldOrPropertyWithValue("updatedAt", savedPost.getUpdatedAt()),
                 () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("weather", savedPost.getWeather())
             );
         }
