@@ -2,10 +2,14 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
-    password: root
-    url: jdbc:mysql://localhost:3308/ootw_test
+    password:
+    url: jdbc:mysql://localhost:43306/ootw
   jpa:
     hibernate:
       ddl-auto: validate
     open-in-view: false
     show-sql: true
+jwt:
+  issuer: tester
+  base64-secret:
+  token-validity-in-seconds: 10

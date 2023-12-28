@@ -13,3 +13,9 @@ minio:
   bucket: ootw-bucket
   access-key: IamUser
   secret-key: IamPassword
+jwt:
+  issuer: ootw
+  base64-secret:
+  token-validity-in-seconds: 86400 # 24 * 60 * 60
+server:
+  port: 8080
