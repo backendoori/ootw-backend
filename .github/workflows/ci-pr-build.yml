@@ -17,6 +17,8 @@ jobs:
         env:
           services.mysql.environment.MYSQL_DATABASE: ${{ secrets.TEST_DATABASE }}
           services.mysql.environment.MYSQL_ROOT_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
+          services.minio.environment.MINIO_ROOT_USER: ${{ secrets.STORAGE_USER }}
+          services.minio.environment.MINIO_ROOT_PASSWORD: ${{ secrets.STORAGE_PASSWORD }}
 
       # Build and start container
       - name: Build and Start Container
@@ -38,14 +40,13 @@ jobs:
           spring.datasource.url: jdbc:mysql://localhost:3308/${{ secrets.TEST_DATABASE }}
           spring.datasource.username: ${{ secrets.TEST_DB_USERNAME }}
           spring.datasource.password: ${{ secrets.TEST_DB_PASSWORD }}
+          spring.minio.bucket: ${secrets.STORAGE_BUCKET}
+          spring.minio.access-key: ${secrets.STORAGE_USER}
+          spring.minio.secret-key: ${secrets.STORAGE_PASSWORD}
 
       # gradle 권한 추가
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
-
-      # run 명령어로 schema 만드는 명령어 실행
-      - name: Into Schema
-        run: mysql -h localhost -P 3306 -u ${{secrets.TEST_DB_USERNAME}} -p${{secrets.TEST_DB_PASSWORD}} --protocol=tcp < ./mysql/schema.sql
 
       # 프로젝트 빌드
       - name: Build with Gradle
