@@ -8,6 +8,11 @@ spring:
     hibernate:
       ddl-auto: validate
     open-in-view: false
+minio:
+  url: http://localhost:9099
+  bucket: ootw-bucket
+  access-key: IamUser
+  secret-key: IamPassword
 jwt:
   issuer: ootw
   base64-secret:
