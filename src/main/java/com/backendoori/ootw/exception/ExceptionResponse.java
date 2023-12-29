@@ -18,6 +18,7 @@ public record ExceptionResponse<T>(
             .map(fieldError ->
                 new FieldErrorDetail(fieldError.getField(), fieldError.getDefaultMessage()))
             .toList();
+
         return new ExceptionResponse<>(errors);
     }
 
