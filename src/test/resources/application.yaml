@@ -9,6 +9,11 @@ spring:
       ddl-auto: validate
     open-in-view: false
     show-sql: true
+minio:
+  url: http://localhost:9099
+  bucket: ootw-bucket
+  access-key: IamUser
+  secret-key: IamPassword
 jwt:
   issuer: tester
   base64-secret:
