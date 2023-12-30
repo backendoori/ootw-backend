@@ -2,11 +2,11 @@ package com.backendoori.ootw.config.jwt;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import javax.crypto.SecretKey;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 import java.util.Base64.Encoder;
 import java.util.Collection;
+import javax.crypto.SecretKey;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Encoders;
 import net.datafaker.Faker;
@@ -79,7 +79,7 @@ class TokenProviderTest {
 
     @DisplayName("토근 검증 테스트")
     @Nested
-    class validateTokenTest {
+    class ValidateTokenTest {
 
         @DisplayName("올바른 토큰은 true를 반환한다")
         @Test
