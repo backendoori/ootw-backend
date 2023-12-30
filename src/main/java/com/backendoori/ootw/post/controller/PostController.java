@@ -53,16 +53,14 @@ public class PostController {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ExceptionResponse<String>> handleException(
-        Exception e
-    ) {
+    public ResponseEntity<ExceptionResponse<String>> handleException(Exception e) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(ExceptionResponse.from(e));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public <T extends Exception> ResponseEntity<ExceptionResponse<String>> handleRuntimeException(
-        T e
+    public ResponseEntity<ExceptionResponse<String>> handleIllegalArgumentException(
+        IllegalArgumentException e
     ) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(ExceptionResponse.from(e));
