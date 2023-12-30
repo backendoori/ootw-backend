@@ -1,6 +1,6 @@
 package com.backendoori.ootw.config;
 
-import com.backendoori.ootw.config.jwt.JwtAuthenticationFilter;
+import com.backendoori.ootw.security.jwt.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

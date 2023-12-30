@@ -1,4 +1,4 @@
-package com.backendoori.ootw.config.jwt;
+package com.backendoori.ootw.security.jwt;
 
 import java.util.Collections;
 import java.util.Date;
