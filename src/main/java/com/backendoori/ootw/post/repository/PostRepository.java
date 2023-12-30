@@ -12,10 +12,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @EntityGraph(attributePaths = "user")
     @Query("select p from Post p where p.id = :postId")
-    Optional<Post> findByIdWithUser(@Param("postId") Long postId);
+    Optional<Post> findByIdWithUserEntityGraph(@Param("postId") Long postId);
 
     @EntityGraph(attributePaths = "user")
     @Query("select p from Post p order by p.createdAt desc")
-    List<Post> findAllWithUser();
+    List<Post> findAllWithUserEntityGraph();
 
 }
