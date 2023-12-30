@@ -32,7 +32,6 @@ public class PostController {
 
     @PostMapping
     public ResponseEntity<PostSaveResponse> save(@RequestBody @Valid PostSaveRequest request) {
-
         PostSaveResponse response = postService.save(request);
 
         return ResponseEntity.created(URI.create("/api/v1/posts/" + response.getPostId()))
