@@ -77,6 +77,42 @@ class TokenProviderTest {
         assertThat(authorities).isEmpty();
     }
 
+    private String unSecureToken(String token) {
+        Decoder decoder = Base64.getUrlDecoder();
+        Encoder encoder = Base64.getUrlEncoder();
+
+        String[] chunks = token.split("\\.");
+        chunks[0] = encoder.encodeToString("{\"alg\":\"none\"}".getBytes());
+
+        return String.join(".", chunks);
+    }
+
+    private SecretKey generateSecretKey() {
+        return Jwts.SIG.HS512.key().build();
+    }
+
+    private String encodeBytes(byte[] bytes) {
+        return Encoders.BASE64.encode(bytes);
+    }
+
+    private TokenProvider createTokenProvider(String issuer, String key, long tokenValidityInSeconds) {
+        JwtProperties jwtProperties = new JwtProperties(issuer, key, tokenValidityInSeconds);
+
+        return new TokenProvider(jwtProperties);
+    }
+
+    private String forgeToken(String token, long originId) {
+        Decoder decoder = Base64.getUrlDecoder();
+        Encoder encoder = Base64.getUrlEncoder();
+
+        String[] chunks = token.split("\\.");
+        String payload = new String(decoder.decode(chunks[1]));
+        String forgedPayload = payload.replace(Long.toString(originId), Long.toString(originId + 1));
+        chunks[1] = encoder.encodeToString(forgedPayload.getBytes());
+
+        return String.join(".", chunks);
+    }
+
     @DisplayName("토근 검증 테스트")
     @Nested
     class ValidateTokenTest {
@@ -167,7 +203,7 @@ class TokenProviderTest {
             long userId = faker.number().positive();
 
             String token = tokenProvider.createToken(userId);
-            String unSecuredToken = unSecuredToken(token);
+            String unSecuredToken = unSecureToken(token);
 
             // when
             boolean isValidToken = tokenProvider.validateToken(unSecuredToken);
@@ -191,42 +227,6 @@ class TokenProviderTest {
             assertThat(isValidToken).isFalse();
         }
 
-    }
-
-    private SecretKey generateSecretKey() {
-        return Jwts.SIG.HS512.key().build();
-    }
-
-    private String encodeBytes(byte[] bytes) {
-        return Encoders.BASE64.encode(bytes);
-    }
-
-    private TokenProvider createTokenProvider(String issuer, String key, long tokenValidityInSeconds) {
-        JwtProperties jwtProperties = new JwtProperties(issuer, key, tokenValidityInSeconds);
-
-        return new TokenProvider(jwtProperties);
-    }
-
-    private String forgeToken(String token, long originId) {
-        Decoder decoder = Base64.getUrlDecoder();
-        Encoder encoder = Base64.getUrlEncoder();
-
-        String[] chunks = token.split("\\.");
-        String payload = new String(decoder.decode(chunks[1]));
-        String forgedPayload = payload.replace(Long.toString(originId), Long.toString(originId + 1));
-        chunks[1] = encoder.encodeToString(forgedPayload.getBytes());
-
-        return String.join(".", chunks);
-    }
-
-    private String unSecuredToken(String token) {
-        Decoder decoder = Base64.getUrlDecoder();
-        Encoder encoder = Base64.getUrlEncoder();
-
-        String[] chunks = token.split("\\.");
-        chunks[0] = encoder.encodeToString("{\"alg\":\"none\"}".getBytes());
-
-        return String.join(".", chunks);
     }
 
 }
