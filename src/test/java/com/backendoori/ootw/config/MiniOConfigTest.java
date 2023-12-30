@@ -1,12 +1,10 @@
 package com.backendoori.ootw.config;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 import io.minio.BucketExistsArgs;
-import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
