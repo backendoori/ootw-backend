@@ -34,7 +34,7 @@ public class AvatarItem {
     @Column(name = "sex", nullable = false, columnDefinition = "tinyint")
     private boolean sex;
 
-    private AvatarItem (String image, String type, boolean sex){
+    private AvatarItem(String image, String type, boolean sex) {
         this.image = image;
         this.type = Type.valueOf(type);
         this.sex = sex;

@@ -23,7 +23,7 @@ class MiniOImageServiceImplTest {
 
     @Test
     @DisplayName("아바타 이미지 업로드 서비스 로직 테스트")
-    public void imageUploadTest(){
+    public void imageUploadTest() {
         //given
         MockMultipartFile file = new MockMultipartFile("file", "filename.txt",
             "text/plain", "some xml".getBytes());

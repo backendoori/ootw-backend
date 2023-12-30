@@ -19,8 +19,8 @@ public class AvatarItemController {
     private final AvatarItemService appearanceService;
 
     @PostMapping("/api/v1/image")
-    public ResponseEntity<AvatarItemResponse> uploadImage(@RequestPart("file")MultipartFile file,
-                                                          @RequestBody AvatarItemRequest requestDto){
+    public ResponseEntity<AvatarItemResponse> uploadImage(@RequestPart("file") MultipartFile file,
+                                                          @RequestBody AvatarItemRequest requestDto) {
         AvatarItemResponse avatarItem = appearanceService.uploadItem(file, requestDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(avatarItem);
