@@ -50,4 +50,5 @@ public class PostService {
             .map(PostReadResponse::from)
             .toList();
     }
+
 }

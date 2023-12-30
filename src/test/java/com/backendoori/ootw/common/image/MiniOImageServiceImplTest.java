@@ -31,4 +31,5 @@ class MiniOImageServiceImplTest {
         assertThatCode(() -> imageService.uploadImage(file))
             .doesNotThrowAnyException();
     }
+
 }
