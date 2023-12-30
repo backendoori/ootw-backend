@@ -41,7 +41,7 @@ public class PostController {
     }
 
     @GetMapping("/{postId}")
-    public ResponseEntity<PostReadResponse> readDetailByPostId(@PathVariable("postId") Long postId) {
+    public ResponseEntity<PostReadResponse> readDetailByPostId(@PathVariable Long postId) {
         return ResponseEntity.ok()
             .contentType(MediaType.APPLICATION_JSON)
             .body(postService.getDatailByPostId(postId));
