@@ -102,10 +102,10 @@ class TokenProviderTest {
             long userId = faker.number().positive();
 
             String token = tokenProvider.createToken(userId);
-            String Malformed = token.replace(".", "..");
+            String malformed = token.replace(".", "..");
 
             // when
-            boolean isValidToken = tokenProvider.validateToken(Malformed);
+            boolean isValidToken = tokenProvider.validateToken(malformed);
 
             // then
             assertThat(isValidToken).isFalse();
