@@ -12,7 +12,6 @@ import com.backendoori.ootw.post.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -34,22 +33,22 @@ public class PostController {
     public ResponseEntity<PostSaveResponse> save(@RequestBody @Valid PostSaveRequest request) {
         PostSaveResponse response = postService.save(request);
 
-        return ResponseEntity.created(URI.create("/api/v1/posts/" + response.getPostId()))
-            .contentType(MediaType.APPLICATION_JSON)
+        URI postUri = URI.create("/api/v1/posts/" + response.getPostId());
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .location(postUri)
             .body(response);
     }
 
     @GetMapping("/{postId}")
     public ResponseEntity<PostReadResponse> readDetailByPostId(@PathVariable Long postId) {
-        return ResponseEntity.ok()
-            .contentType(MediaType.APPLICATION_JSON)
+        return ResponseEntity.status(HttpStatus.OK)
             .body(postService.getDatailByPostId(postId));
     }
 
     @GetMapping
     public ResponseEntity<List<PostReadResponse>> readAll() {
-        return ResponseEntity.ok()
-            .contentType(MediaType.APPLICATION_JSON)
+        return ResponseEntity.status(HttpStatus.OK)
             .body(postService.getAll());
     }
 
@@ -57,7 +56,7 @@ public class PostController {
     public ResponseEntity<ExceptionResponse<String>> handleException(
         Exception e
     ) {
-        return ResponseEntity.internalServerError()
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(ExceptionResponse.from(e));
     }
 
@@ -65,7 +64,7 @@ public class PostController {
     public <T extends Exception> ResponseEntity<ExceptionResponse<String>> handleRuntimeException(
         T e
     ) {
-        return ResponseEntity.badRequest()
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(ExceptionResponse.from(e));
     }
 
@@ -81,7 +80,7 @@ public class PostController {
     public ResponseEntity<ExceptionResponse<List<FieldErrorDetail>>> handleMethodArgumentNotValidException(
         MethodArgumentNotValidException e
     ) {
-        return ResponseEntity.badRequest()
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(ExceptionResponse.from(e));
     }
 
