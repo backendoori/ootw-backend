@@ -44,5 +44,5 @@ CREATE TABLE posts
     CONSTRAINT posts_pk
         PRIMARY KEY (id),
     FOREIGN KEY (user_id)
-        REFERENCES users(id)
+        REFERENCES users (id)
 );
