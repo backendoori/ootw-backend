@@ -173,7 +173,7 @@ class PostControllerTest {
         @DisplayName("게시글 단건 조회에 성공한다.")
         void getDatailByPostIdSuccess() throws Exception {
             // given, when, then
-            mockMvc.perform(get("http://localhost:8080/api/v1/posts/" + savedPost.getPostId())
+            mockMvc.perform(get("http://localhost:8080/api/v1/posts/" + savedPost.postId())
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -184,7 +184,7 @@ class PostControllerTest {
         @DisplayName("존재하지 않는 게시글 단건 조회에 실패한다.")
         void getDatailByPostIdFailNonSavedPost() throws Exception {
             // given, when, then
-            mockMvc.perform(get("http://localhost:8080/api/v1/posts/" + savedPost.getPostId() + 1)
+            mockMvc.perform(get("http://localhost:8080/api/v1/posts/" + savedPost.postId() + 1)
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())

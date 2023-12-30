@@ -33,7 +33,7 @@ public class PostController {
     public ResponseEntity<PostSaveResponse> save(@RequestBody @Valid PostSaveRequest request) {
         PostSaveResponse response = postService.save(request);
 
-        URI postUri = URI.create("/api/v1/posts/" + response.getPostId());
+        URI postUri = URI.create("/api/v1/posts/" + response.postId());
 
         return ResponseEntity.status(HttpStatus.CREATED)
             .location(postUri)
