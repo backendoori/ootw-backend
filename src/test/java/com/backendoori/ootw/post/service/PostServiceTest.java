@@ -137,9 +137,6 @@ class PostServiceTest {
                 () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("title", savedPost.getTitle()),
                 () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("content", savedPost.getContent()),
                 () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("image", savedPost.getImage()),
-                // TODO: LocalDateTime 자릿수 에러 발생
-                //  [savedPost.getCreatedAt()] 2023-12-26T20:16:41.890478800
-                //  [postDetailInfo.createdAt()] 2023-12-26T20:16:41.890479
                 () -> assertThat(postDetailInfo)
                     .hasFieldOrPropertyWithValue("createdAt", savedPost.getCreatedAt()),
                 () -> assertThat(postDetailInfo)
