@@ -1,9 +1,9 @@
-package com.backendoori.ootw.avtarItem.service;
+package com.backendoori.ootw.avtar.service;
 
-import com.backendoori.ootw.avtarItem.domain.AvatarItem;
-import com.backendoori.ootw.avtarItem.dto.AvatarItemRequest;
-import com.backendoori.ootw.avtarItem.dto.AvatarItemResponse;
-import com.backendoori.ootw.avtarItem.repository.AvatarItemRepository;
+import com.backendoori.ootw.avtar.domain.AvatarItem;
+import com.backendoori.ootw.avtar.dto.AvatarItemRequest;
+import com.backendoori.ootw.avtar.dto.AvatarItemResponse;
+import com.backendoori.ootw.avtar.repository.AvatarItemRepository;
 import com.backendoori.ootw.common.image.ImageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

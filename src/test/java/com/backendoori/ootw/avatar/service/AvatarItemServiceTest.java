@@ -1,11 +1,11 @@
-package com.backendoori.ootw.avatarItem.service;
+package com.backendoori.ootw.avatar.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.backendoori.ootw.avtarItem.dto.AvatarItemRequest;
-import com.backendoori.ootw.avtarItem.dto.AvatarItemResponse;
-import com.backendoori.ootw.avtarItem.repository.AvatarItemRepository;
-import com.backendoori.ootw.avtarItem.service.AvatarItemService;
+import com.backendoori.ootw.avtar.dto.AvatarItemRequest;
+import com.backendoori.ootw.avtar.dto.AvatarItemResponse;
+import com.backendoori.ootw.avtar.repository.AvatarItemRepository;
+import com.backendoori.ootw.avtar.service.AvatarItemService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

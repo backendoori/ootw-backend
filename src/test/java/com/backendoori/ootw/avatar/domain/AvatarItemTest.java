@@ -1,9 +1,9 @@
-package com.backendoori.ootw.avatarItem.domain;
+package com.backendoori.ootw.avatar.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.backendoori.ootw.avtarItem.domain.AvatarItem;
-import com.backendoori.ootw.avtarItem.dto.AvatarItemRequest;
+import com.backendoori.ootw.avtar.domain.AvatarItem;
+import com.backendoori.ootw.avtar.dto.AvatarItemRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

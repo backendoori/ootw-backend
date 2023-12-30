@@ -1,8 +1,8 @@
-package com.backendoori.ootw.avtarItem.controller;
+package com.backendoori.ootw.avtar.controller;
 
-import com.backendoori.ootw.avtarItem.dto.AvatarItemRequest;
-import com.backendoori.ootw.avtarItem.dto.AvatarItemResponse;
-import com.backendoori.ootw.avtarItem.service.AvatarItemService;
+import com.backendoori.ootw.avtar.dto.AvatarItemRequest;
+import com.backendoori.ootw.avtar.dto.AvatarItemResponse;
+import com.backendoori.ootw.avtar.service.AvatarItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
