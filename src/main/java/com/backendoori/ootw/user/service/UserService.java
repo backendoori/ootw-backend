@@ -1,9 +1,9 @@
 package com.backendoori.ootw.user.service;
 
-import com.backendoori.ootw.config.jwt.TokenProvider;
 import com.backendoori.ootw.exception.AlreadyExistEmailException;
 import com.backendoori.ootw.exception.IncorrectPasswordException;
 import com.backendoori.ootw.exception.NotExistUserException;
+import com.backendoori.ootw.security.jwt.TokenProvider;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.dto.LoginDto;
 import com.backendoori.ootw.user.dto.SignupDto;

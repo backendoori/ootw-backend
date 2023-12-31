@@ -1,8 +1,8 @@
-package com.backendoori.ootw.config.jwt;
+package com.backendoori.ootw.security.jwt;
 
-import javax.crypto.SecretKey;
 import java.util.Collections;
 import java.util.Date;
+import javax.crypto.SecretKey;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;

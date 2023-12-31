@@ -1,6 +1,6 @@
 package com.backendoori.ootw.user.controller;
 
-import com.backendoori.ootw.config.jwt.JwtAuthenticationFilter;
+import com.backendoori.ootw.security.jwt.JwtAuthenticationFilter;
 import com.backendoori.ootw.user.dto.LoginDto;
 import com.backendoori.ootw.user.dto.SignupDto;
 import com.backendoori.ootw.user.dto.TokenDto;

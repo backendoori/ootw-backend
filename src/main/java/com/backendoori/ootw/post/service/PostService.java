@@ -24,9 +24,7 @@ public class PostService {
     public PostSaveResponse save(PostSaveRequest request) {
         // TODO: 사용자 인증/인가 로직 추가
         User user = userRepository.findById(request.userId())
-            .orElseThrow(() ->
-                new NoSuchElementException("해당하는 유저가 없습니다.")
-            );
+            .orElseThrow(() -> new NoSuchElementException("해당하는 유저가 없습니다."));
 
         Post savedPost = postRepository.save(Post.from(user, request));
 
@@ -35,19 +33,18 @@ public class PostService {
 
     @Transactional(readOnly = true)
     public PostReadResponse getDatailByPostId(Long postId) {
-        Post post = postRepository.findByIdWithUser(postId)
-            .orElseThrow(() ->
-                new NoSuchElementException("해당하는 게시글이 없습니다.")
-            );
+        Post post = postRepository.findByIdWithUserEntityGraph(postId)
+            .orElseThrow(() -> new NoSuchElementException("해당하는 게시글이 없습니다."));
 
         return PostReadResponse.from(post);
     }
 
     @Transactional(readOnly = true)
     public List<PostReadResponse> getAll() {
-        return postRepository.findAllWithUser()
+        return postRepository.findAllWithUserEntityGraph()
             .stream()
             .map(PostReadResponse::from)
             .toList();
     }
+
 }

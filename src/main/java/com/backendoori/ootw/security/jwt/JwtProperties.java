@@ -1,4 +1,4 @@
-package com.backendoori.ootw.config.jwt;
+package com.backendoori.ootw.security.jwt;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

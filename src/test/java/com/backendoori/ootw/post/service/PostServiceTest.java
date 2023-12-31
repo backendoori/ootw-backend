@@ -128,23 +128,20 @@ class PostServiceTest {
             WriterDto savedPostWriter = WriterDto.from(savedUser);
 
             // when
-            PostReadResponse postDetailInfo = postService.getDatailByPostId(savedPost.getPostId());
+            PostReadResponse postDetailInfo = postService.getDatailByPostId(savedPost.postId());
 
             // then
             assertAll(
-                () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("postId", savedPost.getPostId()),
+                () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("postId", savedPost.postId()),
                 () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("writer", savedPostWriter),
-                () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("title", savedPost.getTitle()),
-                () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("content", savedPost.getContent()),
-                () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("image", savedPost.getImage()),
-                // TODO: LocalDateTime 자릿수 에러 발생
-                //  [savedPost.getCreatedAt()] 2023-12-26T20:16:41.890478800
-                //  [postDetailInfo.createdAt()] 2023-12-26T20:16:41.890479
+                () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("title", savedPost.title()),
+                () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("content", savedPost.content()),
+                () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("image", savedPost.image()),
                 () -> assertThat(postDetailInfo)
-                    .hasFieldOrPropertyWithValue("createdAt", savedPost.getCreatedAt()),
+                    .hasFieldOrPropertyWithValue("createdAt", savedPost.createdAt()),
                 () -> assertThat(postDetailInfo)
-                    .hasFieldOrPropertyWithValue("updatedAt", savedPost.getUpdatedAt()),
-                () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("weather", savedPost.getWeather())
+                    .hasFieldOrPropertyWithValue("updatedAt", savedPost.updatedAt()),
+                () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("weather", savedPost.weather())
             );
         }
 
@@ -153,7 +150,7 @@ class PostServiceTest {
         void getDatailByPostIdFailNotSavedPost() {
             // given, when. then
             assertThrows(NoSuchElementException.class,
-                () -> postService.getDatailByPostId(savedPost.getPostId() + 1));
+                () -> postService.getDatailByPostId(savedPost.postId() + 1));
         }
 
     }
@@ -183,10 +180,10 @@ class PostServiceTest {
             // given, when
             List<PostReadResponse> posts = postService.getAll();
             List<PostReadResponse> expectedSortedPosts = posts.stream().sorted((post1, post2) -> {
-                if (post1.getCreatedAt().isAfter(post2.getCreatedAt())) {
+                if (post1.createdAt().isAfter(post2.createdAt())) {
                     return -1;
                 }
-                if (post1.getCreatedAt().isBefore(post2.getCreatedAt())) {
+                if (post1.createdAt().isBefore(post2.createdAt())) {
                     return 1;
                 }
                 return 0;

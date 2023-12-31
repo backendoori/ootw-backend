@@ -1,4 +1,4 @@
-package com.backendoori.ootw.avtarItem.dto;
+package com.backendoori.ootw.avatar.dto;
 
 public record AvatarItemRequest(
     String type,
