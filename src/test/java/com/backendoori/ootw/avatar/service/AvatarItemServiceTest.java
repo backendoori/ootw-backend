@@ -2,10 +2,9 @@ package com.backendoori.ootw.avatar.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.backendoori.ootw.avtar.dto.AvatarItemRequest;
-import com.backendoori.ootw.avtar.dto.AvatarItemResponse;
-import com.backendoori.ootw.avtar.repository.AvatarItemRepository;
-import com.backendoori.ootw.avtar.service.AvatarItemService;
+import com.backendoori.ootw.avatar.dto.AvatarItemRequest;
+import com.backendoori.ootw.avatar.dto.AvatarItemResponse;
+import com.backendoori.ootw.avatar.repository.AvatarItemRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

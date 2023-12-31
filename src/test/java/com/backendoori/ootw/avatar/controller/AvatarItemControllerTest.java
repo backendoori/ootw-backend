@@ -3,8 +3,8 @@ package com.backendoori.ootw.avatar.controller;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.backendoori.ootw.avtar.dto.AvatarItemRequest;
-import com.backendoori.ootw.avtar.service.AvatarItemService;
+import com.backendoori.ootw.avatar.dto.AvatarItemRequest;
+import com.backendoori.ootw.avatar.service.AvatarItemService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

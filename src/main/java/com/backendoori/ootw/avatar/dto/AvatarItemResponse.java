@@ -1,6 +1,6 @@
-package com.backendoori.ootw.avtar.dto;
+package com.backendoori.ootw.avatar.dto;
 
-import com.backendoori.ootw.avtar.domain.AvatarItem;
+import com.backendoori.ootw.avatar.domain.AvatarItem;
 
 public record AvatarItemResponse(
     String type,

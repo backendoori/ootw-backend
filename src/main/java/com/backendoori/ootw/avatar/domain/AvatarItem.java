@@ -1,6 +1,6 @@
-package com.backendoori.ootw.avtar.domain;
+package com.backendoori.ootw.avatar.domain;
 
-import com.backendoori.ootw.avtar.dto.AvatarItemRequest;
+import com.backendoori.ootw.avatar.dto.AvatarItemRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
