@@ -31,8 +31,8 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -78,20 +78,27 @@ class PostControllerTest {
             // given
             WeatherDto weatherDto =
                 new WeatherDto(0.0, -10.0, 10.0, 1, 1);
-            PostSaveRequest request =
+            PostSaveRequest postSaveRequest =
                 new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", weatherDto);
-            MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
-                "text/plain", "some xml".getBytes());
+            MockMultipartFile request =
+                new MockMultipartFile("request", "request.json", MediaType.APPLICATION_JSON_VALUE,
+                    objectMapper.writeValueAsBytes(postSaveRequest));
+            MockMultipartFile postImg =
+                new MockMultipartFile("postImg", "filename.txt", MediaType.MULTIPART_FORM_DATA_VALUE,
+                    "some xml".getBytes());
 
-            // when, then
-            MockHttpServletResponse response = mockMvc.perform(multipart("http://localhost:8080/api/v1/posts")
-                    .file(postImg)
-                    .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
-                    .content(objectMapper.writeValueAsBytes(request))
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .characterEncoding("utf-8"))
+            // when
+            MockHttpServletRequestBuilder requestBuilder = multipart("http://localhost:8080/api/v1/posts")
+                .file(request)
+                .file(postImg)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("utf-8");
+
+            // then
+            MockHttpServletResponse response = mockMvc.perform(requestBuilder)
                 .andExpect(status().isCreated())
-//                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn()
                 .getResponse();
 
@@ -188,7 +195,7 @@ class PostControllerTest {
             MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
                 "text/plain", "some xml".getBytes());
             savedPost = postService.save(
-                new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", weatherDto), postImg );
+                new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", weatherDto), postImg);
         }
 
         @Test
