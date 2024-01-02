@@ -78,8 +78,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.updatedAt", startsWith(removeMills(userDto.updatedAt()))));
         }
 
-        // TODO: 추후 409 status를 반환하도록 rest controller advice 추가
-        @DisplayName("이미 등록된 email일 경우 401 status를 반환한다")
+        @DisplayName("이미 등록된 email일 경우 409 status를 반환한다")
         @Test
         void unauthorizedAlreadyExistEmail() throws Exception {
             // given
@@ -95,7 +94,7 @@ class UserControllerTest {
                     .content(objectMapper.writeValueAsString(signupDto)));
 
             // then
-            actions.andExpect(status().isUnauthorized());
+            actions.andExpect(status().isConflict());
         }
 
     }
@@ -125,7 +124,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.token", is(tokenDto.token())));
         }
 
-        @DisplayName("email이 일치하는 사용자가 없으면 401 status를 반환한다")
+        @DisplayName("email이 일치하는 사용자가 없으면 404 status를 반환한다")
         @Test
         void unauthorizedNotExistUser() throws Exception {
             // given
@@ -141,7 +140,7 @@ class UserControllerTest {
                     .content(objectMapper.writeValueAsString(loginDto)));
 
             // then
-            actions.andExpect(status().isUnauthorized());
+            actions.andExpect(status().isNotFound());
         }
 
         @DisplayName("비밀번호가 일치하지 않으면 401 status를 반환한다")
