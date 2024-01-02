@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import com.backendoori.ootw.exception.AlreadyExistEmailException;
 import com.backendoori.ootw.exception.IncorrectPasswordException;
-import com.backendoori.ootw.exception.NotExistUserException;
+import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.security.jwt.TokenProvider;
 import com.backendoori.ootw.user.dto.LoginDto;
 import com.backendoori.ootw.user.dto.SignupDto;
@@ -131,7 +131,7 @@ class UserControllerTest {
             // given
             LoginDto loginDto = generateLoginDto();
 
-            given(userService.login(loginDto)).willThrow(new NotExistUserException());
+            given(userService.login(loginDto)).willThrow(new UserNotFoundException());
 
             // when
             ResultActions actions = mockMvc.perform(
