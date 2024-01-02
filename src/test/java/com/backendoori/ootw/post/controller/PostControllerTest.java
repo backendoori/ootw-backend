@@ -189,8 +189,7 @@ class PostControllerTest {
             MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
                 "text/plain", "some xml".getBytes());
             savedPost = postService.save(
-                new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", weatherDto), postImg,
-                authentication.getPrincipal());
+                new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", weatherDto), postImg );
         }
 
         @Test
@@ -236,7 +235,7 @@ class PostControllerTest {
                 "text/plain", "some xml".getBytes());
 
             for (int i = 0; i < SAVE_COUNT; i++) {
-                postService.save(request, postImg, authentication.getPrincipal());
+                postService.save(request, postImg);
             }
         }
 
