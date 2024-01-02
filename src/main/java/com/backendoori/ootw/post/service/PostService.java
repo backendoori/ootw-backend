@@ -2,6 +2,7 @@ package com.backendoori.ootw.post.service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import com.backendoori.ootw.common.image.ImageService;
 import com.backendoori.ootw.post.domain.Post;
 import com.backendoori.ootw.post.dto.PostReadResponse;
 import com.backendoori.ootw.post.dto.PostSaveRequest;
@@ -12,6 +13,7 @@ import com.backendoori.ootw.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @Service
@@ -19,20 +21,23 @@ public class PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final ImageService imageService;
 
     @Transactional
-    public PostSaveResponse save(PostSaveRequest request) {
+    public PostSaveResponse save(PostSaveRequest request, MultipartFile postImg) {
+
         // TODO: 사용자 인증/인가 로직 추가
         User user = userRepository.findById(request.userId())
             .orElseThrow(() -> new NoSuchElementException("해당하는 유저가 없습니다."));
+        String imgUrl = imageService.uploadImage(postImg);
 
-        Post savedPost = postRepository.save(Post.from(user, request));
+        Post savedPost = postRepository.save(Post.from(user, request, imgUrl));
 
         return PostSaveResponse.from(savedPost);
     }
 
     @Transactional(readOnly = true)
-    public PostReadResponse getDatailByPostId(Long postId) {
+    public PostReadResponse getDetailByPostId(Long postId) {
         Post post = postRepository.findByIdWithUserEntityGraph(postId)
             .orElseThrow(() -> new NoSuchElementException("해당하는 게시글이 없습니다."));
 
