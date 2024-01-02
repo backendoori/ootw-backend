@@ -11,6 +11,8 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc
 public abstract class TokenMockMvcTest {
 
+    protected String token;
+
     @Autowired
     private TokenProvider tokenProvider;
 
@@ -19,8 +21,6 @@ public abstract class TokenMockMvcTest {
 
     @Autowired
     protected ObjectMapper objectMapper;
-
-    protected String token;
 
     protected final void setToken(long userId) {
         token = tokenProvider.createToken(userId);
