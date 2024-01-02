@@ -3,6 +3,7 @@ package com.backendoori.ootw.post.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -25,6 +26,7 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
 
 @SpringBootTest
@@ -41,7 +43,7 @@ class PostServiceTest {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
+    @MockBean
     private ImageService imageService;
 
     @BeforeEach
@@ -68,15 +70,17 @@ class PostServiceTest {
             MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
                 "text/plain", "some xml".getBytes());
 
+            given(imageService.uploadImage(postImg)).willReturn("imgUrl");
+
             // when
             PostSaveResponse postSaveResponse = postService.save(request, postImg);
-            when(imageService.uploadImage(postImg)).thenReturn("imgUrl");
 
             //then
             assertAll(
                 () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("title", request.title()),
                 () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("content", request.content()),
-                () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("image", imageService.uploadImage(postImg)),
+                () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("image",
+                    imageService.uploadImage(postImg)),
                 () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("weather", request.weather())
             );
         }
@@ -108,7 +112,7 @@ class PostServiceTest {
             WeatherDto weatherDto =
                 new WeatherDto(currentTemperature, -10.0, 10.0, 1, 1);
             PostSaveRequest postSaveRequest =
-                new PostSaveRequest(savedUser.getId(),"Test Title", "Test Content", weatherDto);
+                new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", weatherDto);
             MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
                 "text/plain", "some xml".getBytes());
 
