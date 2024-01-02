@@ -203,7 +203,7 @@ class PostControllerTest {
 
     @Nested
     @DisplayName("게시글 단건 조회하기")
-    class GetDatailByPostId {
+    class GetDetailByPostId {
 
         PostSaveResponse savedPost;
 
