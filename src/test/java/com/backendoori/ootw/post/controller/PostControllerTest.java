@@ -177,19 +177,26 @@ class PostControllerTest {
             // given
             WeatherDto weatherDto =
                 new WeatherDto(900.0, -10.0, 10.0, 1, 1);
-            PostSaveRequest request =
-                new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", weatherDto);
+            PostSaveRequest postSaveRequest =
+                new PostSaveRequest(savedUser.getId(), "", "Test Content", weatherDto);
+            MockMultipartFile request =
+                new MockMultipartFile("request", "request.json", MediaType.APPLICATION_JSON_VALUE,
+                    objectMapper.writeValueAsBytes(postSaveRequest));
+            MockMultipartFile postImg =
+                new MockMultipartFile("postImg", "filename.txt", MediaType.MULTIPART_FORM_DATA_VALUE,
+                    "some xml".getBytes());
 
-            // when, then
-            String response = mockMvc.perform(post("http://localhost:8080/api/v1/posts")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsBytes(request)))
+            // when
+            MockHttpServletRequestBuilder requestBuilder = multipart("http://localhost:8080/api/v1/posts")
+                .file(request)
+                .file(postImg)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .accept(MediaType.APPLICATION_JSON);
+
+            // then
+            mockMvc.perform(requestBuilder)
                 .andExpect(status().isBadRequest())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andReturn()
-                .getResponse()
-                .getContentAsString(StandardCharsets.UTF_8);
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
         }
 
     }
