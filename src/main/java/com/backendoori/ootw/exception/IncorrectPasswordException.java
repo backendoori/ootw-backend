@@ -10,12 +10,4 @@ public class IncorrectPasswordException extends AuthenticationException {
         super(DEFAULT_MESSAGE);
     }
 
-    public IncorrectPasswordException(String msg) {
-        super(msg);
-    }
-
-    public IncorrectPasswordException(String msg, Throwable cause) {
-        super(msg, cause);
-    }
-
 }
