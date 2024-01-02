@@ -128,7 +128,7 @@ class PostServiceTest {
             WriterDto savedPostWriter = WriterDto.from(savedUser);
 
             // when
-            PostReadResponse postDetailInfo = postService.getDatailByPostId(savedPost.postId());
+            PostReadResponse postDetailInfo = postService.getDetailByPostId(savedPost.postId());
 
             // then
             assertAll(
@@ -150,7 +150,7 @@ class PostServiceTest {
         void getDatailByPostIdFailNotSavedPost() {
             // given, when. then
             assertThrows(NoSuchElementException.class,
-                () -> postService.getDatailByPostId(savedPost.postId() + 1));
+                () -> postService.getDetailByPostId(savedPost.postId() + 1));
         }
 
     }

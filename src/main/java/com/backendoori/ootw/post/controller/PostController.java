@@ -43,7 +43,7 @@ public class PostController {
     @GetMapping("/{postId}")
     public ResponseEntity<PostReadResponse> readDetailByPostId(@PathVariable Long postId) {
         return ResponseEntity.status(HttpStatus.OK)
-            .body(postService.getDatailByPostId(postId));
+            .body(postService.getDetailByPostId(postId));
     }
 
     @GetMapping

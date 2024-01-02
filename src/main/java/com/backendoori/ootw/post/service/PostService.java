@@ -32,7 +32,7 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public PostReadResponse getDatailByPostId(Long postId) {
+    public PostReadResponse getDetailByPostId(Long postId) {
         Post post = postRepository.findByIdWithUserEntityGraph(postId)
             .orElseThrow(() -> new NoSuchElementException("해당하는 게시글이 없습니다."));
 
