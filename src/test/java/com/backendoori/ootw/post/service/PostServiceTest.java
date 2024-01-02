@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -17,10 +16,13 @@ import com.backendoori.ootw.post.dto.WriterDto;
 import com.backendoori.ootw.post.repository.PostRepository;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.repository.UserRepository;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -30,6 +32,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
 
 @SpringBootTest
+@TestInstance(Lifecycle.PER_CLASS)
 class PostServiceTest {
 
     User savedUser;
@@ -47,12 +50,18 @@ class PostServiceTest {
     private ImageService imageService;
 
     @BeforeEach
-    void setUp() {
+    void setup() {
         postRepository.deleteAll();
         userRepository.deleteAll();
 
         User user = new User("user@email.com", "password", "nickname", null);
         savedUser = userRepository.save(user);
+    }
+
+    @AfterAll
+    void cleanup() {
+        postRepository.deleteAll();
+        userRepository.deleteAll();
     }
 
     @Nested
