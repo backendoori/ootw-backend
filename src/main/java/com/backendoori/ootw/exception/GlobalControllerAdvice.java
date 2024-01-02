@@ -2,12 +2,14 @@ package com.backendoori.ootw.exception;
 
 
 import java.util.NoSuchElementException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalControllerAdvice {
 
@@ -24,6 +26,16 @@ public class GlobalControllerAdvice {
         ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
 
         return ResponseEntity.status(HttpStatus.CONFLICT)
+            .body(errorResponse);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleException(Exception e) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+
+        log.error(e.getMessage(), e);
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(errorResponse);
     }
 
