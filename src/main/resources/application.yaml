@@ -19,3 +19,5 @@ jwt:
   token-validity-in-seconds: 86400 # 24 * 60 * 60
 server:
   port: 8080
+forecast:
+  service-key:
