@@ -45,15 +45,14 @@ class PostControllerTest extends TokenMockMvcTest {
     User user;
 
     @Autowired
-    MockMvc mockMvc;
-    @Autowired
-    ObjectMapper objectMapper;
-    @Autowired
     PostController postController;
+
     @Autowired
     PostService postService;
+
     @Autowired
     PostRepository postRepository;
+
     @Autowired
     UserRepository userRepository;
 
