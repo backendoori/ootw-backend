@@ -220,10 +220,14 @@ class PostControllerTest extends TokenMockMvcTest {
     @DisplayName("게시글 단건 조회하기")
     class GetDetailByPostId {
 
+        private static final String URL = "http://localhost:8080/api/v1/posts/";
+
         PostSaveResponse savedPost;
 
         @BeforeEach
         void setUp() {
+            TestSecurityContextHolder.setAuthentication(new TestingAuthenticationToken(user.getId(), null));
+
             WeatherDto weatherDto =
                 new WeatherDto(0.0, -10.0, 10.0, 1, 1);
             MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
@@ -235,10 +239,14 @@ class PostControllerTest extends TokenMockMvcTest {
         @Test
         @DisplayName("존재하지 않는 게시글 단건 조회에 실패한다.")
         void getDetailByPostIdFailNonSavedPost() throws Exception {
-            // given, when, then
-            mockMvc.perform(get("http://localhost:8080/api/v1/posts/" + savedPost.postId() + 1)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON))
+            // given // when
+            MockHttpServletRequestBuilder requestBuilder = get(URL + savedPost.postId() + 1)
+                .header(TOKEN_HEADER, TOKEN_PREFIX + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON);
+
+            // then
+            mockMvc.perform(requestBuilder)
                 .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
         }
@@ -246,10 +254,14 @@ class PostControllerTest extends TokenMockMvcTest {
         @Test
         @DisplayName("게시글 단건 조회에 성공한다.")
         void getDetailByPostIdSuccess() throws Exception {
-            // given, when, then
-            mockMvc.perform(get("http://localhost:8080/api/v1/posts/" + savedPost.postId())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON))
+            // given // when
+            MockHttpServletRequestBuilder requestBuilder = get(URL + savedPost.postId())
+                .header(TOKEN_HEADER, TOKEN_PREFIX + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON);
+
+            // then
+            mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
         }
