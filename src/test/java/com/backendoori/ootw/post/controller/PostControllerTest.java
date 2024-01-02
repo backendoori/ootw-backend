@@ -21,7 +21,6 @@ import com.backendoori.ootw.post.service.PostService;
 import com.backendoori.ootw.security.TokenMockMvcTest;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.repository.UserRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +33,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.security.authentication.TestingAuthenticationToken;
+import org.springframework.security.test.context.TestSecurityContextHolder;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 @TestInstance(Lifecycle.PER_CLASS)
@@ -264,6 +264,7 @@ class PostControllerTest extends TokenMockMvcTest {
 
         @BeforeEach
         void setUp() {
+            TestSecurityContextHolder.setAuthentication(new TestingAuthenticationToken(user.getId(), null));
 
             WeatherDto weatherDto =
                 new WeatherDto(0.0, -10.0, 10.0, 1, 1);
@@ -280,10 +281,14 @@ class PostControllerTest extends TokenMockMvcTest {
         @Test
         @DisplayName("게시글 목록 조회 성공")
         void getAllSuccess() throws Exception {
-            // given, when, then
-            String response = mockMvc.perform(get("http://localhost:8080/api/v1/posts")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON))
+            // given // when
+            MockHttpServletRequestBuilder requestBuilder = get("http://localhost:8080/api/v1/posts")
+                .header(TOKEN_HEADER, TOKEN_PREFIX + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON);
+
+            // then
+            String response = mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn()
@@ -291,8 +296,8 @@ class PostControllerTest extends TokenMockMvcTest {
                 .getContentAsString(StandardCharsets.UTF_8);
 
             List<PostReadResponse> posts = objectMapper.readValue(response, List.class);
-            assertThat(posts.size()).isEqualTo(SAVE_COUNT);
 
+            assertThat(posts.size()).isEqualTo(SAVE_COUNT);
         }
 
     }
