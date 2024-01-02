@@ -3,9 +3,11 @@ package com.backendoori.ootw.post.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import com.backendoori.ootw.common.image.ImageService;
 import com.backendoori.ootw.post.dto.PostReadResponse;
 import com.backendoori.ootw.post.dto.PostSaveRequest;
 import com.backendoori.ootw.post.dto.PostSaveResponse;
@@ -23,6 +25,7 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 
 @SpringBootTest
 class PostServiceTest {
@@ -37,6 +40,9 @@ class PostServiceTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private ImageService imageService;
 
     @BeforeEach
     void setUp() {
@@ -58,16 +64,19 @@ class PostServiceTest {
             WeatherDto weatherDto =
                 new WeatherDto(0.0, -10.0, 10.0, 1, 1);
             PostSaveRequest request =
-                new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", null, weatherDto);
+                new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", weatherDto);
+            MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
+                "text/plain", "some xml".getBytes());
 
             // when
-            PostSaveResponse postSaveResponse = postService.save(request);
+            PostSaveResponse postSaveResponse = postService.save(request, postImg);
+            when(imageService.uploadImage(postImg)).thenReturn("imgUrl");
 
             //then
             assertAll(
                 () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("title", request.title()),
                 () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("content", request.content()),
-                () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("image", request.image()),
+                () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("image", imageService.uploadImage(postImg)),
                 () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("weather", request.weather())
             );
         }
@@ -80,11 +89,13 @@ class PostServiceTest {
             WeatherDto weatherDto =
                 new WeatherDto(0.0, -10.0, 10.0, 1, 1);
             PostSaveRequest postSaveRequest =
-                new PostSaveRequest(notSavedUserId, "Test Title", "Test Content", null, weatherDto);
+                new PostSaveRequest(notSavedUserId, "Test Title", "Test Content", weatherDto);
+            MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
+                "text/plain", "some xml".getBytes());
 
             // when, then
             assertThrows(NoSuchElementException.class,
-                () -> postService.save(postSaveRequest));
+                () -> postService.save(postSaveRequest, postImg));
         }
 
         // TODO: 그 외 파라미터도 일일이 테스트 할까 고민!(일단 보류)
@@ -97,11 +108,13 @@ class PostServiceTest {
             WeatherDto weatherDto =
                 new WeatherDto(currentTemperature, -10.0, 10.0, 1, 1);
             PostSaveRequest postSaveRequest =
-                new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", null, weatherDto);
+                new PostSaveRequest(savedUser.getId(),"Test Title", "Test Content", weatherDto);
+            MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
+                "text/plain", "some xml".getBytes());
 
             // when, then
             assertThrows(IllegalArgumentException.class,
-                () -> postService.save(postSaveRequest));
+                () -> postService.save(postSaveRequest, postImg));
         }
 
     }
@@ -117,18 +130,20 @@ class PostServiceTest {
         void setUp() {
             WeatherDto weatherDto =
                 new WeatherDto(0.0, -10.0, 10.0, 1, 1);
+            MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
+                "text/plain", "some xml".getBytes());
             savedPost = postService.save(
-                new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", null, weatherDto));
+                new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", weatherDto), postImg);
         }
 
         @Test
         @DisplayName("게시글 단건 조회에 성공한다.")
-        void getDatailByPostIdSuccess() {
+        void getDetailByPostIdSuccess() {
             // given
             WriterDto savedPostWriter = WriterDto.from(savedUser);
 
             // when
-            PostReadResponse postDetailInfo = postService.getDatailByPostId(savedPost.postId());
+            PostReadResponse postDetailInfo = postService.getDetailByPostId(savedPost.postId());
 
             // then
             assertAll(
@@ -150,7 +165,7 @@ class PostServiceTest {
         void getDatailByPostIdFailNotSavedPost() {
             // given, when. then
             assertThrows(NoSuchElementException.class,
-                () -> postService.getDatailByPostId(savedPost.postId() + 1));
+                () -> postService.getDetailByPostId(savedPost.postId() + 1));
         }
 
     }
@@ -166,11 +181,13 @@ class PostServiceTest {
 
             WeatherDto weatherDto =
                 new WeatherDto(0.0, -10.0, 10.0, 1, 1);
+            MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
+                "text/plain", "some xml".getBytes());
             PostSaveRequest request =
-                new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", null, weatherDto);
+                new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", weatherDto);
 
             for (int i = 0; i < SAVE_COUNT; i++) {
-                postService.save(request);
+                postService.save(request, postImg);
             }
         }
 

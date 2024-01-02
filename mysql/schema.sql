@@ -33,7 +33,7 @@ CREATE TABLE posts
     user_id    BIGINT       NOT NULL,
     title      VARCHAR(30)  NOT NULL,
     content    VARCHAR(255) NOT NULL,
-    image      VARCHAR(255) NULL,
+    image      VARCHAR(500) NULL,
     created_at DATETIME(6)  NULL,
     updated_at DATETIME(6)  NULL,
     current_temperature DOUBLE                                                  NOT NULL,

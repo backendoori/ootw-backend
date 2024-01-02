@@ -16,8 +16,6 @@ public record PostSaveRequest(
     @Size(max = 500)
     String content,
 
-    String image,
-
     WeatherDto weather
 ) {
 

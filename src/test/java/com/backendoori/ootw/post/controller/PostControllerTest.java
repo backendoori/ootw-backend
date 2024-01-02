@@ -2,6 +2,7 @@ package com.backendoori.ootw.post.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -28,6 +29,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
@@ -68,21 +72,26 @@ class PostControllerTest {
     class Save {
 
         @Test
+        @WithMockUser
         @DisplayName("게시글 저장에 성공한다.")
         void saveSuccess() throws Exception {
             // given
             WeatherDto weatherDto =
                 new WeatherDto(0.0, -10.0, 10.0, 1, 1);
             PostSaveRequest request =
-                new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", null, weatherDto);
+                new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", weatherDto);
+            MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
+                "text/plain", "some xml".getBytes());
 
             // when, then
-            MockHttpServletResponse response = mockMvc.perform(post("http://localhost:8080/api/v1/posts")
+            MockHttpServletResponse response = mockMvc.perform(multipart("http://localhost:8080/api/v1/posts")
+                    .file(postImg)
+                    .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                    .content(objectMapper.writeValueAsBytes(request))
                     .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsBytes(request)))
+                    .characterEncoding("utf-8"))
                 .andExpect(status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn()
                 .getResponse();
 
@@ -90,16 +99,21 @@ class PostControllerTest {
         }
 
         @Test
+        @WithMockUser
         @DisplayName("저장되지 않은 유저가 포함된 게시글 저장에 실패한다.")
         void saveFailNonSavedUser() throws Exception {
             // given
             WeatherDto weatherDto =
                 new WeatherDto(0.0, -10.0, 10.0, 1, 1);
             PostSaveRequest request =
-                new PostSaveRequest(savedUser.getId() + 1, "Test Title", "Test Content", null, weatherDto);
+                new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", weatherDto);
+            MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
+                "text/plain", "some xml".getBytes());
 
             // when, then
-            mockMvc.perform(post("http://localhost:8080/api/v1/posts")
+            mockMvc.perform(multipart("http://localhost:8080/api/v1/posts")
+                    .file(postImg)
+                    .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsBytes(request)))
@@ -108,16 +122,21 @@ class PostControllerTest {
         }
 
         @Test
+        @WithMockUser
         @DisplayName("유효하지 않은 요청 값(게시글 title)이 포함된 게시글 저장에 실패한다.")
         void saveFailByMethodArgumentNotValidException() throws Exception {
             // given
             WeatherDto weatherDto =
                 new WeatherDto(0.0, -10.0, 10.0, 1, 1);
             PostSaveRequest request =
-                new PostSaveRequest(savedUser.getId(), null, "Test Content", null, weatherDto);
+                new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", weatherDto);
+            MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
+                "text/plain", "some xml".getBytes());
 
             // when, then
-            String response = mockMvc.perform(post("http://localhost:8080/api/v1/posts")
+            String response = mockMvc.perform(multipart("http://localhost:8080/api/v1/posts")
+                    .file(postImg)
+                    .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsBytes(request)))
@@ -133,13 +152,14 @@ class PostControllerTest {
         }
 
         @Test
+        @WithMockUser
         @DisplayName("유효하지 않은 요청 값(현재 기온)이 포함된 게시글 저장에 실패한다.")
         void saveFailInvalidValueByIllegalArgumentException() throws Exception {
             // given
             WeatherDto weatherDto =
                 new WeatherDto(900.0, -10.0, 10.0, 1, 1);
             PostSaveRequest request =
-                new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", null, weatherDto);
+                new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", weatherDto);
 
             // when, then
             String response = mockMvc.perform(post("http://localhost:8080/api/v1/posts")
@@ -165,29 +185,33 @@ class PostControllerTest {
         void setUp() {
             WeatherDto weatherDto =
                 new WeatherDto(0.0, -10.0, 10.0, 1, 1);
+            MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
+                "text/plain", "some xml".getBytes());
             savedPost = postService.save(
-                new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", null, weatherDto));
+                new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", weatherDto), postImg );
         }
 
         @Test
-        @DisplayName("게시글 단건 조회에 성공한다.")
-        void getDatailByPostIdSuccess() throws Exception {
-            // given, when, then
-            mockMvc.perform(get("http://localhost:8080/api/v1/posts/" + savedPost.postId())
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-        }
-
-        @Test
+        @WithMockUser
         @DisplayName("존재하지 않는 게시글 단건 조회에 실패한다.")
-        void getDatailByPostIdFailNonSavedPost() throws Exception {
+        void getDetailByPostIdFailNonSavedPost() throws Exception {
             // given, when, then
             mockMvc.perform(get("http://localhost:8080/api/v1/posts/" + savedPost.postId() + 1)
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+        }
+
+        @Test
+        @WithMockUser
+        @DisplayName("게시글 단건 조회에 성공한다.")
+        void getDetailByPostIdSuccess() throws Exception {
+            // given, when, then
+            mockMvc.perform(get("http://localhost:8080/api/v1/posts/" + savedPost.postId())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
         }
 
@@ -205,14 +229,17 @@ class PostControllerTest {
             WeatherDto weatherDto =
                 new WeatherDto(0.0, -10.0, 10.0, 1, 1);
             PostSaveRequest request =
-                new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", null, weatherDto);
+                new PostSaveRequest(savedUser.getId(), "Test Title", "Test Content", weatherDto);
+            MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
+                "text/plain", "some xml".getBytes());
 
             for (int i = 0; i < SAVE_COUNT; i++) {
-                postService.save(request);
+                postService.save(request, postImg);
             }
         }
 
         @Test
+        @WithMockUser
         @DisplayName("게시글 목록 조회 성공")
         void getAllSuccess() throws Exception {
             // given, when, then

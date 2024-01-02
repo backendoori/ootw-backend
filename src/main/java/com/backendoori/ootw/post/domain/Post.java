@@ -49,18 +49,18 @@ public class Post extends BaseEntity {
     @Embedded
     private Weather weather;
 
-    private Post(User user, PostSaveRequest request) {
+    private Post(User user, PostSaveRequest request, String imgUrl) {
         validateUser(user);
         validatePostSaveRequest(request);
         this.user = user;
         this.title = request.title();
         this.content = request.content();
-        this.image = request.image();
+        this.image = imgUrl;
         this.weather = Weather.from(request.weather());
     }
 
-    public static Post from(User user, PostSaveRequest request) {
-        return new Post(user, request);
+    public static Post from(User user, PostSaveRequest request, String imgUrl) {
+        return new Post(user, request, imgUrl);
     }
 
     // TODO: Validator 클래스를 독립적으로 만드는 것이 나을까..?
