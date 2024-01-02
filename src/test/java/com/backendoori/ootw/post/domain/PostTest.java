@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.mock.web.MockMultipartFile;
 
 class PostTest {
 
@@ -26,23 +27,23 @@ class PostTest {
     private static Stream<Arguments> provideInvalidInfo() {
         return Stream.of(
             Arguments.of("userId가 null인 경우",
-                new PostSaveRequest(null, "Test Title", "Test Content", null, WEATHER_DTO)),
+                new PostSaveRequest(null, "Test Title", "Test Content", WEATHER_DTO)),
             Arguments.of("title이 null인 경우",
-                new PostSaveRequest(USER_ID, null, "Test Content", null, WEATHER_DTO)),
+                new PostSaveRequest(USER_ID, null, "Test Content", WEATHER_DTO)),
             Arguments.of("title이 공백인 경우",
-                new PostSaveRequest(USER_ID, " ", "Test Content", null, WEATHER_DTO)),
+                new PostSaveRequest(USER_ID, " ", "Test Content", WEATHER_DTO)),
             Arguments.of("title이 30자를 넘는 경우",
-                new PostSaveRequest(USER_ID, "T".repeat(31), "Test Content", null, WEATHER_DTO)),
+                new PostSaveRequest(USER_ID, "T".repeat(31), "Test Content", WEATHER_DTO)),
             Arguments.of("content가 null인 경우",
-                new PostSaveRequest(USER_ID, "Test Title", null, null, WEATHER_DTO)),
+                new PostSaveRequest(USER_ID, "Test Title", null, WEATHER_DTO)),
             Arguments.of("content가 공백인 경우",
-                new PostSaveRequest(USER_ID, "Test Title", " ", null, WEATHER_DTO)),
+                new PostSaveRequest(USER_ID, "Test Title", " ", WEATHER_DTO)),
             Arguments.of("content가 500자를 넘는 경우",
-                new PostSaveRequest(USER_ID, "Test Title", "T".repeat(501), null, WEATHER_DTO)),
+                new PostSaveRequest(USER_ID, "Test Title", "T".repeat(501),  WEATHER_DTO)),
             Arguments.of("weather가 null인 경우",
-                new PostSaveRequest(USER_ID, "Test Title", "Test Content", null, null)),
+                new PostSaveRequest(USER_ID, "Test Title", "Test Content",null)),
             Arguments.of("weather가 유효하지 않은 값인 경우",
-                new PostSaveRequest(USER_ID, "Test Title", "Test Content", null, INVALID_WEATHER_DTO))
+                new PostSaveRequest(USER_ID, "Test Title", "Test Content", INVALID_WEATHER_DTO))
         );
     }
 
@@ -51,17 +52,18 @@ class PostTest {
     void createPostSuccess() {
         // given
         PostSaveRequest request =
-            new PostSaveRequest(USER_ID, "Test Title", "Test Content", null, WEATHER_DTO);
+            new PostSaveRequest(USER_ID, "Test Title", "Test Content", WEATHER_DTO);
+        String imgUrl = "imgUrl";
 
         // when
-        Post createdPost = Post.from(MOCK_USER, request);
+        Post createdPost = Post.from(MOCK_USER, request, imgUrl);
 
         // then
         assertAll(
             () -> assertThat(createdPost).hasFieldOrPropertyWithValue("user", MOCK_USER),
             () -> assertThat(createdPost).hasFieldOrPropertyWithValue("title", request.title()),
             () -> assertThat(createdPost).hasFieldOrPropertyWithValue("content", request.content()),
-            () -> assertThat(createdPost).hasFieldOrPropertyWithValue("image", request.image()),
+            () -> assertThat(createdPost).hasFieldOrPropertyWithValue("image", imgUrl),
             () -> assertThat(createdPost).hasFieldOrPropertyWithValue("weather", Weather.from(WEATHER_DTO))
         );
     }
@@ -71,8 +73,10 @@ class PostTest {
     @DisplayName("from 메서드로 유효하지 않은 User, PostSaveRequest로부터 Post를 생성하는 것에 실패한다.")
     void createPostFail(String info, PostSaveRequest postSaveRequest) {
         // given, when, then
+        String imgUrl = "imgUrl";
+
         assertThrows(IllegalArgumentException.class,
-            () -> Post.from(MOCK_USER, postSaveRequest));
+            () -> Post.from(MOCK_USER, postSaveRequest, imgUrl));
 
         // TODO: 에러 메시지 검증
     }
