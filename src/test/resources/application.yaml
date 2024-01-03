@@ -18,3 +18,5 @@ jwt:
   issuer: tester
   base64-secret:
   token-validity-in-seconds: 10
+forecast:
+  service-key:
