@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface ForecastApi {
 
     @GetMapping(value = "/getVilageFcst")
-    ForecastResult getVilageForecast(
+    ForecastResult getVillageForecast(
         @RequestParam
         String serviceKey,
 
