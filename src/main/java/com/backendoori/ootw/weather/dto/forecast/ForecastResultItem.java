@@ -1,7 +1,6 @@
 package com.backendoori.ootw.weather.dto.forecast;
 
 public record ForecastResultItem(
-
     String baseDate,
     String baseTime,
     String category,
