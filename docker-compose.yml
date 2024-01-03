@@ -10,9 +10,9 @@ services:
     volumes:
       - "data_volume:/var/lib/mysql-local"
     environment:
-      MYSQL_PASSWORD: "root"
-      MYSQL_ROOT_PASSWORD: "root"
-      MYSQL_DATABASE: "ootw"
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
   mysql-test:
     build:
       context: ./mysql
@@ -22,17 +22,17 @@ services:
     volumes:
       - "data_volume:/var/lib/mysql-test"
     environment:
-      MYSQL_PASSWORD: "root"
-      MYSQL_ROOT_PASSWORD: "root"
-      MYSQL_DATABASE: "ootw"
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
   minio:
     image: minio/minio
     ports:
       - "9000:9000"
       - "9099:9099"
     environment:
-      MINIO_ROOT_USER: IamUser
-      MINIO_ROOT_PASSWORD: IamPassword
+      MINIO_ROOT_USER: ${MINIO_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_PASSWORD}
     command: server --address ":9099" --console-address ":9000" /data
 
 volumes:
