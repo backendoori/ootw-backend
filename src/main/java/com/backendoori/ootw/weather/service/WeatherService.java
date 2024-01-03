@@ -36,8 +36,7 @@ public class WeatherService {
 
     private boolean isCurrentWeatherItem(ForecastResultItem item, String currentDate,
                                          String currentHour) {
-        return item.fcstDate().equals(currentDate)
-            && item.fcstTime().equals(currentHour);
+        return item.fcstDate().equals(currentDate) && item.fcstTime().equals(currentHour);
     }
 
 }
