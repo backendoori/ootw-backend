@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatNoException;
 
 import com.backendoori.ootw.exception.AlreadyExistEmailException;
 import com.backendoori.ootw.exception.IncorrectPasswordException;
-import com.backendoori.ootw.exception.NotExistUserException;
+import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.dto.LoginDto;
 import com.backendoori.ootw.user.dto.SignupDto;
@@ -112,8 +112,8 @@ class UserServiceTest {
             ThrowingCallable login = () -> userService.login(loginDto);
 
             // then
-            assertThatExceptionOfType(NotExistUserException.class).isThrownBy(login)
-                .withMessage(NotExistUserException.DEFAULT_MESSAGE);
+            assertThatExceptionOfType(UserNotFoundException.class).isThrownBy(login)
+                .withMessage(UserNotFoundException.DEFAULT_MESSAGE);
         }
 
         @DisplayName("비밀번호가 일치하지 않으면 로그인에 실패한다")

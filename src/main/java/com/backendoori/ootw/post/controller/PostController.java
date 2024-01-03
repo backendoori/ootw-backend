@@ -18,9 +18,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/posts")
@@ -30,8 +31,10 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping
-    public ResponseEntity<PostSaveResponse> save(@RequestBody @Valid PostSaveRequest request) {
-        PostSaveResponse response = postService.save(request);
+    public ResponseEntity<PostSaveResponse> save(
+        @RequestPart MultipartFile postImg,
+        @RequestPart @Valid PostSaveRequest request) {
+        PostSaveResponse response = postService.save(request, postImg);
 
         URI postUri = URI.create("/api/v1/posts/" + response.postId());
 

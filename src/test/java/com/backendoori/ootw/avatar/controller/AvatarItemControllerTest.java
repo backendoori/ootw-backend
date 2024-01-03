@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 @AutoConfigureMockMvc
@@ -30,6 +31,7 @@ class AvatarItemControllerTest {
     ObjectMapper objectMapper;
 
     @Test
+    @WithMockUser
     @DisplayName("아바타 이미지 업로드 api 테스트")
     public void imageUploadTest() throws Exception {
         //given

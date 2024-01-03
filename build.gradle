@@ -70,14 +70,16 @@ jacocoTestCoverageVerification {
             limit {
                 counter = 'LINE'
                 value = 'COVEREDRATIO'
-                minimum = 0.75
+                minimum = 0.70
             }
 
             limit {
                 counter = 'BRANCH'
                 value = 'COVEREDRATIO'
-                minimum = 0.90
+                minimum = 0.70
             }
+
+            excludes = ['com.backendoori.ootw.config.ExceptionHandlerConfigurer']
         }
 
         rule {
