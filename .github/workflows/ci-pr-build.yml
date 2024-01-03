@@ -2,7 +2,7 @@ name: Spring Boot Gradle Test Workflow
 on:
   pull_request:
     branches:
-      - merge
+      - refactoring
 
 jobs:
   build:

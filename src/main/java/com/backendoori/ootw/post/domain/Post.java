@@ -70,7 +70,6 @@ public class Post extends BaseEntity {
 
     private static void validatePostSaveRequest(PostSaveRequest request) {
         Assert.notNull(request, "게시글 생성 요청 정보가 null이어서는 안됩니다.");
-        Assert.notNull(request.userId(), "게시글 작성자 ID가 null이어서는 안됩니다.");
         Assert.notNull(request.weather(), "게시글 기온/날씨 정보가 null이어서는 안됩니다.");
         validateTitle(request.title());
         validateContent(request.content());
