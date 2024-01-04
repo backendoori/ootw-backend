@@ -35,6 +35,11 @@ on:
       FORECAST_URL:
         required: true
 
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
 jobs:
   build:
     environment: build

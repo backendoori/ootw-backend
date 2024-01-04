@@ -11,11 +11,9 @@ jobs:
         with:
           addAssignees: author
           addReviewers: true
-          useReviewGroups: true
-          reviewGroups:
-            mentee:
-              - ASak1104
-              - shoeone96
-              - Sehee-Lee-01
+          reviewers:
+            - ASak1104
+            - shoeone96
+            - Sehee-Lee-01
           skipKeywords:
             - wip
