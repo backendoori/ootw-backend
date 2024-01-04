@@ -1,6 +1,6 @@
 package com.backendoori.ootw.weather.util.client;
 
-import com.backendoori.ootw.weather.dto.forecast.ForecastResult;
+import com.backendoori.ootw.weather.domain.ForecastResult;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;

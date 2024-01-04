@@ -1,8 +1,8 @@
 package com.backendoori.ootw.weather.util.client;
 
 import java.util.List;
-import com.backendoori.ootw.weather.dto.forecast.BaseDateTime;
-import com.backendoori.ootw.weather.dto.forecast.ForecastResultItem;
+import com.backendoori.ootw.weather.domain.BaseDateTime;
+import com.backendoori.ootw.weather.domain.ForecastResultItem;
 import com.backendoori.ootw.weather.util.ForecastProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

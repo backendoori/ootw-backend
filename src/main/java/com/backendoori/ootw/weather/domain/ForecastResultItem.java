@@ -1,4 +1,4 @@
-package com.backendoori.ootw.weather.dto.forecast;
+package com.backendoori.ootw.weather.domain;
 
 public record ForecastResultItem(
     String baseDate,
