@@ -16,7 +16,7 @@ jobs:
       - name: Run Coverage
         run: |
           chmod +x gradlew
-          ./gradlew testCoverage
+          ./gradlew test
 
       - name: 📑 Jacoco 테스트 결과
         id: jacoco
