@@ -9,14 +9,14 @@ jobs:
     steps:
       - uses: kentaro-m/auto-assign-action@v1.2.5
         with:
-          configuration-path: .github/workflows/auto-assign-action.yml
+          configuration-path: ".github/workflows/auto-assign-action.yml"
           addAssignees: author
           addReviewers: true
           useReviewGroups: true
           reviewGroups:
             mentee:
-              - ASak1104
-              - shoeone96
-              - Sehee-Lee-01
+              - "ASak1104"
+              - "shoeone96"
+              - "Sehee-Lee-01"
           skipKeywords:
             - wip
