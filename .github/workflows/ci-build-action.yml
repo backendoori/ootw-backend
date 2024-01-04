@@ -1,6 +1,22 @@
 name: Spring Boot Gradle Test Workflow
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  workflow_call:
+    inputs:
+      target-env:
+        required: true
+        type: string
+    secrets:
+      TEST_MYSQL_USERNAME:
+        required: true
+      TEST_MYSQL_PASSWORD:
+        required: true
+      TEST_MYSQL_DATABASE:
+        required: true
+      TEST_MYSQL_URL:
+        required: true
 
 jobs:
   build:
@@ -11,7 +27,7 @@ jobs:
 
       # echo secrets for github action debug
       - name: echo secrets for github action debug
-        run: echo ${{secrets.MAIN_MYSQL_DATABASE}}
+        run: echo ${{secrets.TEST_MYSQL_USERNAME}}
 
       - name: Configure docker-compose.yml
         uses: microsoft/variable-substitution@v1
