@@ -15,10 +15,17 @@ jobs:
         with:
           files: ./docker-compose.yml
         env:
-          services.mysql.environment.MYSQL_DATABASE: ${{secrets.TEST_DATABASE}}
-          services.mysql.environment.MYSQL_ROOT_PASSWORD: ${{secrets.TEST_DB_PASSWORD}}
+          services.mysql-local.environment.MYSQL_DATABASE: ${{secrets.TEST_DATABASE}}
+          services.mysql-local.environment.MYSQL_ROOT_PASSWORD: ${{secrets.TEST_DB_PASSWORD}}
+          services.mysql-local.environment.MYSQL_PASSWORD: ${{secrets.TEST_DB_PASSWORD}}
+          services.mysql-local.ports: ${{secrets.MYSQL_LOCAL_PORT}}
+          services.mysql-test.environment.MYSQL_DATABASE: ${{secrets.TEST_DATABASE}}
+          services.mysql-test.environment.MYSQL_ROOT_PASSWORD: ${{secrets.TEST_DB_PASSWORD}}
+          services.mysql-test.environment.MYSQL_PASSWORD: ${{secrets.TEST_DB_PASSWORD}}
+          services.mysql-test.ports: ${{secrets.MYSQL_TEST_PORT}}
           services.minio.environment.MINIO_ROOT_USER: ${{secrets.STORAGE_USER}}
           services.minio.environment.MINIO_ROOT_PASSWORD: ${{secrets.STORAGE_PASSWORD}}
+          services.minio.ports: ${{secrets.MINIO_PORT}}
 
       # Build and start container
       - name: Build and Start Container
@@ -31,13 +38,26 @@ jobs:
           java-version: '17'
           distribution: 'liberica'
 
-      # 환경 변수 적용
-      - name: Configure application.yaml under test directory
+      # 환경 변수 적용(main)
+      - name: Configure application.yaml under main directory
         uses: microsoft/variable-substitution@v1
         with:
           files: ./src/main/resources/application.yaml
         env:
-          spring.datasource.url: jdbc:mysql://localhost:3308/${{secrets.TEST_DATABASE}}
+          spring.datasource.url: ${{secrets.MYSQL_URL}}
+          spring.datasource.username: ${{secrets.TEST_DB_USERNAME}}
+          spring.datasource.password: ${{secrets.TEST_DB_PASSWORD}}
+          spring.minio.bucket: ${{secrets.STORAGE_BUCKET}}
+          spring.minio.access-key: ${{secrets.STORAGE_USER}}
+          spring.minio.secret-key: ${{secrets.STORAGE_PASSWORD}}
+
+      # 환경 변수 적용(test)
+      - name: Configure application.yaml under test directory
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./src/test/resources/application.yaml
+        env:
+          spring.datasource.url: ${{secrets.TEST_MYSQL_URL}}
           spring.datasource.username: ${{secrets.TEST_DB_USERNAME}}
           spring.datasource.password: ${{secrets.TEST_DB_PASSWORD}}
           spring.minio.bucket: ${{secrets.STORAGE_BUCKET}}
