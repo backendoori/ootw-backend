@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: ${MYSQL_USERNAME}
-    password: ${MYSQL_PASSWORD}
-    url: ${MYSQL_URL}
+    username: ${TEST_MYSQL_USERNAME}
+    password: ${TEST_MYSQL_PASSWORD}
+    url: ${TEST_MYSQL_URL}
   jpa:
     hibernate:
       ddl-auto: validate
