@@ -19,10 +19,17 @@ public class ForecastApiClient {
     private final ForecastApi forecastApi;
 
     public List<ForecastResultItem> requestUltraShortForecastItems(BaseDateTime requestBaseDateTime,
-                                                                   int nx, int ny) {
-        return forecastApi.getUltraShortForecast(forecastProperties.serviceKey(), NUM_OF_ROWS, PAGE_NO, DATA_TYPE,
+                                                                   int nx,
+                                                                   int ny) {
+        return forecastApi.getUltraShortForecast(
+                forecastProperties.serviceKey(),
+                NUM_OF_ROWS,
+                PAGE_NO,
+                DATA_TYPE,
                 requestBaseDateTime.baseDate(),
-                requestBaseDateTime.baseTime(), nx, ny)
+                requestBaseDateTime.baseTime(),
+                nx,
+                ny)
             .items();
     }
 

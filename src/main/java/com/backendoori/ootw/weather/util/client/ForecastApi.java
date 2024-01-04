@@ -9,18 +9,25 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface ForecastApi {
 
     @GetMapping(value = "/getVilageFcst")
-    ForecastResult getVillageForecast(@RequestParam String serviceKey, @RequestParam int numOfRows,
-                                      @RequestParam int pageNo, @RequestParam String dataType,
+    ForecastResult getVillageForecast(@RequestParam String serviceKey,
+                                      @RequestParam int numOfRows,
+                                      @RequestParam int pageNo,
+                                      @RequestParam String dataType,
                                       @RequestParam(name = "base_date") String baseDate,
-                                      @RequestParam(name = "base_time") String baseTime, @RequestParam int nx,
+                                      @RequestParam(name = "base_time") String baseTime,
+                                      @RequestParam int nx,
                                       @RequestParam int ny
     );
 
     @GetMapping(value = "/getUltraSrtFcst")
-    ForecastResult getUltraShortForecast(@RequestParam String serviceKey, @RequestParam int numOfRows,
-                                         @RequestParam int pageNo, @RequestParam String dataType,
+    ForecastResult getUltraShortForecast(@RequestParam String serviceKey,
+                                         @RequestParam int numOfRows,
+                                         @RequestParam int pageNo,
+                                         @RequestParam String dataType,
                                          @RequestParam(name = "base_date") String baseDate,
-                                         @RequestParam(name = "base_time") String baseTime, @RequestParam int nx,
-                                         @RequestParam int ny);
+                                         @RequestParam(name = "base_time") String baseTime,
+                                         @RequestParam int nx,
+                                         @RequestParam int ny
+    );
 
 }
