@@ -33,14 +33,20 @@ jobs:
       - name: Configure application.yaml under test directory
         uses: microsoft/variable-substitution@v1
         with:
-          files: ./src/main/resources/application.yaml
+          files: ./src/test/resources/application.yaml
         env:
-          spring.datasource.url: jdbc:mysql://localhost:3308/${{secrets.TEST_DATABASE}}
-          spring.datasource.username: ${{secrets.TEST_DB_USERNAME}}
-          spring.datasource.password: ${{secrets.TEST_DB_PASSWORD}}
-          spring.minio.bucket: ${{secrets.STORAGE_BUCKET}}
-          spring.minio.access-key: ${{secrets.STORAGE_USER}}
-          spring.minio.secret-key: ${{secrets.STORAGE_PASSWORD}}
+          spring.datasource.username: ${{secrets.MYSQL_USERNAME}}
+          spring.datasource.password: ${{secrets.MYSQL_PASSWORD}}
+          spring.datasource.url: ${{secrets.MYSQL_URL}}
+          spring.minio.url: ${{secrets.MINIO_URL}}
+          spring.minio.bucket: ${{secrets.MINIO_BUCKET}}
+          spring.minio.access-key: ${{secrets.MINIO_USER}}
+          spring.minio.secret-key: ${{secrets.MINIO_PASSWORD}}
+          jwt.issuer: ${{secrets.TOKEN_ISSUER}}
+          jwt.base64-secret: ${{secrets.TOKEN_SECRET}}
+          jwt.TOKEN_EXPIRATION: ${{secrets.TOKEN_EXPIRATION}}
+          forecast.service-key: ${{secrets.FORECAST_SERVICE_KEY}}
+          forecast.url: ${{secrets.FORECAST_URL}}
 
       # gradle 권한 추가
       - name: Grant execute permission for gradlew
