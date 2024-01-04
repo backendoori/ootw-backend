@@ -11,4 +11,11 @@ public record ForecastResultItem(
     int ny
 ) {
 
+    public boolean matchFcstDateTimeWithBaseDateTime(BaseDateTime baseDateTime) {
+        return this.fcstDate()
+            .equals(baseDateTime.baseDate())
+            && this.fcstTime()
+            .equals(baseDateTime.baseTime());
+    }
+
 }
