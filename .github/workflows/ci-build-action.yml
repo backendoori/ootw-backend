@@ -75,13 +75,13 @@ jobs:
           spring.datasource.username: ${{secrets.TEST_MYSQL_USERNAME}}
           spring.datasource.password: ${{secrets.TEST_MYSQL_PASSWORD}}
           spring.datasource.url: ${{secrets.TEST_MYSQL_URL}}
-          spring.minio.url: ${{secrets.MINIO_URL}}
-          spring.minio.bucket: ${{secrets.MINIO_BUCKET}}
-          spring.minio.access-key: ${{secrets.MINIO_USER}}
-          spring.minio.secret-key: ${{secrets.MINIO_PASSWORD}}
+          minio.url: ${{secrets.MINIO_URL}}
+          minio.bucket: ${{secrets.MINIO_BUCKET}}
+          minio.access-key: ${{secrets.MINIO_USER}}
+          minio.secret-key: ${{secrets.MINIO_PASSWORD}}
           jwt.issuer: ${{secrets.TOKEN_ISSUER}}
           jwt.base64-secret: ${{secrets.TOKEN_SECRET}}
-          jwt.TOKEN_EXPIRATION: ${{secrets.TOKEN_EXPIRATION}}
+          jwt.token-validity-in-seconds: ${{secrets.TOKEN_EXPIRATION}}
           forecast.service-key: ${{secrets.FORECAST_SERVICE_KEY}}
           forecast.url: ${{secrets.FORECAST_URL}}
 
