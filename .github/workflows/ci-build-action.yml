@@ -9,13 +9,31 @@ on:
         required: true
         type: string
     secrets:
+      TEST_MYSQL_DATABASE:
+        required: true
       TEST_MYSQL_USERNAME:
         required: true
       TEST_MYSQL_PASSWORD:
         required: true
-      TEST_MYSQL_DATABASE:
-        required: true
       TEST_MYSQL_URL:
+        required: true
+      MINIO_URL:
+        required: true
+      MINIO_BUCKET:
+        required: true
+      MINIO_USER:
+        required: true
+      MINIO_PASSWORD:
+        required: true
+      TOKEN_ISSUER:
+        required: true
+      TOKEN_SECRET:
+        required: true
+      TOKEN_EXPIRATION:
+        required: true
+      FORECAST_SERVICE_KEY:
+        required: true
+      FORECAST_URL:
         required: true
 
 jobs:
@@ -24,10 +42,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
-      # echo secrets for github action debug
-      - name: echo secrets for github action debug
-        run: echo ${{secrets.TEST_MYSQL_USERNAME}}
 
       - name: Configure docker-compose.yml
         uses: microsoft/variable-substitution@v1
@@ -51,25 +65,6 @@ jobs:
         with:
           java-version: '17'
           distribution: 'liberica'
-
-      # 환경 변수 적용
-      - name: Configure application.yaml under test directory
-        uses: microsoft/variable-substitution@v1
-        with:
-          files: ./src/test/resources/application.yaml
-        env:
-          spring.datasource.username: ${{secrets.TEST_MYSQL_USERNAME}}
-          spring.datasource.password: ${{secrets.TEST_MYSQL_PASSWORD}}
-          spring.datasource.url: ${{secrets.TEST_MYSQL_URL}}
-          spring.minio.url: ${{secrets.MINIO_URL}}
-          spring.minio.bucket: ${{secrets.MINIO_BUCKET}}
-          spring.minio.access-key: ${{secrets.MINIO_USER}}
-          spring.minio.secret-key: ${{secrets.MINIO_PASSWORD}}
-          jwt.issuer: ${{secrets.TOKEN_ISSUER}}
-          jwt.base64-secret: ${{secrets.TOKEN_SECRET}}
-          jwt.TOKEN_EXPIRATION: ${{secrets.TOKEN_EXPIRATION}}
-          forecast.service-key: ${{secrets.FORECAST_SERVICE_KEY}}
-          forecast.url: ${{secrets.FORECAST_URL}}
 
       # gradle 권한 추가
       - name: Grant execute permission for gradlew
