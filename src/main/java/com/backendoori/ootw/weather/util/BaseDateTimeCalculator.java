@@ -19,6 +19,7 @@ public class BaseDateTimeCalculator {
             baseRequestDate = BaseDateTimeFormatter.formatBaseDate(dateTime.minusDays(1));
             baseRequestTime = BaseDateTimeFormatter.formatBaseTime(dateTime.withHour(23));
         }
+
         return new BaseDateTime(baseRequestDate, baseRequestTime);
     }
 
