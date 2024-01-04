@@ -85,9 +85,6 @@ jobs:
           forecast.service-key: ${{secrets.FORECAST_SERVICE_KEY}}
           forecast.url: ${{secrets.FORECAST_URL}}
 
-      - name: echo files
-        run: cat ./docker-compose.yml ; cat ./src/test/resources/application.yaml
-
       # gradle 권한 추가
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
