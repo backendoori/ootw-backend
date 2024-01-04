@@ -13,6 +13,9 @@ jobs:
           addReviewers: true
           useReviewGroups: true
           reviewGroups:
-            mentee: [ASak1104, shoeone96, Sehee-Lee-01]
+            mentee:
+              - ASak1104
+              - shoeone96
+              - Sehee-Lee-01
           skipKeywords:
             - wip

@@ -1,7 +1,6 @@
 name: Spring Boot Gradle Test Workflow
 
 on:
-  push:
   pull_request:
   workflow_call:
     inputs:
