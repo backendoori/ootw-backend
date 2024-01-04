@@ -13,10 +13,10 @@ jobs:
         with:
           files: ./docker-compose.yml
         env:
-          services.mysql.environment.MYSQL_DATABASE: ${{secrets.TEST_DATABASE}}
-          services.mysql.environment.MYSQL_ROOT_PASSWORD: ${{secrets.TEST_DB_PASSWORD}}
-          services.minio.environment.MINIO_ROOT_USER: ${{secrets.STORAGE_USER}}
-          services.minio.environment.MINIO_ROOT_PASSWORD: ${{secrets.STORAGE_PASSWORD}}
+          services.mysql.environment.MYSQL_DATABASE: ${{secrets.MYSQL_DATABASE}}
+          services.mysql.environment.MYSQL_ROOT_PASSWORD: ${{secrets.MYSQL_PASSWORD}}
+          services.minio.environment.MINIO_ROOT_USER: ${{secrets.MINIO_USER}}
+          services.minio.environment.MINIO_ROOT_PASSWORD: ${{secrets.MINIO_PASSWORD}}
 
       # Build and start container
       - name: Build and Start Container
