@@ -54,6 +54,7 @@ jobs:
           services.mysql-test.environment.MYSQL_DATABASE: ${{secrets.TEST_MYSQL_DATABASE}}
           services.minio.environment.MINIO_ROOT_USER: ${{secrets.MINIO_USER}}
           services.minio.environment.MINIO_ROOT_PASSWORD: ${{secrets.MINIO_PASSWORD}}
+        run: echo ./docker-compose.yml
 
       - name: echo files
         run: echo ./docker-compose.yml | echo ./src/test/resources/application.yaml
@@ -75,7 +76,7 @@ jobs:
 
       # 프로젝트 빌드
       - name: Build with Gradle
-        run: ./gradlew clean build
+        run: echo ./src/test/resources/application.yaml | ./gradlew clean build
 
       # Jacoco 테스트 결과 추가
       - name: 📑 Jacoco 테스트 결과
