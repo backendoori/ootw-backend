@@ -5,7 +5,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(value = "forecast-api", url = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0")
+@FeignClient(value = "forecast-api", url = "${forecast.url}")
 public interface ForecastApi {
 
     @GetMapping(value = "/getVilageFcst")

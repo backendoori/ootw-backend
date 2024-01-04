@@ -19,5 +19,6 @@ jwt:
   token-validity-in-seconds: ${TOKEN_EXPIRATION}
 forecast:
   service-key: ${FORECAST_SERVICE_KEY}
+  url: ${FORECAST_URL}
 server:
   port: 8080
