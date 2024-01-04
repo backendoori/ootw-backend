@@ -1,22 +1,23 @@
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password:
-    url: jdbc:mysql://localhost:3309/ootw
+    username: ${MYSQL_USERNAME}
+    password: ${MYSQL_PASSWORD}
+    url: ${MYSQL_URL}
   jpa:
     hibernate:
       ddl-auto: validate
     open-in-view: false
-    show-sql: true
 minio:
-  url: http://localhost:9099
-  bucket: ootw-bucket
-  access-key: IamUser
-  secret-key: IamPassword
+  url: ${MINIO_URL}
+  bucket: ${MINIO_BUCKET}
+  access-key: ${MINIO_USER}
+  secret-key: ${MINIO_PASSWORD}
 jwt:
-  issuer: tester
-  base64-secret:
-  token-validity-in-seconds: 10
+  issuer: ${TOKEN_ISSUER}
+  base64-secret: ${TOKEN_SECRET}
+  token-validity-in-seconds: ${TOKEN_EXPIRATION}
 forecast:
-  service-key:
+  service-key: ${FORECAST_SERVICE_KEY}
+server:
+  port: 8080
