@@ -23,12 +23,10 @@ public class WeatherService {
         BaseDateTime currentBaseDateTime = BaseDateTimeCalculator.getCurrentBaseDateTime(dateTime);
 
         Map<ForecastCategory, String> currentWeather = new HashMap<>();
-        forecastApiClient.requestUltraShortForecastItems(requestBaseDateTime, nx, ny).forEach(
-            item -> {
-                if (item.matchFcstDateTimeWithBaseDateTime(currentBaseDateTime)) {
-                    currentWeather.put(ForecastCategory.valueOf(item.category()), item.fcstValue());
-                }
-            });
+        forecastApiClient.requestUltraShortForecastItems(requestBaseDateTime, nx, ny)
+            .stream()
+            .filter(item -> item.matchFcstDateTimeWithBaseDateTime(currentBaseDateTime))
+            .forEach(item -> currentWeather.put(ForecastCategory.valueOf(item.category()), item.fcstValue()));
 
         return WeatherResponse.from(dateTime, nx, ny, currentWeather);
     }
