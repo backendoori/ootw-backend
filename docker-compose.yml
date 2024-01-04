@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-  mysql-local:
+  mysql-main:
     build:
       context: ./mysql
       dockerfile: Dockerfile
@@ -10,9 +10,8 @@ services:
     volumes:
       - "data_volume:/var/lib/mysql-local"
     environment:
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${MAIN_MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${MAIN_MYSQL_DATABASE}
   mysql-test:
     build:
       context: ./mysql
@@ -22,9 +21,8 @@ services:
     volumes:
       - "data_volume:/var/lib/mysql-test"
     environment:
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${TEST_MYSQL_PASSWORD}
+      MYSQL_DATABASE: ${TEST_MYSQL_DATABASE}
   minio:
     image: minio/minio
     ports:
