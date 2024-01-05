@@ -58,7 +58,7 @@ jobs:
         env:
           MAIN_MYSQL_PASSWORD: ${{secrets.MAIN_MYSQL_PASSWORD}}
           MAIN_MYSQL_DATABASE: ${{secrets.MAIN_MYSQL_DATABASE}}
-          MAIN_MYSQL_PORT: ${secrets.MAIN_MYSQL_PORT}
+          MAIN_MYSQL_PORT: ${{secrets.MAIN_MYSQL_PORT}}
           TEST_MYSQL_PASSWORD: ${{secrets.TEST_MYSQL_PASSWORD}}
           TEST_MYSQL_DATABASE: ${{secrets.TEST_MYSQL_DATABASE}}
           TEST_MYSQL_PORT: ${{secrets.TEST_MYSQL_PORT}}
