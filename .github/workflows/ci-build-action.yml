@@ -16,6 +16,8 @@ on:
         required: true
       TEST_MYSQL_URL:
         required: true
+      TEST_MYSQL_PORT:
+        required: true
       MINIO_URL:
         required: true
       MINIO_BUCKET:
@@ -23,6 +25,8 @@ on:
       MINIO_USER:
         required: true
       MINIO_PASSWORD:
+        required: true
+      MINIO_PORT:
         required: true
       TOKEN_ISSUER:
         required: true
@@ -54,10 +58,13 @@ jobs:
         env:
           services.mysql-main.environment.MYSQL_ROOT_PASSWORD: ${{secrets.MAIN_MYSQL_PASSWORD}}
           services.mysql-main.environment.MYSQL_DATABASE: ${{secrets.MAIN_MYSQL_DATABASE}}
+          services.mysql-main.ports: ${{secrets.MAIN_MYSQL_PORT}}
           services.mysql-test.environment.MYSQL_ROOT_PASSWORD: ${{secrets.TEST_MYSQL_PASSWORD}}
           services.mysql-test.environment.MYSQL_DATABASE: ${{secrets.TEST_MYSQL_DATABASE}}
+          services.mysql-test.ports: ${{secrets.TEST_MYSQL_PORT}}
           services.minio.environment.MINIO_ROOT_USER: ${{secrets.MINIO_USER}}
           services.minio.environment.MINIO_ROOT_PASSWORD: ${{secrets.MINIO_PASSWORD}}
+          services.minio.ports: ${{secrets.MINIO_PORT}}
 
       # Build and start container
       - name: Build and Start Container
