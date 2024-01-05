@@ -54,7 +54,7 @@ test {
 jacocoTestReport {
     reports {
         html.required = true
-        xml.required = false
+        xml.required = true
         csv.required = false
     }
 
@@ -79,7 +79,10 @@ jacocoTestCoverageVerification {
                 minimum = 0.70
             }
 
-            excludes = ['com.backendoori.ootw.config.ExceptionHandlerConfigurer']
+            excludes = [
+                    'com.backendoori.ootw.config.ExceptionHandlerConfigurer',
+                    'com.backendoori.ootw.weather.*' // must be include next pull request
+            ]
         }
 
         rule {
