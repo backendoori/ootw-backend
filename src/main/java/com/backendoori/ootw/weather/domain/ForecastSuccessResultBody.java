@@ -5,7 +5,7 @@ import com.backendoori.ootw.weather.util.deserializer.ForecastResultDeserializer
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = ForecastResultDeserializer.class)
-public record ForecastResult(
+public record ForecastSuccessResultBody(
     List<ForecastResultItem> items
 ) {
 
