@@ -58,13 +58,16 @@ jobs:
         env:
           services.mysql-main.environment.MYSQL_ROOT_PASSWORD: ${{secrets.MAIN_MYSQL_PASSWORD}}
           services.mysql-main.environment.MYSQL_DATABASE: ${{secrets.MAIN_MYSQL_DATABASE}}
-          services.mysql-main.ports[0]: ${{secrets.MAIN_MYSQL_PORT}}
+          services.mysql-main.ports:
+            - ${{secrets.MAIN_MYSQL_PORT}}
           services.mysql-test.environment.MYSQL_ROOT_PASSWORD: ${{secrets.TEST_MYSQL_PASSWORD}}
           services.mysql-test.environment.MYSQL_DATABASE: ${{secrets.TEST_MYSQL_DATABASE}}
-          services.mysql-test.ports[0]: ${{secrets.TEST_MYSQL_PORT}}
+          services.mysql-test.ports:
+            - ${{secrets.TEST_MYSQL_PORT}}
           services.minio.environment.MINIO_ROOT_USER: ${{secrets.MINIO_USER}}
           services.minio.environment.MINIO_ROOT_PASSWORD: ${{secrets.MINIO_PASSWORD}}
-          services.minio.ports[0]: ${{secrets.MINIO_PORT}}
+          services.minio.ports:
+            - ${{secrets.MINIO_PORT}}
 
       # Build and start container
       - name: Build and Start Container
