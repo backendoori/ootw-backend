@@ -6,8 +6,10 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 @Slf4j
 @RestControllerAdvice
@@ -47,4 +49,13 @@ public class GlobalControllerAdvice {
             .body(errorResponse);
     }
 
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
+        MethodArgumentNotValidException e
+    ) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(errorResponse);
+    }
 }
