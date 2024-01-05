@@ -18,7 +18,7 @@ public class WeatherController {
     private final WeatherService weatherService;
 
     @GetMapping
-    public ResponseEntity<WeatherResponse> readCurrentWeather(@RequestParam(defaultValue = "55") int nx,
+    public ResponseEntity<WeatherResponse> readCurrentWeather(@RequestParam(defaultValue = "60") int nx,
                                                               @RequestParam(defaultValue = "127") int ny) {
         return ResponseEntity.status(HttpStatus.OK)
             .body(weatherService.getCurrentWeather(nx, ny));
