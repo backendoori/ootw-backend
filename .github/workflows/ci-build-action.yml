@@ -56,18 +56,15 @@ jobs:
         with:
           files: ./docker-compose.yml
         env:
-          services.mysql-main.environment.MYSQL_ROOT_PASSWORD: ${{secrets.MAIN_MYSQL_PASSWORD}}
-          services.mysql-main.environment.MYSQL_DATABASE: ${{secrets.MAIN_MYSQL_DATABASE}}
-          services.mysql-main.ports:
-            - ${{secrets.MAIN_MYSQL_PORT}}
-          services.mysql-test.environment.MYSQL_ROOT_PASSWORD: ${{secrets.TEST_MYSQL_PASSWORD}}
-          services.mysql-test.environment.MYSQL_DATABASE: ${{secrets.TEST_MYSQL_DATABASE}}
-          services.mysql-test.ports:
-            - ${{secrets.TEST_MYSQL_PORT}}
-          services.minio.environment.MINIO_ROOT_USER: ${{secrets.MINIO_USER}}
-          services.minio.environment.MINIO_ROOT_PASSWORD: ${{secrets.MINIO_PASSWORD}}
-          services.minio.ports:
-            - ${{secrets.MINIO_PORT}}
+          MAIN_MYSQL_PASSWORD: ${{secrets.MAIN_MYSQL_PASSWORD}}
+          MAIN_MYSQL_DATABASE: ${{secrets.MAIN_MYSQL_DATABASE}}
+          MAIN_MYSQL_PORT: ${secrets.MAIN_MYSQL_PORT}
+          TEST_MYSQL_PASSWORD: ${{secrets.TEST_MYSQL_PASSWORD}}
+          TEST_MYSQL_DATABASE: ${{secrets.TEST_MYSQL_DATABASE}}
+          TEST_MYSQL_PORT: ${{secrets.TEST_MYSQL_PORT}}
+          MINIO_USER: ${{secrets.MINIO_USER}}
+          MINIO_PASSWORD: ${{secrets.MINIO_PASSWORD}}
+          MINIO_PORT: ${{secrets.MINIO_PORT}}
 
       # Build and start container
       - name: Build and Start Container
