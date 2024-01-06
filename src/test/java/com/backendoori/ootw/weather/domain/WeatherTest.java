@@ -27,7 +27,7 @@ class WeatherTest {
             Arguments.of("하늘 상태 코드가 유효하지 않은 경우",
                 new WeatherDto(0.0, 0.0, 0.0, 5, 1)),
             Arguments.of("강수 형태 코드가 유효하지 않은 경우",
-                new WeatherDto(0.0, 0.0, 0.0, 1, 7)),
+                new WeatherDto(0.0, 0.0, 0.0, 1, 10)),
             Arguments.of("기온값이 기온 최저값보다 낮은 경우",
                 new WeatherDto(-900.0, 0.0, 0.0, 1, 1)),
             Arguments.of("기온값이 기온 최고값보다 높은 경우",
