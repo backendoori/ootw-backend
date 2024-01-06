@@ -1,5 +1,6 @@
 package com.backendoori.ootw.post.dto;
 
+import com.backendoori.ootw.weather.dto.WeatherDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 

@@ -1,11 +1,11 @@
-package com.backendoori.ootw.post.domain.weather;
+package com.backendoori.ootw.weather.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.stream.Stream;
-import com.backendoori.ootw.post.dto.WeatherDto;
+import com.backendoori.ootw.weather.dto.WeatherDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;

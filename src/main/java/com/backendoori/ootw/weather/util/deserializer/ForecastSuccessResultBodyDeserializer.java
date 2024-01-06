@@ -3,9 +3,9 @@ package com.backendoori.ootw.weather.util.deserializer;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import com.backendoori.ootw.weather.domain.ForecastCategory;
-import com.backendoori.ootw.weather.domain.ForecastResultItem;
-import com.backendoori.ootw.weather.domain.ForecastSuccessResultBody;
+import com.backendoori.ootw.weather.domain.forecast.ForecastCategory;
+import com.backendoori.ootw.weather.domain.forecast.ForecastResultItem;
+import com.backendoori.ootw.weather.domain.forecast.ForecastSuccessResultBody;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class ForecastResultDeserializer extends JsonDeserializer<ForecastSuccessResultBody> {
+public class ForecastSuccessResultBodyDeserializer extends JsonDeserializer<ForecastSuccessResultBody> {
 
     private final ObjectMapper objectMapper;
 

@@ -1,7 +1,7 @@
 package com.backendoori.ootw.weather.util;
 
 import java.time.LocalDateTime;
-import com.backendoori.ootw.weather.domain.BaseDateTime;
+import com.backendoori.ootw.weather.domain.forecast.BaseDateTime;
 
 public class BaseDateTimeCalculator {
 

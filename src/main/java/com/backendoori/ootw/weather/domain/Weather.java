@@ -1,6 +1,6 @@
-package com.backendoori.ootw.post.domain.weather;
+package com.backendoori.ootw.weather.domain;
 
-import com.backendoori.ootw.post.dto.WeatherDto;
+import com.backendoori.ootw.weather.dto.WeatherDto;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

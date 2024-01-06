@@ -1,6 +1,6 @@
-package com.backendoori.ootw.post.dto;
+package com.backendoori.ootw.weather.dto;
 
-import com.backendoori.ootw.post.domain.weather.Weather;
+import com.backendoori.ootw.weather.domain.Weather;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;

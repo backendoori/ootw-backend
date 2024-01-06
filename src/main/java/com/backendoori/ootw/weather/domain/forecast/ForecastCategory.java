@@ -1,4 +1,4 @@
-package com.backendoori.ootw.weather.domain;
+package com.backendoori.ootw.weather.domain.forecast;
 
 import java.util.Arrays;
 
