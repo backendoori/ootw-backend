@@ -93,8 +93,8 @@ jobs:
           jwt.issuer: ${{secrets.TOKEN_ISSUER}}
           jwt.base64-secret: ${{secrets.TOKEN_SECRET}}
           jwt.token-validity-in-seconds: ${{secrets.TOKEN_EXPIRATION}}
-          forecast.service-key: ${{secrets.FORECAST_SERVICE_KEY}}
-          forecast.url: ${{secrets.FORECAST_URL}}
+          openfeign.forecast.service-key: ${{secrets.FORECAST_SERVICE_KEY}}
+          openfeign.forecast.url: ${{secrets.FORECAST_URL}}
 
       # gradle 권한 추가
       - name: Grant execute permission for gradlew
