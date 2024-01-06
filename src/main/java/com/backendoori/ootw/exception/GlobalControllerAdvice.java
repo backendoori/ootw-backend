@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -49,14 +48,6 @@ public class GlobalControllerAdvice {
             .get(0)
             .getDefaultMessage();
         ErrorResponse errorResponse = new ErrorResponse(errorMessage);
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(errorResponse);
-    }
-
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ErrorResponse> httpMessageNotReadableException(HttpMessageNotReadableException e) {
-        ErrorResponse errorResponse = new ErrorResponse(ErrorMessage.JSON_CONVERT_ERROR.getMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(errorResponse);
