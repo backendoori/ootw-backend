@@ -7,7 +7,6 @@ import com.backendoori.ootw.weather.domain.forecast.ForecastCategory;
 import com.backendoori.ootw.weather.dto.WeatherResponse;
 import com.backendoori.ootw.weather.dto.forecast.BaseDateTime;
 import com.backendoori.ootw.weather.util.BaseDateTimeCalculator;
-import com.backendoori.ootw.weather.util.CurrentDateTimeSupplier;
 import com.backendoori.ootw.weather.util.client.ForecastApiClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +18,7 @@ public class WeatherService {
     private final ForecastApiClient forecastApiClient;
 
     public WeatherResponse getCurrentWeather(Integer nx, Integer ny) {
-        LocalDateTime dateTime = CurrentDateTimeSupplier.get();
+        LocalDateTime dateTime = LocalDateTime.now();
         BaseDateTime requestBaseDateTime = BaseDateTimeCalculator.getRequestBaseDateTime(dateTime);
         BaseDateTime currentBaseDateTime = BaseDateTimeCalculator.getCurrentBaseDateTime(dateTime);
 
