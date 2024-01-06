@@ -1,4 +1,4 @@
-package com.backendoori.ootw.post.domain.weather;
+package com.backendoori.ootw.weather.domain;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -14,7 +14,10 @@ public enum PtyType {
     RAIN(1),
     RAIN_OR_SNOW(2),
     SNOW(3),
-    SHOWER(4);
+    SHOWER(4),
+    RAIN_DROP(5),
+    RAIN_DROP_OR_SNOW_DRIFTING(6),
+    SNOW_DRIFTING(7);
 
     private final Integer code;
 
