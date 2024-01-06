@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public enum ForecastResultErrorManager {
-    APPLICATION_ERROR("01", IllegalAccessException::new),
+    APPLICATION_ERROR("01", IllegalArgumentException::new),
     NODATA_ERROR("03", NoSuchElementException::new),
     INVALID_REQUEST_PARAMETER_ERROR("10", IllegalArgumentException::new);
 
@@ -16,7 +16,7 @@ public enum ForecastResultErrorManager {
     private static final String NORMAL_SERVICE_CODE = "00";
 
     private final String resultCode;
-    private final Function<String, Exception> exceptionThrower;
+    private final Function<String, RuntimeException> exceptionThrower;
 
     private static void throwByErrorCode(String resultCode) {
         Arrays.stream(values())
@@ -33,7 +33,7 @@ public enum ForecastResultErrorManager {
     }
 
     private void throwException() {
-        this.exceptionThrower.apply(this.name());
+        throw this.exceptionThrower.apply(this.name());
     }
 
 }
