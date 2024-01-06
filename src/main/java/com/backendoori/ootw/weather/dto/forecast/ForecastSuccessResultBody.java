@@ -1,4 +1,4 @@
-package com.backendoori.ootw.weather.domain.forecast;
+package com.backendoori.ootw.weather.dto.forecast;
 
 import java.util.List;
 import com.backendoori.ootw.weather.util.deserializer.ForecastSuccessResultBodyDeserializer;

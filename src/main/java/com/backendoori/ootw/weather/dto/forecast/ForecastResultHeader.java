@@ -1,4 +1,4 @@
-package com.backendoori.ootw.weather.domain.forecast;
+package com.backendoori.ootw.weather.dto.forecast;
 
 import com.backendoori.ootw.weather.util.deserializer.ForecastResultHeaderDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

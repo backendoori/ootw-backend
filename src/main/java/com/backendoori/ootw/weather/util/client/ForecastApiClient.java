@@ -1,10 +1,10 @@
 package com.backendoori.ootw.weather.util.client;
 
 import java.util.List;
-import com.backendoori.ootw.weather.domain.forecast.BaseDateTime;
-import com.backendoori.ootw.weather.domain.forecast.ForecastResultHeader;
-import com.backendoori.ootw.weather.domain.forecast.ForecastResultItem;
-import com.backendoori.ootw.weather.domain.forecast.ForecastSuccessResultBody;
+import com.backendoori.ootw.weather.dto.forecast.BaseDateTime;
+import com.backendoori.ootw.weather.dto.forecast.ForecastResultHeader;
+import com.backendoori.ootw.weather.dto.forecast.ForecastResultItem;
+import com.backendoori.ootw.weather.dto.forecast.ForecastSuccessResultBody;
 import com.backendoori.ootw.weather.exception.ForecastResultErrorManager;
 import com.backendoori.ootw.weather.util.ForecastProperties;
 import com.fasterxml.jackson.core.JacksonException;
