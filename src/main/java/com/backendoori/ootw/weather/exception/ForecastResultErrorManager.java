@@ -2,6 +2,7 @@ package com.backendoori.ootw.weather.exception;
 
 import java.util.Arrays;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.function.Function;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -20,14 +21,14 @@ public enum ForecastResultErrorManager {
 
     private static void throwByErrorCode(String resultCode) {
         Arrays.stream(values())
-            .filter(code -> code.resultCode.equals(resultCode))
+            .filter(code -> Objects.equals(resultCode, code.resultCode))
             .findFirst()
             .orElseThrow(() -> new IllegalStateException(API_SERVER_ERROR_MESSAGE))
             .throwException();
     }
 
     public static void checkResultCode(String resultCode) {
-        if (!resultCode.equals(NORMAL_SERVICE_CODE)) {
+        if (!Objects.equals(resultCode, NORMAL_SERVICE_CODE)) {
             throwByErrorCode(resultCode);
         }
     }
