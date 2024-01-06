@@ -19,14 +19,4 @@ public class WeatherControllerAdvice {
             .body(errorResponse);
     }
 
-    @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<ErrorResponse> handleIllegalStateException(IllegalStateException e) {
-        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
-
-        log.error(e.getMessage(), e);
-
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(errorResponse);
-    }
-
 }
