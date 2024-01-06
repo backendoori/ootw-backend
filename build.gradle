@@ -80,8 +80,7 @@ jacocoTestCoverageVerification {
             }
 
             excludes = [
-                    'com.backendoori.ootw.config.ExceptionHandlerConfigurer',
-                    'com.backendoori.ootw.weather.*' // must be include next pull request
+                    'com.backendoori.ootw.config.ExceptionHandlerConfigurer'
             ]
         }
 
