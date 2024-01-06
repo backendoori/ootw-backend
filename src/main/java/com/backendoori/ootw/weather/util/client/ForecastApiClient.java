@@ -29,13 +29,13 @@ public class ForecastApiClient {
                                                                    Integer nx,
                                                                    Integer ny) {
         String response = forecastApi.getUltraShortForecast(
-                forecastProperties.serviceKey(),
-                NUM_OF_ROWS,
-                PAGE_NO,
-                DATA_TYPE,
-                requestBaseDateTime.baseDate(),
-                requestBaseDateTime.baseTime(),
-                nx,
+            forecastProperties.serviceKey(),
+            NUM_OF_ROWS,
+            PAGE_NO,
+            DATA_TYPE,
+            requestBaseDateTime.baseDate(),
+            requestBaseDateTime.baseTime(),
+            nx,
             ny);
 
         return parseForecastResult(response);

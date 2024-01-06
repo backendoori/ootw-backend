@@ -30,11 +30,11 @@ public class MiniOImageServiceImpl implements ImageService {
             InputStream inputStream = file.getInputStream();
             String contentType = file.getContentType();
             PutObjectArgs args = PutObjectArgs.builder()
-                    .bucket(miniOConfig.getBucket())
-                    .object(path.toString())
-                    .stream(inputStream, inputStream.available(), -1)
-                    .contentType(contentType)
-                    .build();
+                .bucket(miniOConfig.getBucket())
+                .object(path.toString())
+                .stream(inputStream, inputStream.available(), -1)
+                .contentType(contentType)
+                .build();
             minioClient.putObject(args);
         } catch (Exception e) {
             log.warn("Exception occurred while saving contents : {}", e.getMessage(), e);
@@ -47,12 +47,12 @@ public class MiniOImageServiceImpl implements ImageService {
         String url = null;
         try {
             url = minioClient.getPresignedObjectUrl(
-                    GetPresignedObjectUrlArgs.builder()
-                            .method(Method.GET)
-                            .bucket(miniOConfig.getBucket())
-                            .object(path.toString())
-                            .expiry(12, TimeUnit.HOURS)
-                            .build());
+                GetPresignedObjectUrlArgs.builder()
+                    .method(Method.GET)
+                    .bucket(miniOConfig.getBucket())
+                    .object(path.toString())
+                    .expiry(12, TimeUnit.HOURS)
+                    .build());
         } catch (Exception e) {
             log.warn("Exception Occurred while getting: {}", e.getMessage(), e);
         }
