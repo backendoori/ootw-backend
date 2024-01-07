@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 import com.backendoori.ootw.config.MiniOConfig;
+import com.backendoori.ootw.exception.ImageUploadException;
 import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
@@ -37,7 +38,7 @@ public class MiniOImageServiceImpl implements ImageService {
                     .build();
             minioClient.putObject(args);
         } catch (Exception e) {
-            log.warn("Exception occurred while saving contents : {}", e.getMessage(), e);
+            throw new ImageUploadException();
         }
 
         return getUrl();
@@ -54,7 +55,7 @@ public class MiniOImageServiceImpl implements ImageService {
                             .expiry(12, TimeUnit.HOURS)
                             .build());
         } catch (Exception e) {
-            log.warn("Exception Occurred while getting: {}", e.getMessage(), e);
+            throw new ImageUploadException();
         }
 
         return url;

@@ -55,17 +55,20 @@ public class GlobalControllerAdvice {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ExceptionResponse<List<FieldErrorDetail>>> handleMethodArgumentNotValidException(
-        MethodArgumentNotValidException e
-    ) {
+        MethodArgumentNotValidException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(ExceptionResponse.from(e));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ExceptionResponse<String>> handleIllegalArgumentException(
-        IllegalArgumentException e
-    ) {
+    public ResponseEntity<ExceptionResponse<String>> handleIllegalArgumentException(IllegalArgumentException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(ExceptionResponse.from(e));
+    }
+
+    @ExceptionHandler(ImageUploadException.class)
+    public ResponseEntity<ExceptionResponse<String>> handleImageUploadException(ImageUploadException e) {
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
             .body(ExceptionResponse.from(e));
     }
 
