@@ -58,7 +58,7 @@ class AvatarItemControllerTest {
     @WithMockUser
     @ParameterizedTest(name = "[{index}] content-type 이 {0}인 경우")
     @ValueSource(strings = {"text/plain", "application/json"})
-    @DisplayName("아바타 이미지 업로드 시 파일의 유형이 이미지가 아닌 경우 에러가 난다.")
+    @DisplayName("아바타 이미지 업로드 시 파일의 유형이 이미지가 아닌 경우 예외가 발생한다.")
     public void imageUpLoadWithInvalidContentType(String contentType) throws Exception {
         //given
         MockMultipartFile file = new MockMultipartFile("file", "filename.txt",
@@ -79,7 +79,7 @@ class AvatarItemControllerTest {
 
     @Test
     @WithMockUser
-    @DisplayName("아바타 이미지 업로드 시 이미지 파일이 없는 경우 에러가 발생한다.")
+    @DisplayName("아바타 이미지 업로드 시 이미지 파일이 없는 경우 예외가 발생한다.")
     public void noImageUpLoad() throws Exception {
         //given
         MockMultipartFile file = new MockMultipartFile("file", "", "image/png", new byte[0]);
@@ -102,7 +102,7 @@ class AvatarItemControllerTest {
     @ParameterizedTest(name = "[{index}] item type으로  {0}가 들어오는 경우")
     @ValueSource(strings = {"afsee", "", "    ", "hair"})
     @NullSource
-    @DisplayName("아바타 이미지 업로드 시 아이템 타입이 존재하지 않는 경우 에러가 난다.")
+    @DisplayName("아바타 이미지 업로드 시 아이템 타입이 존재하지 않는 경우 예외가 발생한다.")
     public void UpLoadWithInvalidRequest(String type) throws Exception {
         //given
         MockMultipartFile file = new MockMultipartFile("file", "filename.txt",
