@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class MiniOImageServiceImplTestValid {
+class MiniOImageServiceImplTest {
 
     @Autowired
     MockMvc mockMvc;
