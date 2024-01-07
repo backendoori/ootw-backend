@@ -15,7 +15,7 @@ public record WeatherResponse(
     Integer ny
 ) {
 
-    public static WeatherResponse from(LocalDateTime dateTime, Integer nx, Integer ny,
+    public static WeatherResponse from(LocalDateTime dateTime, int nx, int ny,
                                        Map<ForecastCategory, String> currentWeather) {
 
         Double currentTemperature = Double.valueOf(currentWeather.get(ForecastCategory.T1H));

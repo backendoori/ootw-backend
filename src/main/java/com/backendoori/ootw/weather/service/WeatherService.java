@@ -17,7 +17,7 @@ public class WeatherService {
 
     private final ForecastApiClient forecastApiClient;
 
-    public WeatherResponse getCurrentWeather(Integer nx, Integer ny) {
+    public WeatherResponse getCurrentWeather(int nx, int ny) {
         LocalDateTime dateTime = LocalDateTime.now();
         BaseDateTime requestBaseDateTime = BaseDateTimeCalculator.getRequestBaseDateTime(dateTime);
         BaseDateTime currentBaseDateTime = BaseDateTimeCalculator.getCurrentBaseDateTime(dateTime);

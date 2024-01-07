@@ -26,8 +26,8 @@ public class ForecastApiClient {
     private final ForecastProperties forecastProperties;
 
     public List<ForecastResultItem> requestUltraShortForecastItems(BaseDateTime requestBaseDateTime,
-                                                                   Integer nx,
-                                                                   Integer ny) {
+                                                                   int nx,
+                                                                   int ny) {
         String response = forecastApi.getUltraShortForecast(
             forecastProperties.serviceKey(),
             NUM_OF_ROWS,

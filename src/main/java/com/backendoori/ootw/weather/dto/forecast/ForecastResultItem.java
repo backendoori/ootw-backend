@@ -10,8 +10,8 @@ public record ForecastResultItem(
     BaseDateTime fcstDateTime,
     String category,
     String fcstValue,
-    Integer nx,
-    Integer ny
+    int nx,
+    int ny
 ) {
 
     public boolean matchFcstDateTimeWithBaseDateTime(BaseDateTime baseDateTime) {

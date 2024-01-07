@@ -26,8 +26,8 @@ public class ForecastResultItemSerializer extends JsonDeserializer<ForecastResul
         String category = node.findValue("category").asText();
         String fcstValue = node.findValue("fcstValue").asText();
 
-        Integer nx = node.findValue("nx").asInt();
-        Integer ny = node.findValue("ny").asInt();
+        int nx = node.findValue("nx").asInt();
+        int ny = node.findValue("ny").asInt();
 
         return new ForecastResultItem(baseDateTime, fcstDateTime, category, fcstValue, nx, ny);
     }

@@ -9,24 +9,24 @@ public interface ForecastApi {
 
     @GetMapping(value = "/getVilageFcst")
     String getVillageForecast(@RequestParam String serviceKey,
-                              @RequestParam Integer numOfRows,
-                              @RequestParam Integer pageNo,
+                              @RequestParam int numOfRows,
+                              @RequestParam int pageNo,
                               @RequestParam String dataType,
                               @RequestParam(name = "base_date") String baseDate,
                               @RequestParam(name = "base_time") String baseTime,
-                              @RequestParam Integer nx,
-                              @RequestParam Integer ny
+                              @RequestParam int nx,
+                              @RequestParam int ny
     );
 
     @GetMapping(value = "/getUltraSrtFcst")
     String getUltraShortForecast(@RequestParam String serviceKey,
-                                 @RequestParam Integer numOfRows,
-                                 @RequestParam Integer pageNo,
+                                 @RequestParam int numOfRows,
+                                 @RequestParam int pageNo,
                                  @RequestParam String dataType,
                                  @RequestParam(name = "base_date") String baseDate,
                                  @RequestParam(name = "base_time") String baseTime,
-                                 @RequestParam Integer nx,
-                                 @RequestParam Integer ny
+                                 @RequestParam int nx,
+                                 @RequestParam int ny
     );
 
 }
