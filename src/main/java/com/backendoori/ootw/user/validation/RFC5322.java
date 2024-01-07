@@ -1,6 +1,5 @@
 package com.backendoori.ootw.user.validation;
 
-import java.util.regex.Pattern;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
