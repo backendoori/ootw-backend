@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class MiniOImageServiceImpl implements ImageService {
 
+    private static final int DURATION = 12;
     private final MinioClient minioClient;
     private final MiniOConfig miniOConfig;
     private Path path;
@@ -51,7 +52,7 @@ public class MiniOImageServiceImpl implements ImageService {
                     .method(Method.GET)
                     .bucket(miniOConfig.getBucket())
                     .object(path.toString())
-                    .expiry(12, TimeUnit.HOURS)
+                    .expiry(DURATION, TimeUnit.HOURS)
                     .build());
         } catch (Exception e) {
             log.warn("Exception Occurred while getting: {}", e.getMessage(), e);
