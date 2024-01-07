@@ -1,9 +1,6 @@
 package com.backendoori.ootw.user.service;
 
-import java.util.Objects;
 import com.backendoori.ootw.common.AssertUtil;
-import com.backendoori.ootw.user.exception.AlreadyExistEmailException;
-import com.backendoori.ootw.user.exception.IncorrectPasswordException;
 import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.security.jwt.TokenProvider;
 import com.backendoori.ootw.user.domain.User;
@@ -11,6 +8,8 @@ import com.backendoori.ootw.user.dto.LoginDto;
 import com.backendoori.ootw.user.dto.SignupDto;
 import com.backendoori.ootw.user.dto.TokenDto;
 import com.backendoori.ootw.user.dto.UserDto;
+import com.backendoori.ootw.user.exception.AlreadyExistEmailException;
+import com.backendoori.ootw.user.exception.IncorrectPasswordException;
 import com.backendoori.ootw.user.repository.UserRepository;
 import com.backendoori.ootw.user.validation.Message;
 import com.backendoori.ootw.user.validation.Password;

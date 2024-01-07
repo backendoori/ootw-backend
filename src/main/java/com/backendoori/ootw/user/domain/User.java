@@ -41,7 +41,7 @@ public class User extends BaseEntity {
 
     public User(Long id, String email, String password, String nickname, String image) {
         AssertUtil.hasPattern(email, RFC5322.REGEX, Message.INVALID_EMAIL);
-        AssertUtil.notBlank(password,Message.BLANK_PASSWORD);
+        AssertUtil.notBlank(password, Message.BLANK_PASSWORD);
         AssertUtil.notBlank(nickname, Message.BLANK_NICKNAME);
 
         this.id = id;
