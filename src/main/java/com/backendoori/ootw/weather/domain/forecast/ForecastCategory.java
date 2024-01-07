@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public enum ForecastCategory {
+
     TMX, TMP, PTY, SKY, TMN, T1H;
 
     public static boolean anyMatch(String categoryName) {

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public enum ForecastResultErrorManager {
+
     APPLICATION_ERROR("01", IllegalArgumentException::new),
     NODATA_ERROR("03", NoSuchElementException::new),
     INVALID_REQUEST_PARAMETER_ERROR("10", IllegalArgumentException::new);

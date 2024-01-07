@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum SkyType {
+
     SUNNY(1),
     CLOUDY(3),
     OVERCAST(4);
