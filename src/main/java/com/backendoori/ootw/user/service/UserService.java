@@ -36,7 +36,6 @@ public class UserService {
             .email(signupDto.email())
             .password(passwordEncoder.encode(signupDto.password()))
             .nickname(signupDto.nickname())
-            .image(signupDto.image())
             .build();
 
         userRepository.save(user);

@@ -140,7 +140,7 @@ class UserServiceTest {
         String nickname = faker.internet().username();
         String image = faker.internet().url();
 
-        return new SignupDto(email, password, nickname, image);
+        return new SignupDto(email, password, nickname);
     }
 
     private User generateUser(String password) {
