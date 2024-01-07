@@ -20,14 +20,9 @@ public class ItemTypeValidator implements ConstraintValidator<ItemTypeValid, Str
         if (type == null) {
             return false;
         }
-        List<String> enumList = Arrays.stream(Type.class.getEnumConstants())
-            .map(Enum::name)
-            .toList();
-        if (!enumList.contains(type)) {
-            return false;
-        }
 
-        return true;
+        return Arrays.stream(Type.class.getEnumConstants())
+            .anyMatch(e -> e.name().equals(type));
     }
 
 }
