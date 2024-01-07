@@ -10,8 +10,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import com.backendoori.ootw.exception.AlreadyExistEmailException;
-import com.backendoori.ootw.exception.IncorrectPasswordException;
+import com.backendoori.ootw.user.exception.AlreadyExistEmailException;
+import com.backendoori.ootw.user.exception.IncorrectPasswordException;
 import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.security.jwt.TokenProvider;
 import com.backendoori.ootw.user.dto.LoginDto;

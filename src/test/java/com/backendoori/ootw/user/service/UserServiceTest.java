@@ -4,8 +4,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 
-import com.backendoori.ootw.exception.AlreadyExistEmailException;
-import com.backendoori.ootw.exception.IncorrectPasswordException;
+import com.backendoori.ootw.user.exception.AlreadyExistEmailException;
+import com.backendoori.ootw.user.exception.IncorrectPasswordException;
 import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.dto.LoginDto;
@@ -136,9 +136,8 @@ class UserServiceTest {
 
     private SignupDto generateSignupDto() {
         String email = faker.internet().emailAddress();
-        String password = faker.internet().password();
+        String password = faker.internet().password(8, 30, true, true, true);
         String nickname = faker.internet().username();
-        String image = faker.internet().url();
 
         return new SignupDto(email, password, nickname);
     }
