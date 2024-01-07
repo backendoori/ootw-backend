@@ -14,11 +14,11 @@ import com.backendoori.ootw.user.dto.UserDto;
 import com.backendoori.ootw.user.repository.UserRepository;
 import com.backendoori.ootw.user.validation.Message;
 import com.backendoori.ootw.user.validation.Password;
-import com.backendoori.ootw.user.validation.PasswordValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -68,7 +68,7 @@ public class UserService {
     }
 
     private boolean isValidPassword(String password) {
-        return Objects.nonNull(password) && password.matches(Password.PATTERN);
+        return StringUtils.hasLength(password) && password.matches(Password.REGEX);
     }
 
 }

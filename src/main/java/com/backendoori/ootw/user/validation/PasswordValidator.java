@@ -12,7 +12,7 @@ public class PasswordValidator implements ConstraintValidator<Password, String> 
             return violateWithMessage(context, Message.BLANK_PASSWORD);
         }
 
-        if (!password.matches(Password.PATTERN)) {
+        if (!password.matches(Password.REGEX)) {
             return violateWithMessage(context, Message.INVALID_PASSWORD);
         }
 
