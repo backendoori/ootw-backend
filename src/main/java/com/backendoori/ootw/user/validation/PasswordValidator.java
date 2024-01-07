@@ -6,18 +6,13 @@ import jakarta.validation.ConstraintValidatorContext;
 
 public class PasswordValidator implements ConstraintValidator<Password, String> {
 
-    public static final int MIN_SIZE = 8;
-    public static final int MAX_SIZE = 30;
-    public static final String PATTERN = "^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[$@$!%%*#?&])[A-Za-z[0-9]$@$!%%*#?&]" +
-        "{" + MIN_SIZE + "," + MAX_SIZE + "}$";
-
     @Override
     public boolean isValid(String password, ConstraintValidatorContext context) {
         if (Objects.isNull(password) || password.isBlank()) {
             return violateWithMessage(context, Message.BLANK_PASSWORD);
         }
 
-        if (!password.matches(PATTERN)) {
+        if (!password.matches(Password.PATTERN)) {
             return violateWithMessage(context, Message.INVALID_PASSWORD);
         }
 

@@ -14,6 +14,11 @@ import jakarta.validation.Payload;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Password {
 
+    int MIN_SIZE = 8;
+    int MAX_SIZE = 30;
+    String PATTERN = "^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[$@$!%%*#?&])[A-Za-z[0-9]$@$!%%*#?&]" +
+        "{" + MIN_SIZE + "," + MAX_SIZE + "}$";
+
     String message() default Message.INVALID_PASSWORD;
 
     Class<?>[] groups() default {};
