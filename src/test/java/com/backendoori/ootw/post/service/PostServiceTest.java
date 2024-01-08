@@ -81,10 +81,8 @@ class PostServiceTest {
         @DisplayName("게시글 저장에 성공한다.")
         void saveSuccess() {
             // given
-            WeatherDto weatherDto =
-                new WeatherDto(0.0, -10.0, 10.0, 1, 1);
-            PostSaveRequest request =
-                new PostSaveRequest("Test Title", "Test Content", weatherDto);
+            WeatherDto weatherDto = new WeatherDto(-10.0, 10.0);
+            PostSaveRequest request = new PostSaveRequest("Test Title", "Test Content", weatherDto);
             MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
                 "text/plain", "some xml".getBytes());
 
@@ -112,10 +110,8 @@ class PostServiceTest {
             System.out.println(user.getId() + 1);
             System.out.println(userRepository.findAll().stream().map(User::getId).toList());
 
-            WeatherDto weatherDto =
-                new WeatherDto(0.0, -10.0, 10.0, 1, 1);
-            PostSaveRequest postSaveRequest =
-                new PostSaveRequest("Test Title", "Test Content", weatherDto);
+            WeatherDto weatherDto = new WeatherDto(-10.0, 10.0);
+            PostSaveRequest postSaveRequest = new PostSaveRequest("Test Title", "Test Content", weatherDto);
             MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
                 "text/plain", "some xml".getBytes());
 
@@ -132,13 +128,11 @@ class PostServiceTest {
         @ParameterizedTest(name = "[{index}] 현재 기온이 {0}인 경우")
         @ValueSource(doubles = {-900.0, 900.0})
         @NullSource
-        @DisplayName("유효하지 않은 값(현재 기온)이 들어갈 경우 게시글 저장에 실패한다.")
-        void saveFailInvalidValue(Double currentTemperature) {
+        @DisplayName("유효하지 않은 값(최저 기온)이 들어갈 경우 게시글 저장에 실패한다.")
+        void saveFailInvalidValue(Double minTemperature) {
             // given
-            WeatherDto weatherDto =
-                new WeatherDto(currentTemperature, -10.0, 10.0, 1, 1);
-            PostSaveRequest postSaveRequest =
-                new PostSaveRequest("Test Title", "Test Content", weatherDto);
+            WeatherDto weatherDto = new WeatherDto(minTemperature, 10.0);
+            PostSaveRequest postSaveRequest = new PostSaveRequest("Test Title", "Test Content", weatherDto);
             MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
                 "text/plain", "some xml".getBytes());
 
@@ -158,8 +152,7 @@ class PostServiceTest {
 
         @BeforeEach
         void setUp() {
-            WeatherDto weatherDto =
-                new WeatherDto(0.0, -10.0, 10.0, 1, 1);
+            WeatherDto weatherDto = new WeatherDto(-10.0, 10.0);
             MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
                 "text/plain", "some xml".getBytes());
             savedPost = postService.save(
@@ -209,12 +202,10 @@ class PostServiceTest {
         @BeforeEach
         void setUp() {
 
-            WeatherDto weatherDto =
-                new WeatherDto(0.0, -10.0, 10.0, 1, 1);
+            WeatherDto weatherDto = new WeatherDto(-10.0, 10.0);
             MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
                 "text/plain", "some xml".getBytes());
-            PostSaveRequest request =
-                new PostSaveRequest("Test Title", "Test Content", weatherDto);
+            PostSaveRequest request = new PostSaveRequest("Test Title", "Test Content", weatherDto);
 
             for (int i = 0; i < SAVE_COUNT; i++) {
                 postService.save(request, postImg);

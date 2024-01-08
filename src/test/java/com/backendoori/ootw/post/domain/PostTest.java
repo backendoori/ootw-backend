@@ -18,8 +18,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 class PostTest {
 
-    private static final WeatherDto WEATHER_DTO = new WeatherDto(0.0, -10.0, 10.0, 1, 1);
-    private static final WeatherDto INVALID_WEATHER_DTO = new WeatherDto(-900.0, -10.0, 10.0, 1, 1);
+    private static final WeatherDto WEATHER_DTO = new WeatherDto(-10.0, 10.0);
+    private static final WeatherDto INVALID_WEATHER_DTO = new WeatherDto(-900.0, 10.0);
     private static final User MOCK_USER = mock(User.class);
 
     private static Stream<Arguments> provideInvalidInfo() {
