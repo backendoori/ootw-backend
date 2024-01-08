@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,8 +98,8 @@ class AvatarItemControllerTest {
     }
 
     @ParameterizedTest(name = "[{index}] item type으로  {0}가 들어오는 경우")
-    @ValueSource(strings = {"afsee", "", "    ", "hair"})
-    @NullSource
+    @ValueSource(strings = {"afsee", "hair"})
+    @NullAndEmptySource
     @DisplayName("아바타 이미지 업로드 시 아이템 타입이 존재하지 않는 경우 예외가 발생한다.")
     public void UpLoadWithInvalidRequest(String type) throws Exception {
         //given
