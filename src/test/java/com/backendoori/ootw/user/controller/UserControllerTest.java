@@ -124,6 +124,26 @@ class UserControllerTest {
             actions.andExpect(status().isBadRequest());
         }
 
+        @DisplayName("닉네임이 공백일 경우 400 status를 반환한다")
+        @NullAndEmptySource
+        @ParameterizedTest
+        void badRequestBlankNickname(String nickname) throws Exception {
+            // given
+            String email = faker.internet().emailAddress();
+            String password = faker.internet().password(8, 30, true, true, true);
+            SignupDto signupDto = new SignupDto(email, password, nickname);
+
+            // when
+            ResultActions actions = mockMvc.perform(
+                post("/api/v1/auth/signup")
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(signupDto)));
+
+            // then
+            actions.andExpect(status().isBadRequest());
+        }
+
         @DisplayName("이미 등록된 email일 경우 409 status를 반환한다")
         @Test
         void unauthorizedAlreadyExistEmail() throws Exception {
