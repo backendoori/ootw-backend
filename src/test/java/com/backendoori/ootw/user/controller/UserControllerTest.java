@@ -103,6 +103,27 @@ class UserControllerTest {
             actions.andExpect(status().isBadRequest());
         }
 
+        @DisplayName("잘못된 형식의 비밀번호의 경우 400 status를 반환한다")
+        @NullAndEmptySource
+        @MethodSource("generateInvalidPasswords")
+        @ParameterizedTest
+        void badRequestInvalidPassword(String password) throws Exception {
+            // given
+            String email = faker.internet().emailAddress();
+            String nickname = faker.internet().username();
+            SignupDto signupDto = new SignupDto(email, password, nickname);
+
+            // when
+            ResultActions actions = mockMvc.perform(
+                post("/api/v1/auth/signup")
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(signupDto)));
+
+            // then
+            actions.andExpect(status().isBadRequest());
+        }
+
         @DisplayName("이미 등록된 email일 경우 409 status를 반환한다")
         @Test
         void unauthorizedAlreadyExistEmail() throws Exception {
@@ -130,6 +151,15 @@ class UserControllerTest {
                 faker.internet().domainName(),
                 faker.internet().webdomain(),
                 faker.internet().botUserAgentAny()
+            );
+        }
+
+        private static Stream<String> generateInvalidPasswords() {
+            return Stream.of(
+                faker.internet().password(1, 7, true, true, true),
+                faker.internet().password(31, 50, true, true, true),
+                faker.internet().password(8, 30, true, false, true),
+                faker.internet().password(8, 30, true, true, false)
             );
         }
 
