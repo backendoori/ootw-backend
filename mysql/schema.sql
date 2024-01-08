@@ -4,13 +4,14 @@ USE ootw;
 
 CREATE TABLE users
 (
-    id         BIGINT AUTO_INCREMENT,
-    email      VARCHAR(255) NOT NULL,
-    password   VARCHAR(255) NOT NULL,
-    nickname   VARCHAR(255) NOT NULL,
-    image      VARCHAR(500) NULL,
-    created_at DATETIME(6)  NULL,
-    updated_at DATETIME(6)  NULL,
+    id           BIGINT AUTO_INCREMENT,
+    email        VARCHAR(255) NOT NULL,
+    password     VARCHAR(255) NOT NULL,
+    nickname     VARCHAR(255) NOT NULL,
+    image        VARCHAR(500) NULL,
+    certificated TINYINT      NOT NULL,
+    created_at   DATETIME(6)  NULL,
+    updated_at   DATETIME(6)  NULL,
     CONSTRAINT users_pk
         PRIMARY KEY (id),
     CONSTRAINT users_email_index
@@ -29,13 +30,13 @@ CREATE TABLE avatar_items
 
 CREATE TABLE posts
 (
-    id         BIGINT AUTO_INCREMENT,
-    user_id    BIGINT       NOT NULL,
-    title      VARCHAR(30)  NOT NULL,
-    content    VARCHAR(255) NOT NULL,
-    image      VARCHAR(500) NULL,
-    created_at DATETIME(6)  NULL,
-    updated_at DATETIME(6)  NULL,
+    id                  BIGINT AUTO_INCREMENT,
+    user_id             BIGINT                                                  NOT NULL,
+    title               VARCHAR(30)                                             NOT NULL,
+    content             VARCHAR(255)                                            NOT NULL,
+    image               VARCHAR(500)                                            NULL,
+    created_at          DATETIME(6)                                             NULL,
+    updated_at          DATETIME(6)                                             NULL,
     current_temperature DOUBLE                                                  NOT NULL,
     day_min_temperature DOUBLE                                                  NOT NULL,
     day_max_temperature DOUBLE                                                  NOT NULL,

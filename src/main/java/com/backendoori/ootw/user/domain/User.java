@@ -39,7 +39,10 @@ public class User extends BaseEntity {
     @Column(name = "image")
     private String image;
 
-    public User(Long id, String email, String password, String nickname, String image) {
+    @Column(name = "certificated", nullable = false)
+    private Boolean certificated;
+
+    public User(Long id, String email, String password, String nickname, String image, Boolean certificated) {
         AssertUtil.hasPattern(email, RFC5322.REGEX, Message.INVALID_EMAIL);
         AssertUtil.notBlank(password, Message.BLANK_PASSWORD);
         AssertUtil.notBlank(nickname, Message.BLANK_NICKNAME);
@@ -49,6 +52,7 @@ public class User extends BaseEntity {
         this.password = password;
         this.nickname = nickname;
         this.image = image;
+        this.certificated = certificated;
     }
 
 }
