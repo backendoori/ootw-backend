@@ -39,7 +39,7 @@ public class User extends BaseEntity {
     @Column(name = "image")
     private String image;
 
-    @Column(name = "certificated", nullable = false)
+    @Column(name = "certificated", nullable = false, columnDefinition = "TINYINT(1)")
     private Boolean certificated;
 
     public User(Long id, String email, String password, String nickname, String image, Boolean certificated) {
