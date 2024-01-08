@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotNull;
 
 public record SignupDto(
     @NotNull
+    @NotBlank
     @Email(regexp = RFC5322.REGEX)
     String email,
 
