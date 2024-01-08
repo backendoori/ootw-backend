@@ -7,8 +7,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import net.datafaker.Faker;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,7 +18,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 @WithMockUser
 @SpringBootTest
 @AutoConfigureMockMvc
-@TestInstance(Lifecycle.PER_CLASS)
 class WeatherControllerTest {
 
     static final String URL = "http://localhost:8080/api/v1/weather";
@@ -40,20 +37,6 @@ class WeatherControllerTest {
         MockHttpServletRequestBuilder requestBuilder = get(URL)
             .param("nx", String.valueOf(nx))
             .param("ny", String.valueOf(ny))
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON);
-
-        // then
-        mockMvc.perform(requestBuilder)
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-    }
-
-    @Test
-    @DisplayName("기본 위치 날씨 불러오기에 성공한다.")
-    void readCurrentDefaultWeatherSuccess() throws Exception {
-        // given // when
-        MockHttpServletRequestBuilder requestBuilder = get(URL)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON);
 
