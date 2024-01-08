@@ -9,15 +9,12 @@ import jakarta.validation.Payload;
 
 @Target(value = {ElementType.PARAMETER, ElementType.FIELD})
 @Retention(value = RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = ItemTypeValidator.class)
-public @interface ItemTypeValid {
+@Constraint(validatedBy = EnumValidator.class)
+public @interface Enum {
 
-    String message = "유효하지 않은 값입니다. 다시 입력해주세요";
-
-    String message() default message;
-
+    String message() default "유효하지 않은 값입니다 다시 입력해주세요";
     Class<?>[] groups() default {};
-
     Class<? extends Payload>[] payload() default {};
+    Class<? extends java.lang.Enum<?>> enumClass();
 
 }

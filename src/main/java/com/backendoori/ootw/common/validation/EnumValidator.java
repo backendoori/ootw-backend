@@ -1,17 +1,15 @@
 package com.backendoori.ootw.common.validation;
 
 import java.util.Arrays;
-import java.util.List;
-import com.backendoori.ootw.avatar.domain.Type;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class ItemTypeValidator implements ConstraintValidator<ItemTypeValid, String> {
+public class EnumValidator implements ConstraintValidator<Enum, String> {
 
-    private ItemTypeValid annotation;
+    private Enum annotation;
 
     @Override
-    public void initialize(ItemTypeValid constraintAnnotation) {
+    public void initialize(Enum constraintAnnotation) {
         this.annotation = constraintAnnotation;
     }
 
@@ -21,7 +19,7 @@ public class ItemTypeValidator implements ConstraintValidator<ItemTypeValid, Str
             return false;
         }
 
-        return Arrays.stream(Type.class.getEnumConstants())
+        return Arrays.stream(this.annotation.enumClass().getEnumConstants())
             .anyMatch(e -> e.name().equals(type));
     }
 

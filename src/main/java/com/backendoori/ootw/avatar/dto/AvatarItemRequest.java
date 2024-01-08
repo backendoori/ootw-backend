@@ -1,10 +1,11 @@
 package com.backendoori.ootw.avatar.dto;
 
-import com.backendoori.ootw.common.validation.ItemTypeValid;
+import com.backendoori.ootw.avatar.domain.ItemType;
+import com.backendoori.ootw.common.validation.Enum;
 import jakarta.validation.constraints.NotNull;
 
 public record AvatarItemRequest(
-    @ItemTypeValid
+    @Enum(enumClass = ItemType.class)
     String type,
     @NotNull
     boolean sex
