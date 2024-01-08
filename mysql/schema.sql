@@ -46,3 +46,19 @@ CREATE TABLE posts
     FOREIGN KEY (user_id)
         REFERENCES users (id)
 );
+
+CREATE TABLE likes
+(
+    id         BIGINT AUTO_INCREMENT,
+    user_id    BIGINT       NOT NULL,
+    post_id    BIGINT       NOT NULL,
+    status     TINYINT      NOT NULL,
+    created_at DATETIME(6)  NULL,
+    updated_at DATETIME(6)  NULL,
+    CONSTRAINT posts_pk
+        PRIMARY KEY (id),
+    FOREIGN KEY (user_id)
+        REFERENCES users (id),
+    FOREIGN KEY (post_id)
+        REFERENCES posts (id),
+);
