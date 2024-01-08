@@ -272,7 +272,7 @@ class UserControllerTest {
 
     private LoginDto generateLoginDto() {
         String email = faker.internet().emailAddress();
-        String password = faker.internet().password();
+        String password = faker.internet().password(8, 30, true, true, true);
 
         return new LoginDto(email, password);
     }
