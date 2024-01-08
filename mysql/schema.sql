@@ -36,8 +36,8 @@ CREATE TABLE posts
     image      VARCHAR(500) NULL,
     created_at DATETIME(6)  NULL,
     updated_at DATETIME(6)  NULL,
-    day_min_temperature DOUBLE                                                  NOT NULL,
-    day_max_temperature DOUBLE                                                  NOT NULL,
+    min_temperature DOUBLE NOT NULL,
+    max_temperature DOUBLE NOT NULL,
     CONSTRAINT posts_pk
         PRIMARY KEY (id),
     FOREIGN KEY (user_id)
