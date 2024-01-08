@@ -8,8 +8,8 @@ import static org.mockito.Mockito.mock;
 import java.util.stream.Stream;
 import com.backendoori.ootw.post.dto.PostSaveRequest;
 import com.backendoori.ootw.user.domain.User;
-import com.backendoori.ootw.weather.domain.Weather;
-import com.backendoori.ootw.weather.dto.WeatherDto;
+import com.backendoori.ootw.weather.domain.TemperatureArrange;
+import com.backendoori.ootw.weather.dto.TemperatureArrangeDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,8 +18,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 class PostTest {
 
-    private static final WeatherDto WEATHER_DTO = new WeatherDto(-10.0, 10.0);
-    private static final WeatherDto INVALID_WEATHER_DTO = new WeatherDto(-900.0, 10.0);
+    private static final TemperatureArrangeDto WEATHER_DTO = new TemperatureArrangeDto(-10.0, 10.0);
+    private static final TemperatureArrangeDto INVALID_WEATHER_DTO = new TemperatureArrangeDto(-900.0, 10.0);
     private static final User MOCK_USER = mock(User.class);
 
     private static Stream<Arguments> provideInvalidInfo() {
@@ -56,7 +56,7 @@ class PostTest {
             () -> assertThat(createdPost).hasFieldOrPropertyWithValue("title", request.title()),
             () -> assertThat(createdPost).hasFieldOrPropertyWithValue("content", request.content()),
             () -> assertThat(createdPost).hasFieldOrPropertyWithValue("image", imgUrl),
-            () -> assertThat(createdPost).hasFieldOrPropertyWithValue("weather", Weather.from(WEATHER_DTO)));
+            () -> assertThat(createdPost).hasFieldOrPropertyWithValue("weather", TemperatureArrange.from(WEATHER_DTO)));
     }
 
     @ParameterizedTest(name = "[{index}] {0}")

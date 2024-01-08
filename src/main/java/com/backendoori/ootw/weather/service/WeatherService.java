@@ -3,7 +3,7 @@ package com.backendoori.ootw.weather.service;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import com.backendoori.ootw.weather.domain.Weather;
+import com.backendoori.ootw.weather.domain.TemperatureArrange;
 import com.backendoori.ootw.weather.domain.forecast.ForecastCategory;
 import com.backendoori.ootw.weather.dto.WeatherResponse;
 import com.backendoori.ootw.weather.dto.forecast.BaseDateTime;
@@ -32,7 +32,7 @@ public class WeatherService {
         return WeatherResponse.from(dateTime, nx, ny, currentWeather);
     }
 
-    public Weather getCurrentTemperatureArrange(LocalDateTime dateTime, int nx, int ny) {
+    public TemperatureArrange getCurrentTemperatureArrange(LocalDateTime dateTime, int nx, int ny) {
         BaseDateTime requestBaseDateTime = BaseDateTimeCalculator.getVilageForecastRequestBaseDateTime(dateTime);
         BaseDateTime fcstBaseDateTime = BaseDateTimeCalculator.getCurrentBaseDateTime(dateTime);
 
@@ -44,7 +44,7 @@ public class WeatherService {
                 || item.category().equals(ForecastCategory.TMX.name()))
             .forEach(item -> temperatureArrange.put(ForecastCategory.valueOf(item.category()), item.fcstValue()));
 
-        return Weather.from(temperatureArrange);
+        return TemperatureArrange.from(temperatureArrange);
     }
 
 }

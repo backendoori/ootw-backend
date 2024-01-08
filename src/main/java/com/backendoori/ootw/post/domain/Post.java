@@ -3,7 +3,7 @@ package com.backendoori.ootw.post.domain;
 import com.backendoori.ootw.common.BaseEntity;
 import com.backendoori.ootw.post.dto.PostSaveRequest;
 import com.backendoori.ootw.user.domain.User;
-import com.backendoori.ootw.weather.domain.Weather;
+import com.backendoori.ootw.weather.domain.TemperatureArrange;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -47,7 +47,7 @@ public class Post extends BaseEntity {
     private String image;
 
     @Embedded
-    private Weather weather;
+    private TemperatureArrange weather;
 
     private Post(User user, PostSaveRequest request, String imgUrl) {
         validateUser(user);
@@ -56,7 +56,7 @@ public class Post extends BaseEntity {
         this.title = request.title();
         this.content = request.content();
         this.image = imgUrl;
-        this.weather = Weather.from(request.weather());
+        this.weather = TemperatureArrange.from(request.weather());
     }
 
     public static Post from(User user, PostSaveRequest request, String imgUrl) {
