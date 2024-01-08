@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import com.backendoori.ootw.weather.domain.forecast.ForecastCategory;
-import com.backendoori.ootw.weather.dto.forecast.ForecastResultItem;
-import com.backendoori.ootw.weather.dto.forecast.ForecastSuccessResultBody;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
@@ -20,7 +18,6 @@ public class ForecastSuccessResultBodyDeserializer extends JsonDeserializer<Fore
 
     @Override
     public ForecastSuccessResultBody deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-
         JsonNode node = p.getCodec()
             .readTree(p);
         JsonNode itemNode = node.findValue("response")

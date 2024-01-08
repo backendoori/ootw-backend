@@ -2,7 +2,6 @@ package com.backendoori.ootw.common.image;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 
-import com.backendoori.ootw.common.image.ImageService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

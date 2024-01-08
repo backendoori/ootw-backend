@@ -1,7 +1,6 @@
 package com.backendoori.ootw.user.service;
 
-import com.backendoori.ootw.exception.AlreadyExistEmailException;
-import com.backendoori.ootw.exception.IncorrectPasswordException;
+import com.backendoori.ootw.common.AssertUtil;
 import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.security.jwt.TokenProvider;
 import com.backendoori.ootw.user.domain.User;
@@ -9,11 +8,16 @@ import com.backendoori.ootw.user.dto.LoginDto;
 import com.backendoori.ootw.user.dto.SignupDto;
 import com.backendoori.ootw.user.dto.TokenDto;
 import com.backendoori.ootw.user.dto.UserDto;
+import com.backendoori.ootw.user.exception.AlreadyExistEmailException;
+import com.backendoori.ootw.user.exception.IncorrectPasswordException;
 import com.backendoori.ootw.user.repository.UserRepository;
+import com.backendoori.ootw.user.validation.Message;
+import com.backendoori.ootw.user.validation.Password;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -28,16 +32,10 @@ public class UserService {
         boolean isAlreadyExistEmail = userRepository.findByEmail(signupDto.email())
             .isPresent();
 
-        if (isAlreadyExistEmail) {
-            throw new AlreadyExistEmailException();
-        }
+        AssertUtil.throwIf(isAlreadyExistEmail, AlreadyExistEmailException::new);
+        AssertUtil.isTrue(isValidPassword(signupDto.password()), Message.INVALID_PASSWORD);
 
-        User user = User.builder()
-            .email(signupDto.email())
-            .password(passwordEncoder.encode(signupDto.password()))
-            .nickname(signupDto.nickname())
-            .image(signupDto.image())
-            .build();
+        User user = buildUser(signupDto);
 
         userRepository.save(user);
 
@@ -47,14 +45,29 @@ public class UserService {
     public TokenDto login(LoginDto loginDto) {
         User user = userRepository.findByEmail(loginDto.email())
             .orElseThrow(UserNotFoundException::new);
+        boolean isIncorrectPassword = !matchPassword(loginDto.password(), user.getPassword());
 
-        if (!passwordEncoder.matches(loginDto.password(), user.getPassword())) {
-            throw new IncorrectPasswordException();
-        }
+        AssertUtil.throwIf(isIncorrectPassword, IncorrectPasswordException::new);
 
         String token = tokenProvider.createToken(user.getId());
 
         return new TokenDto(token);
+    }
+
+    private User buildUser(SignupDto signupDto) {
+        return User.builder()
+            .email(signupDto.email())
+            .password(passwordEncoder.encode(signupDto.password()))
+            .nickname(signupDto.nickname())
+            .build();
+    }
+
+    private boolean matchPassword(String decrypted, String encrypted) {
+        return passwordEncoder.matches(decrypted, encrypted);
+    }
+
+    private boolean isValidPassword(String password) {
+        return StringUtils.hasLength(password) && password.matches(Password.REGEX);
     }
 
 }

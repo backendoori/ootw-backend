@@ -1,4 +1,4 @@
-package com.backendoori.ootw.exception;
+package com.backendoori.ootw.user.exception;
 
 import org.springframework.dao.DuplicateKeyException;
 

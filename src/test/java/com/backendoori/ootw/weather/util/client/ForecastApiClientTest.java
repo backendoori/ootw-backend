@@ -10,8 +10,6 @@ import com.backendoori.ootw.weather.util.BaseDateTimeCalculator;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -19,26 +17,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-@TestInstance(Lifecycle.PER_CLASS)
 class ForecastApiClientTest {
 
     static final Integer VALID_NX = 50;
     static final Integer VALID_NY = 127;
     static final BaseDateTime TEMP_BASE_DATETIME = BaseDateTimeCalculator.getRequestBaseDateTime(LocalDateTime.now());
-    static Faker faker = new Faker();
+    static final Faker FAKER = new Faker();
 
     @Autowired
     ForecastApi forecastApi;
     @Autowired
     ForecastApiClient forecastApiClient;
 
-
     static Stream<Arguments> provideInvalidRange() {
         return Stream.of(
-            Arguments.of(faker.number().negative(), VALID_NY),
-            Arguments.of(VALID_NX, faker.number().negative()),
-            Arguments.of(faker.number().numberBetween(1000, 10000), VALID_NY),
-            Arguments.of(VALID_NX, faker.number().numberBetween(1000, 10000)));
+            Arguments.of(FAKER.number().negative(), VALID_NY),
+            Arguments.of(VALID_NX, FAKER.number().negative()),
+            Arguments.of(FAKER.number().numberBetween(1000, 10000), VALID_NY),
+            Arguments.of(VALID_NX, FAKER.number().numberBetween(1000, 10000)));
     }
 
     @Test

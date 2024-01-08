@@ -2,19 +2,18 @@ package com.backendoori.ootw.weather.util.client;
 
 import java.util.List;
 import com.backendoori.ootw.weather.dto.forecast.BaseDateTime;
-import com.backendoori.ootw.weather.dto.forecast.ForecastResultHeader;
-import com.backendoori.ootw.weather.dto.forecast.ForecastResultItem;
-import com.backendoori.ootw.weather.dto.forecast.ForecastSuccessResultBody;
 import com.backendoori.ootw.weather.exception.ForecastResultErrorManager;
 import com.backendoori.ootw.weather.util.ForecastProperties;
+import com.backendoori.ootw.weather.util.deserializer.ForecastResultHeader;
+import com.backendoori.ootw.weather.util.deserializer.ForecastResultItem;
+import com.backendoori.ootw.weather.util.deserializer.ForecastSuccessResultBody;
 import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+@RequiredArgsConstructor
 public class ForecastApiClient {
 
     private static final int NUM_OF_ROWS = 500;
@@ -49,6 +48,7 @@ public class ForecastApiClient {
             return objectMapper.readValue(response, ForecastSuccessResultBody.class)
                 .items();
         } catch (JacksonException e) {
+            // TODO: 리팩토링
             throw new IllegalStateException(ForecastResultErrorManager.API_SERVER_ERROR_MESSAGE);
         }
     }

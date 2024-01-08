@@ -4,6 +4,7 @@ import com.backendoori.ootw.weather.dto.WeatherResponse;
 import com.backendoori.ootw.weather.service.WeatherService;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,11 +24,13 @@ public class WeatherController {
     public ResponseEntity<WeatherResponse> readCurrentWeather(
         @Min(0)
         @Max(999)
-        @RequestParam(defaultValue = "60")
+        @NotNull
+        @RequestParam
         int nx,
         @Min(0)
         @Max(999)
-        @RequestParam(defaultValue = "127")
+        @NotNull
+        @RequestParam
         int ny) {
         return ResponseEntity.status(HttpStatus.OK)
             .body(weatherService.getCurrentWeather(nx, ny));

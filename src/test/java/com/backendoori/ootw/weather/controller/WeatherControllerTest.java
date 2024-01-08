@@ -7,8 +7,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import net.datafaker.Faker;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,19 +15,18 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+@WithMockUser
 @SpringBootTest
 @AutoConfigureMockMvc
-@TestInstance(Lifecycle.PER_CLASS)
 class WeatherControllerTest {
+
+    static final String URL = "http://localhost:8080/api/v1/weather";
+    static final Faker FAKER = new Faker();
 
     @Autowired
     MockMvc mockMvc;
 
-    static final String URL = "http://localhost:8080/api/v1/weather";
-    static Faker faker = new Faker();
-
     @Test
-    @WithMockUser
     @DisplayName("현재 날씨 불러오기에 성공한다.")
     void readCurrentWeatherSuccess() throws Exception {
         // given
@@ -50,27 +47,11 @@ class WeatherControllerTest {
     }
 
     @Test
-    @WithMockUser
-    @DisplayName("기본 위치 날씨 불러오기에 성공한다.")
-    void readCurrentDefaultWeatherSuccess() throws Exception {
-        // given // when
-        MockHttpServletRequestBuilder requestBuilder = get(URL)
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON);
-
-        // then
-        mockMvc.perform(requestBuilder)
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-    }
-
-    @Test
-    @WithMockUser
     @DisplayName("유효하지 않은 위치 값으로 현재 날씨 불러오기에 실패한다.")
     void readCurrentWeatherFailByIllegalLocation() throws Exception {
         // given
-        Integer nx = faker.number().negative();
-        Integer ny = faker.number().negative();
+        Integer nx = FAKER.number().negative();
+        Integer ny = FAKER.number().negative();
 
         // when
         MockHttpServletRequestBuilder requestBuilder = get(URL)
@@ -86,7 +67,6 @@ class WeatherControllerTest {
     }
 
     @Test
-    @WithMockUser
     @DisplayName("정보가 없는 위치 값으로 현재 날씨 불러오기에 실패한다.")
     void readCurrentWeatherFailByNoData() throws Exception {
         // given

@@ -4,22 +4,24 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 import com.backendoori.ootw.config.MiniOConfig;
+import com.backendoori.ootw.exception.ImageUploadException;
 import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.http.Method;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 
 @Slf4j
-@Controller
+@Service
 @RequiredArgsConstructor
 public class MiniOImageServiceImpl implements ImageService {
 
     private static final int DURATION = 12;
+
     private final MinioClient minioClient;
     private final MiniOConfig miniOConfig;
     private Path path;
@@ -38,7 +40,7 @@ public class MiniOImageServiceImpl implements ImageService {
                 .build();
             minioClient.putObject(args);
         } catch (Exception e) {
-            log.warn("Exception occurred while saving contents : {}", e.getMessage(), e);
+            throw new ImageUploadException();
         }
 
         return getUrl();
@@ -55,7 +57,7 @@ public class MiniOImageServiceImpl implements ImageService {
                     .expiry(DURATION, TimeUnit.HOURS)
                     .build());
         } catch (Exception e) {
-            log.warn("Exception Occurred while getting: {}", e.getMessage(), e);
+            throw new ImageUploadException();
         }
 
         return url;

@@ -6,13 +6,10 @@ import java.time.LocalDateTime;
 import java.util.stream.Stream;
 import com.backendoori.ootw.weather.dto.forecast.BaseDateTime;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-@TestInstance(Lifecycle.PER_CLASS)
 class BaseDateTimeCalculatorTest {
 
     private static Stream<Arguments> provideCurrentDateTime() {

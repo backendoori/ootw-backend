@@ -2,7 +2,6 @@ package com.backendoori.ootw.weather.util.deserializer;
 
 import java.io.IOException;
 import com.backendoori.ootw.weather.dto.forecast.BaseDateTime;
-import com.backendoori.ootw.weather.dto.forecast.ForecastResultItem;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
@@ -12,8 +11,7 @@ public class ForecastResultItemSerializer extends JsonDeserializer<ForecastResul
 
     @Override
     public ForecastResultItem deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-        JsonNode node = p.getCodec()
-            .readTree(p);
+        JsonNode node = p.getCodec().readTree(p);
 
         String baseDate = node.findValue("baseDate").asText();
         String baseTime = node.findValue("baseTime").asText();

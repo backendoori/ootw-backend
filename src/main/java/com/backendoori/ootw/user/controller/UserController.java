@@ -6,6 +6,7 @@ import com.backendoori.ootw.user.dto.SignupDto;
 import com.backendoori.ootw.user.dto.TokenDto;
 import com.backendoori.ootw.user.dto.UserDto;
 import com.backendoori.ootw.user.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<UserDto> signup(@RequestBody SignupDto signupDto) {
+    public ResponseEntity<UserDto> signup(@RequestBody @Valid SignupDto signupDto) {
         UserDto userDto = userService.signup(signupDto);
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -31,7 +32,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenDto> login(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<TokenDto> login(@RequestBody @Valid LoginDto loginDto) {
         TokenDto tokenDto = userService.login(loginDto);
         HttpHeaders httpHeaders = new HttpHeaders();
 
