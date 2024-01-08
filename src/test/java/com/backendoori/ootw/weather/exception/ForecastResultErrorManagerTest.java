@@ -34,7 +34,7 @@ class ForecastResultErrorManagerTest {
         // given
         String normalResultCode = "00";
 
-        // when
+        // when // then
         assertDoesNotThrow(() -> checkResultCode(normalResultCode));
     }
 
