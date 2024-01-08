@@ -1,7 +1,7 @@
-package com.backendoori.ootw.weather.dto.forecast;
+package com.backendoori.ootw.weather.util.deserializer;
 
 import java.util.Objects;
-import com.backendoori.ootw.weather.util.deserializer.ForecastResultItemSerializer;
+import com.backendoori.ootw.weather.dto.forecast.BaseDateTime;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonDeserialize(using = ForecastResultItemSerializer.class)
