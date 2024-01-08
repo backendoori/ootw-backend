@@ -21,6 +21,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+@WithMockUser
 @AutoConfigureMockMvc
 @SpringBootTest
 class AvatarItemControllerTest {
@@ -35,7 +36,6 @@ class AvatarItemControllerTest {
     ObjectMapper objectMapper;
 
     @Test
-    @WithMockUser
     @DisplayName("아바타 이미지를 정상적으로 등록한다.")
     public void imageUploadTest() throws Exception {
         //given
@@ -55,7 +55,6 @@ class AvatarItemControllerTest {
             .andExpect(status().isCreated());
     }
 
-    @WithMockUser
     @ParameterizedTest(name = "[{index}] content-type 이 {0}인 경우")
     @ValueSource(strings = {"text/plain", "application/json"})
     @DisplayName("아바타 이미지 업로드 시 파일의 유형이 이미지가 아닌 경우 예외가 발생한다.")
@@ -78,7 +77,6 @@ class AvatarItemControllerTest {
     }
 
     @Test
-    @WithMockUser
     @DisplayName("아바타 이미지 업로드 시 이미지 파일이 없는 경우 예외가 발생한다.")
     public void noImageUpLoad() throws Exception {
         //given
@@ -98,7 +96,6 @@ class AvatarItemControllerTest {
             .andExpect(status().isBadRequest());
     }
 
-    @WithMockUser
     @ParameterizedTest(name = "[{index}] item type으로  {0}가 들어오는 경우")
     @ValueSource(strings = {"afsee", "", "    ", "hair"})
     @NullSource
