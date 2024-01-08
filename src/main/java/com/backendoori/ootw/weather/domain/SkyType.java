@@ -1,4 +1,4 @@
-package com.backendoori.ootw.post.domain.weather;
+package com.backendoori.ootw.weather.domain;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public enum SkyType {
+
     SUNNY(1),
     CLOUDY(3),
     OVERCAST(4);

@@ -1,11 +1,11 @@
-package com.backendoori.ootw.post.domain.weather;
+package com.backendoori.ootw.weather.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.stream.Stream;
-import com.backendoori.ootw.post.dto.WeatherDto;
+import com.backendoori.ootw.weather.dto.WeatherDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -27,7 +27,7 @@ class WeatherTest {
             Arguments.of("하늘 상태 코드가 유효하지 않은 경우",
                 new WeatherDto(0.0, 0.0, 0.0, 5, 1)),
             Arguments.of("강수 형태 코드가 유효하지 않은 경우",
-                new WeatherDto(0.0, 0.0, 0.0, 1, 7)),
+                new WeatherDto(0.0, 0.0, 0.0, 1, 10)),
             Arguments.of("기온값이 기온 최저값보다 낮은 경우",
                 new WeatherDto(-900.0, 0.0, 0.0, 1, 1)),
             Arguments.of("기온값이 기온 최고값보다 높은 경우",

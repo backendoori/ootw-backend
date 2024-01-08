@@ -1,9 +1,9 @@
 package com.backendoori.ootw.post.domain;
 
 import com.backendoori.ootw.common.BaseEntity;
-import com.backendoori.ootw.post.domain.weather.Weather;
 import com.backendoori.ootw.post.dto.PostSaveRequest;
 import com.backendoori.ootw.user.domain.User;
+import com.backendoori.ootw.weather.domain.Weather;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;

@@ -6,10 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 import java.util.stream.Stream;
-import com.backendoori.ootw.post.domain.weather.Weather;
 import com.backendoori.ootw.post.dto.PostSaveRequest;
-import com.backendoori.ootw.post.dto.WeatherDto;
 import com.backendoori.ootw.user.domain.User;
+import com.backendoori.ootw.weather.domain.Weather;
+import com.backendoori.ootw.weather.dto.WeatherDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

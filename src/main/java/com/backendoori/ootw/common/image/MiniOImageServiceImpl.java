@@ -20,6 +20,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class MiniOImageServiceImpl implements ImageService {
 
+    private static final int DURATION = 12;
+
     private final MinioClient minioClient;
     private final MiniOConfig miniOConfig;
     private Path path;
@@ -31,11 +33,11 @@ public class MiniOImageServiceImpl implements ImageService {
             InputStream inputStream = file.getInputStream();
             String contentType = file.getContentType();
             PutObjectArgs args = PutObjectArgs.builder()
-                    .bucket(miniOConfig.getBucket())
-                    .object(path.toString())
-                    .stream(inputStream, inputStream.available(), -1)
-                    .contentType(contentType)
-                    .build();
+                .bucket(miniOConfig.getBucket())
+                .object(path.toString())
+                .stream(inputStream, inputStream.available(), -1)
+                .contentType(contentType)
+                .build();
             minioClient.putObject(args);
         } catch (Exception e) {
             throw new ImageUploadException();
@@ -48,12 +50,12 @@ public class MiniOImageServiceImpl implements ImageService {
         String url = null;
         try {
             url = minioClient.getPresignedObjectUrl(
-                    GetPresignedObjectUrlArgs.builder()
-                            .method(Method.GET)
-                            .bucket(miniOConfig.getBucket())
-                            .object(path.toString())
-                            .expiry(12, TimeUnit.HOURS)
-                            .build());
+                GetPresignedObjectUrlArgs.builder()
+                    .method(Method.GET)
+                    .bucket(miniOConfig.getBucket())
+                    .object(path.toString())
+                    .expiry(DURATION, TimeUnit.HOURS)
+                    .build());
         } catch (Exception e) {
             throw new ImageUploadException();
         }

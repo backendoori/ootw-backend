@@ -1,4 +1,4 @@
-package com.backendoori.ootw.post.domain.weather;
+package com.backendoori.ootw.weather.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
