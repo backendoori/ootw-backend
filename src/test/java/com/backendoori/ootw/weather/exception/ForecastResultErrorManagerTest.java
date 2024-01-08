@@ -1,8 +1,6 @@
 package com.backendoori.ootw.weather.exception;
 
-import static com.backendoori.ootw.weather.exception.ForecastResultErrorManager.API_SERVER_ERROR_MESSAGE;
 import static com.backendoori.ootw.weather.exception.ForecastResultErrorManager.checkResultCode;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -49,11 +47,7 @@ class ForecastResultErrorManagerTest {
     @DisplayName("정의된 에러 코드가 아니면 IllegalStateException이 발생한다.")
     void checkResultCodeFail(String notDefinedErrorResultCode) {
         // given // when // then
-        String errorMessage =
-            assertThrows(IllegalStateException.class, () -> checkResultCode(notDefinedErrorResultCode))
-                .getMessage();
-
-        assertThat(errorMessage).isEqualTo(API_SERVER_ERROR_MESSAGE);
+        assertThrows(IllegalStateException.class, () -> checkResultCode(notDefinedErrorResultCode));
     }
 
 }

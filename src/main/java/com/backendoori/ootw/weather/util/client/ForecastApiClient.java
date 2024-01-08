@@ -48,8 +48,7 @@ public class ForecastApiClient {
             return objectMapper.readValue(response, ForecastSuccessResultBody.class)
                 .items();
         } catch (JacksonException e) {
-            // TODO: 리팩토링
-            throw new IllegalStateException(ForecastResultErrorManager.API_SERVER_ERROR_MESSAGE);
+            throw ForecastResultErrorManager.getApiServerException();
         }
     }
 
