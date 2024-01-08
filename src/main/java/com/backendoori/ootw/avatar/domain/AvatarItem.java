@@ -29,14 +29,14 @@ public class AvatarItem {
 
     @Column(name = "type", nullable = false, columnDefinition = "varchar(30)")
     @Enumerated(EnumType.STRING)
-    private Type type;
+    private ItemType itemType;
 
     @Column(name = "sex", nullable = false, columnDefinition = "tinyint")
     private boolean sex;
 
     private AvatarItem(String image, String type, boolean sex) {
         this.image = image;
-        this.type = Type.valueOf(type);
+        this.itemType = ItemType.valueOf(type);
         this.sex = sex;
     }
 
