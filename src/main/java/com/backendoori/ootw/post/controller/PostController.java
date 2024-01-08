@@ -2,9 +2,6 @@ package com.backendoori.ootw.post.controller;
 
 import java.net.URI;
 import java.util.List;
-import java.util.NoSuchElementException;
-import com.backendoori.ootw.exception.ExceptionResponse;
-import com.backendoori.ootw.exception.ExceptionResponse.FieldErrorDetail;
 import com.backendoori.ootw.post.dto.PostReadResponse;
 import com.backendoori.ootw.post.dto.PostSaveRequest;
 import com.backendoori.ootw.post.dto.PostSaveResponse;
@@ -13,8 +10,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,36 +48,6 @@ public class PostController {
     public ResponseEntity<List<PostReadResponse>> readAll() {
         return ResponseEntity.status(HttpStatus.OK)
             .body(postService.getAll());
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ExceptionResponse<String>> handleException(Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(ExceptionResponse.from(e));
-    }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ExceptionResponse<String>> handleIllegalArgumentException(
-        IllegalArgumentException e
-    ) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(ExceptionResponse.from(e));
-    }
-
-    @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<ExceptionResponse<String>> handleNoSuchElementException(
-        NoSuchElementException e
-    ) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(ExceptionResponse.from(e));
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ExceptionResponse<List<FieldErrorDetail>>> handleMethodArgumentNotValidException(
-        MethodArgumentNotValidException e
-    ) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(ExceptionResponse.from(e));
     }
 
 }
