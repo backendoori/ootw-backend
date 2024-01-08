@@ -19,13 +19,13 @@ public class WeatherService {
 
     public WeatherResponse getCurrentWeather(int nx, int ny) {
         LocalDateTime dateTime = LocalDateTime.now();
-        BaseDateTime requestBaseDateTime = BaseDateTimeCalculator.getRequestBaseDateTime(dateTime);
+        BaseDateTime requestBaseDateTime = BaseDateTimeCalculator.getUltraShortForecastRequestBaseDateTime(dateTime);
         BaseDateTime currentBaseDateTime = BaseDateTimeCalculator.getCurrentBaseDateTime(dateTime);
 
         Map<ForecastCategory, String> currentWeather = new HashMap<>();
         forecastApiClient.requestUltraShortForecastItems(requestBaseDateTime, nx, ny)
             .stream()
-            .filter(item -> item.matchFcstDateTimeWithBaseDateTime(currentBaseDateTime))
+            .filter(item -> item.matchFcstDateTime(currentBaseDateTime))
             .forEach(item -> currentWeather.put(ForecastCategory.valueOf(item.category()), item.fcstValue()));
 
         return WeatherResponse.from(dateTime, nx, ny, currentWeather);

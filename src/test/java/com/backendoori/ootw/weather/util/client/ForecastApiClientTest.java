@@ -21,7 +21,8 @@ class ForecastApiClientTest {
 
     static final Integer VALID_NX = 50;
     static final Integer VALID_NY = 127;
-    static final BaseDateTime TEMP_BASE_DATETIME = BaseDateTimeCalculator.getRequestBaseDateTime(LocalDateTime.now());
+    static final BaseDateTime TEMP_BASE_DATETIME =
+        BaseDateTimeCalculator.getUltraShortForecastRequestBaseDateTime(LocalDateTime.now());
     static final Faker FAKER = new Faker();
 
     @Autowired

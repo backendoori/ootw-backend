@@ -45,7 +45,8 @@ class BaseDateTimeCalculatorTest {
         BaseDateTime baseDateTime = new BaseDateTime(baseDate, baseTime);
 
         // when // then
-        assertThat(BaseDateTimeCalculator.getRequestBaseDateTime(localDateTime)).isEqualTo(baseDateTime);
+        assertThat(BaseDateTimeCalculator.getUltraShortForecastRequestBaseDateTime(localDateTime)).isEqualTo(
+            baseDateTime);
     }
 
 }
