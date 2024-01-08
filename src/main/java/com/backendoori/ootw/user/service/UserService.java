@@ -10,6 +10,7 @@ import com.backendoori.ootw.user.dto.TokenDto;
 import com.backendoori.ootw.user.dto.UserDto;
 import com.backendoori.ootw.user.exception.AlreadyExistEmailException;
 import com.backendoori.ootw.user.exception.IncorrectPasswordException;
+import com.backendoori.ootw.user.exception.NonCertifiedUserException;
 import com.backendoori.ootw.user.repository.UserRepository;
 import com.backendoori.ootw.user.validation.Message;
 import com.backendoori.ootw.user.validation.Password;
@@ -29,11 +30,7 @@ public class UserService {
 
     @Transactional
     public UserDto signup(SignupDto signupDto) {
-        boolean isAlreadyExistEmail = userRepository.findByEmail(signupDto.email())
-            .isPresent();
-
-        AssertUtil.throwIf(isAlreadyExistEmail, AlreadyExistEmailException::new);
-        AssertUtil.isTrue(isValidPassword(signupDto.password()), Message.INVALID_PASSWORD);
+        validateSignup(signupDto);
 
         User user = buildUser(signupDto);
 
@@ -45,13 +42,19 @@ public class UserService {
     public TokenDto login(LoginDto loginDto) {
         User user = userRepository.findByEmail(loginDto.email())
             .orElseThrow(UserNotFoundException::new);
-        boolean isIncorrectPassword = !matchPassword(loginDto.password(), user.getPassword());
 
-        AssertUtil.throwIf(isIncorrectPassword, IncorrectPasswordException::new);
+        validateLogin(loginDto, user);
 
         String token = tokenProvider.createToken(user.getId());
 
         return new TokenDto(token);
+    }
+
+    private void validateSignup(SignupDto signupDto) {
+        boolean isAlreadyExistEmail = userRepository.existsByEmail(signupDto.email());
+
+        AssertUtil.throwIf(isAlreadyExistEmail, AlreadyExistEmailException::new);
+        AssertUtil.isTrue(isValidPassword(signupDto.password()), Message.INVALID_PASSWORD);
     }
 
     private User buildUser(SignupDto signupDto) {
@@ -63,12 +66,16 @@ public class UserService {
             .build();
     }
 
-    private boolean matchPassword(String decrypted, String encrypted) {
-        return passwordEncoder.matches(decrypted, encrypted);
-    }
-
     private boolean isValidPassword(String password) {
         return StringUtils.hasLength(password) && password.matches(Password.REGEX);
+    }
+
+    private void validateLogin(LoginDto loginDto, User user) {
+        AssertUtil.throwIf(!user.getCertificated(), NonCertifiedUserException::new);
+
+        boolean isIncorrectPassword = !passwordEncoder.matches(loginDto.password(), user.getPassword());
+
+        AssertUtil.throwIf(isIncorrectPassword, IncorrectPasswordException::new);
     }
 
 }
