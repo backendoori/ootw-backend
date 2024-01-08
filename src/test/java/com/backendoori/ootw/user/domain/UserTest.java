@@ -11,7 +11,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
@@ -95,14 +94,14 @@ class UserTest {
             .withMessage(Message.BLANK_NICKNAME);
     }
 
-    private static Stream<Arguments> generateInvalidEmails() {
+    private static Stream<String> generateInvalidEmails() {
         return Stream.of(
-            Arguments.of(faker.app().name()),
-            Arguments.of(faker.name().fullName()),
-            Arguments.of(faker.internet().url()),
-            Arguments.of(faker.internet().domainName()),
-            Arguments.of(faker.internet().webdomain()),
-            Arguments.of(faker.internet().botUserAgentAny())
+            faker.app().name(),
+            faker.name().fullName(),
+            faker.internet().url(),
+            faker.internet().domainName(),
+            faker.internet().webdomain(),
+            faker.internet().botUserAgentAny()
         );
     }
 
