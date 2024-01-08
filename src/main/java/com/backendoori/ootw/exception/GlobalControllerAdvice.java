@@ -3,7 +3,6 @@ package com.backendoori.ootw.exception;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import com.backendoori.ootw.exception.ExceptionResponse.FieldErrorDetail;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DuplicateKeyException;
@@ -41,7 +40,20 @@ public class GlobalControllerAdvice {
 
         ErrorResponse errorResponse = new ErrorResponse(message);
 
-        return ResponseEntity.badRequest()
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(errorResponse);
+    }
+
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<ErrorResponse> handlerMethodValidationException(HandlerMethodValidationException e) {
+        String errorMessage = e.getAllValidationResults()
+            .get(0)
+            .getResolvableErrors()
+            .get(0)
+            .getDefaultMessage();
+        ErrorResponse errorResponse = new ErrorResponse(errorMessage);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
             .body(errorResponse);
     }
 
@@ -69,29 +81,12 @@ public class GlobalControllerAdvice {
             .body(errorResponse);
     }
 
-    @ExceptionHandler(HandlerMethodValidationException.class)
-    public ResponseEntity<ErrorResponse> handlerMethodValidationException(HandlerMethodValidationException e) {
-        String errorMessage = e.getAllValidationResults()
-            .get(0)
-            .getResolvableErrors()
-            .get(0)
-            .getDefaultMessage();
-        ErrorResponse errorResponse = new ErrorResponse(errorMessage);
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(errorResponse);
-    }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<ExceptionResponse<String>> handleIllegalArgumentException(IllegalArgumentException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(ExceptionResponse.from(e));
-    }
-
     @ExceptionHandler(ImageUploadException.class)
-    public ResponseEntity<ExceptionResponse<String>> handleImageUploadException(ImageUploadException e) {
+    public ResponseEntity<ErrorResponse> handleImageUploadException(ImageUploadException e) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
-            .body(ExceptionResponse.from(e));
+            .body(errorResponse);
     }
 
     @ExceptionHandler(Exception.class)
@@ -103,6 +98,5 @@ public class GlobalControllerAdvice {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(errorResponse);
     }
-
 
 }

@@ -3,15 +3,15 @@ package com.backendoori.ootw.post.controller;
 import static com.backendoori.ootw.security.jwt.JwtAuthenticationFilter.TOKEN_HEADER;
 import static com.backendoori.ootw.security.jwt.JwtAuthenticationFilter.TOKEN_PREFIX;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import com.backendoori.ootw.exception.ExceptionResponse;
-import com.backendoori.ootw.exception.ExceptionResponse.FieldErrorDetail;
 import com.backendoori.ootw.post.dto.PostReadResponse;
 import com.backendoori.ootw.post.dto.PostSaveRequest;
 import com.backendoori.ootw.post.dto.PostSaveResponse;
@@ -173,16 +173,10 @@ class PostControllerTest extends TokenMockMvcTest {
                 .accept(MediaType.APPLICATION_JSON);
 
             // then
-            String response = mockMvc.perform(requestBuilder)
+            mockMvc.perform(requestBuilder)
                 .andExpect(status().isBadRequest())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andReturn()
-                .getResponse()
-                .getContentAsString(StandardCharsets.UTF_8);
-
-            ExceptionResponse<List<FieldErrorDetail>> exceptionResponse =
-                objectMapper.readValue(response, ExceptionResponse.class);
-            assertThat(exceptionResponse.error()).hasSize(1);
+                .andExpect(jsonPath("$.message", instanceOf(String.class)))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
         }
 
         @Test
