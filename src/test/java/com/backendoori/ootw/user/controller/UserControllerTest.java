@@ -10,20 +10,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import com.backendoori.ootw.user.exception.AlreadyExistEmailException;
-import com.backendoori.ootw.user.exception.IncorrectPasswordException;
+import java.util.stream.Stream;
 import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.security.jwt.TokenProvider;
 import com.backendoori.ootw.user.dto.LoginDto;
 import com.backendoori.ootw.user.dto.SignupDto;
 import com.backendoori.ootw.user.dto.TokenDto;
 import com.backendoori.ootw.user.dto.UserDto;
+import com.backendoori.ootw.user.exception.AlreadyExistEmailException;
+import com.backendoori.ootw.user.exception.IncorrectPasswordException;
 import com.backendoori.ootw.user.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -78,6 +82,27 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.updatedAt", startsWith(removeMills(userDto.updatedAt()))));
         }
 
+        @DisplayName("잘못된 형식의 email일 경우 400 status를 반환한다")
+        @NullAndEmptySource
+        @MethodSource("generateInvalidEmails")
+        @ParameterizedTest
+        void badRequestInvalidEmail(String email) throws Exception {
+            // given
+            String password = faker.internet().password(8, 30, true, true, true);
+            String nickname = faker.internet().username();
+            SignupDto signupDto = new SignupDto(email, password, nickname);
+
+            // when
+            ResultActions actions = mockMvc.perform(
+                post("/api/v1/auth/signup")
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(signupDto)));
+
+            // then
+            actions.andExpect(status().isBadRequest());
+        }
+
         @DisplayName("이미 등록된 email일 경우 409 status를 반환한다")
         @Test
         void unauthorizedAlreadyExistEmail() throws Exception {
@@ -95,6 +120,17 @@ class UserControllerTest {
 
             // then
             actions.andExpect(status().isConflict());
+        }
+
+        private static Stream<String> generateInvalidEmails() {
+            return Stream.of(
+                faker.app().name(),
+                faker.name().fullName(),
+                faker.internet().url(),
+                faker.internet().domainName(),
+                faker.internet().webdomain(),
+                faker.internet().botUserAgentAny()
+            );
         }
 
     }
@@ -166,9 +202,8 @@ class UserControllerTest {
 
     private SignupDto generateSignupDto() {
         String email = faker.internet().emailAddress();
-        String password = faker.internet().password();
+        String password = faker.internet().password(8, 30, true, true, true);
         String nickname = faker.internet().username();
-        String image = faker.internet().url();
 
         return new SignupDto(email, password, nickname);
     }
