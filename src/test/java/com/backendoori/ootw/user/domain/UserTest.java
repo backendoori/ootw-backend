@@ -105,13 +105,14 @@ class UserTest {
         );
     }
 
-    private User buildUser() {
-        return User.builder()
+    private void buildUser() {
+        User.builder()
             .id(id)
             .email(email)
             .password(password)
             .nickname(nickname)
             .image(image)
+            .certificated(false)
             .build();
     }
 

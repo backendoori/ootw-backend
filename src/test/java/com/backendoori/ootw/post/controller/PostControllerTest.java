@@ -78,6 +78,7 @@ class PostControllerTest extends TokenMockMvcTest {
             .password(faker.internet().password())
             .nickname(faker.internet().username())
             .image(faker.internet().url())
+            .certificated(true)
             .build();
     }
 
