@@ -9,7 +9,7 @@ public record AvatarItemResponse(
 ) {
 
     public static AvatarItemResponse from(AvatarItem avatarItem) {
-        return new AvatarItemResponse(avatarItem.getType().name(),
+        return new AvatarItemResponse(avatarItem.getItemType().name(),
             avatarItem.isSex(),
             avatarItem.getImage());
     }

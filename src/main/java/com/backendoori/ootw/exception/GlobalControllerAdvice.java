@@ -3,6 +3,7 @@ package com.backendoori.ootw.exception;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import com.backendoori.ootw.exception.ExceptionResponse.FieldErrorDetail;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.dao.DuplicateKeyException;
@@ -13,6 +14,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 @Slf4j
 @RestControllerAdvice
@@ -65,6 +67,31 @@ public class GlobalControllerAdvice {
 
         return ResponseEntity.status(HttpStatus.CONFLICT)
             .body(errorResponse);
+    }
+
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    public ResponseEntity<ErrorResponse> handlerMethodValidationException(HandlerMethodValidationException e) {
+        String errorMessage = e.getAllValidationResults()
+            .get(0)
+            .getResolvableErrors()
+            .get(0)
+            .getDefaultMessage();
+        ErrorResponse errorResponse = new ErrorResponse(errorMessage);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(errorResponse);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ExceptionResponse<String>> handleIllegalArgumentException(IllegalArgumentException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(ExceptionResponse.from(e));
+    }
+
+    @ExceptionHandler(ImageUploadException.class)
+    public ResponseEntity<ExceptionResponse<String>> handleImageUploadException(ImageUploadException e) {
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+            .body(ExceptionResponse.from(e));
     }
 
     @ExceptionHandler(Exception.class)
