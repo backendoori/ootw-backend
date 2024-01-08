@@ -25,8 +25,11 @@ import net.datafaker.Faker;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -84,7 +87,7 @@ class UserControllerTest {
 
         @DisplayName("잘못된 형식의 email일 경우 400 status를 반환한다")
         @NullAndEmptySource
-        @MethodSource("generateInvalidEmails")
+        @ArgumentsSource(InvalidEmailProvider.class)
         @ParameterizedTest
         void badRequestInvalidEmail(String email) throws Exception {
             // given
@@ -105,7 +108,7 @@ class UserControllerTest {
 
         @DisplayName("잘못된 형식의 비밀번호의 경우 400 status를 반환한다")
         @NullAndEmptySource
-        @MethodSource("generateInvalidPasswords")
+        @ArgumentsSource(InvalidPasswordProvider.class)
         @ParameterizedTest
         void badRequestInvalidPassword(String password) throws Exception {
             // given
@@ -163,26 +166,6 @@ class UserControllerTest {
             actions.andExpect(status().isConflict());
         }
 
-        private static Stream<String> generateInvalidEmails() {
-            return Stream.of(
-                faker.app().name(),
-                faker.name().fullName(),
-                faker.internet().url(),
-                faker.internet().domainName(),
-                faker.internet().webdomain(),
-                faker.internet().botUserAgentAny()
-            );
-        }
-
-        private static Stream<String> generateInvalidPasswords() {
-            return Stream.of(
-                faker.internet().password(1, 7, true, true, true),
-                faker.internet().password(31, 50, true, true, true),
-                faker.internet().password(8, 30, true, false, true),
-                faker.internet().password(8, 30, true, true, false)
-            );
-        }
-
     }
 
     @DisplayName("로그인 테스트")
@@ -210,6 +193,26 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.token", is(tokenDto.token())));
         }
 
+        @DisplayName("잘못된 형식의 email일 경우 400 status를 반환한다")
+        @NullAndEmptySource
+        @ArgumentsSource(InvalidEmailProvider.class)
+        @ParameterizedTest
+        void badRequestInvalidEmail(String email) throws Exception {
+            // given
+            String password = faker.internet().password(8, 30, true, true, true);
+            LoginDto loginDto = new LoginDto(email, password);
+
+            // when
+            ResultActions actions = mockMvc.perform(
+                post("/api/v1/auth/login")
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(loginDto)));
+
+            // then
+            actions.andExpect(status().isBadRequest());
+        }
+
         @DisplayName("email이 일치하는 사용자가 없으면 404 status를 반환한다")
         @Test
         void unauthorizedNotExistUser() throws Exception {
@@ -227,6 +230,26 @@ class UserControllerTest {
 
             // then
             actions.andExpect(status().isNotFound());
+        }
+
+        @DisplayName("잘못된 형식의 비밀번호의 경우 400 status를 반환한다")
+        @NullAndEmptySource
+        @ArgumentsSource(InvalidPasswordProvider.class)
+        @ParameterizedTest
+        void badRequestInvalidPassword(String password) throws Exception {
+            // given
+            String email = faker.internet().emailAddress();
+            LoginDto loginDto = new LoginDto(email, password);
+
+            // when
+            ResultActions actions = mockMvc.perform(
+                post("/api/v1/auth/login")
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(loginDto)));
+
+            // then
+            actions.andExpect(status().isBadRequest());
         }
 
         @DisplayName("비밀번호가 일치하지 않으면 401 status를 반환한다")
@@ -279,6 +302,36 @@ class UserControllerTest {
 
     private String removeMills(LocalDateTime localDateTime) {
         return localDateTime.truncatedTo(ChronoUnit.SECONDS).toString();
+    }
+
+    static class InvalidEmailProvider implements ArgumentsProvider {
+
+        @Override
+        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
+            return Stream.of(
+                Arguments.of(faker.app().name()),
+                Arguments.of(faker.name().fullName()),
+                Arguments.of(faker.internet().url()),
+                Arguments.of(faker.internet().domainName()),
+                Arguments.of(faker.internet().webdomain()),
+                Arguments.of(faker.internet().botUserAgentAny())
+            );
+        }
+
+    }
+
+    static class InvalidPasswordProvider implements ArgumentsProvider {
+
+        @Override
+        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
+            return Stream.of(
+                Arguments.of(faker.internet().password(1, 7, true, true, true)),
+                Arguments.of(faker.internet().password(31, 50, true, true, true)),
+                Arguments.of(faker.internet().password(8, 30, true, false, true)),
+                Arguments.of(faker.internet().password(8, 30, true, true, false))
+            );
+        }
+
     }
 
 }
