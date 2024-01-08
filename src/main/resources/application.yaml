@@ -12,6 +12,15 @@ spring:
     multipart:
       max-file-size: 10MB
       maxRequestSize: 10MB
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties: # google smtp properties
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.smtp.starttls.required: true
 minio:
   url: ${MINIO_URL}
   bucket: ${MINIO_BUCKET}
