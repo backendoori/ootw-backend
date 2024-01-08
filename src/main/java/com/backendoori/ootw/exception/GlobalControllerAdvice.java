@@ -43,7 +43,8 @@ public class GlobalControllerAdvice {
 
     @ExceptionHandler(HandlerMethodValidationException.class)
     public ResponseEntity<ErrorResponse> handlerMethodValidationException(HandlerMethodValidationException e) {
-        String errorMessage = e.getAllValidationResults().get(0)
+        String errorMessage = e.getAllValidationResults()
+            .get(0)
             .getResolvableErrors()
             .get(0)
             .getDefaultMessage();
