@@ -3,6 +3,7 @@ package com.backendoori.ootw.weather.service;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import com.backendoori.ootw.weather.domain.Weather;
 import com.backendoori.ootw.weather.domain.forecast.ForecastCategory;
 import com.backendoori.ootw.weather.dto.WeatherResponse;
 import com.backendoori.ootw.weather.dto.forecast.BaseDateTime;
@@ -20,15 +21,30 @@ public class WeatherService {
     public WeatherResponse getCurrentWeather(int nx, int ny) {
         LocalDateTime dateTime = LocalDateTime.now();
         BaseDateTime requestBaseDateTime = BaseDateTimeCalculator.getUltraShortForecastRequestBaseDateTime(dateTime);
-        BaseDateTime currentBaseDateTime = BaseDateTimeCalculator.getCurrentBaseDateTime(dateTime);
+        BaseDateTime fcstBaseDateTime = BaseDateTimeCalculator.getCurrentBaseDateTime(dateTime);
 
         Map<ForecastCategory, String> currentWeather = new HashMap<>();
         forecastApiClient.requestUltraShortForecastItems(requestBaseDateTime, nx, ny)
             .stream()
-            .filter(item -> item.matchFcstDateTime(currentBaseDateTime))
+            .filter(item -> item.matchFcstDateTime(fcstBaseDateTime))
             .forEach(item -> currentWeather.put(ForecastCategory.valueOf(item.category()), item.fcstValue()));
 
         return WeatherResponse.from(dateTime, nx, ny, currentWeather);
+    }
+
+    public Weather getCurrentTemperatureArrange(LocalDateTime dateTime, int nx, int ny) {
+        BaseDateTime requestBaseDateTime = BaseDateTimeCalculator.getVilageForecastRequestBaseDateTime(dateTime);
+        BaseDateTime fcstBaseDateTime = BaseDateTimeCalculator.getCurrentBaseDateTime(dateTime);
+
+        Map<ForecastCategory, String> temperatureArrange = new HashMap<>();
+        forecastApiClient.requestUltraShortForecastItems(requestBaseDateTime, nx, ny)
+            .stream()
+            .filter(item -> item.fcstDateTime().baseDate().equals(fcstBaseDateTime.baseDate()))
+            .filter(item -> item.category().equals(ForecastCategory.TMN.name())
+                || item.category().equals(ForecastCategory.TMX.name()))
+            .forEach(item -> temperatureArrange.put(ForecastCategory.valueOf(item.category()), item.fcstValue()));
+
+        return Weather.from(temperatureArrange);
     }
 
 }
