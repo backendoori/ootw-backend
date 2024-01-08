@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class MiniOImageServiceImpl implements ImageService {
 
     private static final int DURATION = 12;
+
     private final MinioClient minioClient;
     private final MiniOConfig miniOConfig;
     private Path path;
