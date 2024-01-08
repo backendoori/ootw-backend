@@ -4,7 +4,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.web.multipart.MultipartFile;
 
-public class ImageValidator implements ConstraintValidator<ImageValid, MultipartFile> {
+public class ImageValidator implements ConstraintValidator<Image, MultipartFile> {
 
     @Override
     public boolean isValid(MultipartFile img, ConstraintValidatorContext context) {

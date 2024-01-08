@@ -3,7 +3,7 @@ package com.backendoori.ootw.avatar.controller;
 import com.backendoori.ootw.avatar.dto.AvatarItemRequest;
 import com.backendoori.ootw.avatar.dto.AvatarItemResponse;
 import com.backendoori.ootw.avatar.service.AvatarItemService;
-import com.backendoori.ootw.common.validation.ImageValid;
+import com.backendoori.ootw.common.validation.Image;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,7 +22,7 @@ public class AvatarItemController {
     private final AvatarItemService appearanceService;
 
     @PostMapping
-    public ResponseEntity<AvatarItemResponse> uploadImage(@RequestPart @ImageValid MultipartFile file,
+    public ResponseEntity<AvatarItemResponse> uploadImage(@RequestPart @Image MultipartFile file,
                                                           @RequestPart @Valid AvatarItemRequest request) {
         AvatarItemResponse avatarItem = appearanceService.uploadItem(file, request);
 

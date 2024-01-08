@@ -10,7 +10,7 @@ import jakarta.validation.Payload;
 @Target(value = ElementType.PARAMETER)
 @Retention(value = RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = ImageValidator.class)
-public @interface ImageValid {
+public @interface Image {
 
     String message = "유효하지 않은 이미지를 업로드하였습니다. 다른 이미지를 업로드 해주세요";
 
