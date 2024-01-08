@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalControllerAdvice {
 
+    public static final String DEFAULT_MESSAGE = "유효하지 않은 요청 입니다.";
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e) {
         ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
@@ -33,7 +35,7 @@ public class GlobalControllerAdvice {
             .map(DefaultMessageSourceResolvable::getDefaultMessage)
             .filter(Objects::nonNull)
             .findFirst()
-            .orElseThrow();
+            .orElse(DEFAULT_MESSAGE);
 
         ErrorResponse errorResponse = new ErrorResponse(message);
 
