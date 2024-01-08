@@ -109,9 +109,6 @@ class PostServiceTest {
             // given
             setAuthentication(user.getId() + 1);
 
-            System.out.println(user.getId() + 1);
-            System.out.println(userRepository.findAll().stream().map(User::getId).toList());
-
             WeatherDto weatherDto =
                 new WeatherDto(0.0, -10.0, 10.0, 1, 1);
             PostSaveRequest postSaveRequest =

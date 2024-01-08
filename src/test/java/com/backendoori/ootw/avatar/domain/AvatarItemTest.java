@@ -20,7 +20,7 @@ class AvatarItemTest {
 
 
         //then
-        assertThat(request.type()).isEqualTo(avatarItem.getType().name());
+        assertThat(request.type()).isEqualTo(avatarItem.getItemType().name());
         assertThat(request.sex()).isEqualTo(avatarItem.isSex());
     }
 

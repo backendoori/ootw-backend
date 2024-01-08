@@ -8,6 +8,10 @@ spring:
     hibernate:
       ddl-auto: validate
     open-in-view: false
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      maxRequestSize: 10MB
 minio:
   url: ${MINIO_URL}
   bucket: ${MINIO_BUCKET}

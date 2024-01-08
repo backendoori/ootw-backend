@@ -10,20 +10,27 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import com.backendoori.ootw.exception.AlreadyExistEmailException;
-import com.backendoori.ootw.exception.IncorrectPasswordException;
+import java.util.stream.Stream;
 import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.security.jwt.TokenProvider;
 import com.backendoori.ootw.user.dto.LoginDto;
 import com.backendoori.ootw.user.dto.SignupDto;
 import com.backendoori.ootw.user.dto.TokenDto;
 import com.backendoori.ootw.user.dto.UserDto;
+import com.backendoori.ootw.user.exception.AlreadyExistEmailException;
+import com.backendoori.ootw.user.exception.IncorrectPasswordException;
 import com.backendoori.ootw.user.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -78,6 +85,68 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.updatedAt", startsWith(removeMills(userDto.updatedAt()))));
         }
 
+        @DisplayName("잘못된 형식의 email일 경우 400 status를 반환한다")
+        @NullAndEmptySource
+        @ArgumentsSource(InvalidEmailProvider.class)
+        @ParameterizedTest
+        void badRequestInvalidEmail(String email) throws Exception {
+            // given
+            String password = faker.internet().password(8, 30, true, true, true);
+            String nickname = faker.internet().username();
+            SignupDto signupDto = new SignupDto(email, password, nickname);
+
+            // when
+            ResultActions actions = mockMvc.perform(
+                post("/api/v1/auth/signup")
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(signupDto)));
+
+            // then
+            actions.andExpect(status().isBadRequest());
+        }
+
+        @DisplayName("잘못된 형식의 비밀번호의 경우 400 status를 반환한다")
+        @NullAndEmptySource
+        @ArgumentsSource(InvalidPasswordProvider.class)
+        @ParameterizedTest
+        void badRequestInvalidPassword(String password) throws Exception {
+            // given
+            String email = faker.internet().emailAddress();
+            String nickname = faker.internet().username();
+            SignupDto signupDto = new SignupDto(email, password, nickname);
+
+            // when
+            ResultActions actions = mockMvc.perform(
+                post("/api/v1/auth/signup")
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(signupDto)));
+
+            // then
+            actions.andExpect(status().isBadRequest());
+        }
+
+        @DisplayName("닉네임이 공백일 경우 400 status를 반환한다")
+        @NullAndEmptySource
+        @ParameterizedTest
+        void badRequestBlankNickname(String nickname) throws Exception {
+            // given
+            String email = faker.internet().emailAddress();
+            String password = faker.internet().password(8, 30, true, true, true);
+            SignupDto signupDto = new SignupDto(email, password, nickname);
+
+            // when
+            ResultActions actions = mockMvc.perform(
+                post("/api/v1/auth/signup")
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(signupDto)));
+
+            // then
+            actions.andExpect(status().isBadRequest());
+        }
+
         @DisplayName("이미 등록된 email일 경우 409 status를 반환한다")
         @Test
         void unauthorizedAlreadyExistEmail() throws Exception {
@@ -124,6 +193,26 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.token", is(tokenDto.token())));
         }
 
+        @DisplayName("잘못된 형식의 email일 경우 400 status를 반환한다")
+        @NullAndEmptySource
+        @ArgumentsSource(InvalidEmailProvider.class)
+        @ParameterizedTest
+        void badRequestInvalidEmail(String email) throws Exception {
+            // given
+            String password = faker.internet().password(8, 30, true, true, true);
+            LoginDto loginDto = new LoginDto(email, password);
+
+            // when
+            ResultActions actions = mockMvc.perform(
+                post("/api/v1/auth/login")
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(loginDto)));
+
+            // then
+            actions.andExpect(status().isBadRequest());
+        }
+
         @DisplayName("email이 일치하는 사용자가 없으면 404 status를 반환한다")
         @Test
         void unauthorizedNotExistUser() throws Exception {
@@ -141,6 +230,26 @@ class UserControllerTest {
 
             // then
             actions.andExpect(status().isNotFound());
+        }
+
+        @DisplayName("잘못된 형식의 비밀번호의 경우 400 status를 반환한다")
+        @NullAndEmptySource
+        @ArgumentsSource(InvalidPasswordProvider.class)
+        @ParameterizedTest
+        void badRequestInvalidPassword(String password) throws Exception {
+            // given
+            String email = faker.internet().emailAddress();
+            LoginDto loginDto = new LoginDto(email, password);
+
+            // when
+            ResultActions actions = mockMvc.perform(
+                post("/api/v1/auth/login")
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(loginDto)));
+
+            // then
+            actions.andExpect(status().isBadRequest());
         }
 
         @DisplayName("비밀번호가 일치하지 않으면 401 status를 반환한다")
@@ -166,11 +275,10 @@ class UserControllerTest {
 
     private SignupDto generateSignupDto() {
         String email = faker.internet().emailAddress();
-        String password = faker.internet().password();
+        String password = faker.internet().password(8, 30, true, true, true);
         String nickname = faker.internet().username();
-        String image = faker.internet().url();
 
-        return new SignupDto(email, password, nickname, image);
+        return new SignupDto(email, password, nickname);
     }
 
     private UserDto createUser(SignupDto signupDto) {
@@ -187,13 +295,43 @@ class UserControllerTest {
 
     private LoginDto generateLoginDto() {
         String email = faker.internet().emailAddress();
-        String password = faker.internet().password();
+        String password = faker.internet().password(8, 30, true, true, true);
 
         return new LoginDto(email, password);
     }
 
     private String removeMills(LocalDateTime localDateTime) {
         return localDateTime.truncatedTo(ChronoUnit.SECONDS).toString();
+    }
+
+    static class InvalidEmailProvider implements ArgumentsProvider {
+
+        @Override
+        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
+            return Stream.of(
+                Arguments.of(faker.app().name()),
+                Arguments.of(faker.name().fullName()),
+                Arguments.of(faker.internet().url()),
+                Arguments.of(faker.internet().domainName()),
+                Arguments.of(faker.internet().webdomain()),
+                Arguments.of(faker.internet().botUserAgentAny())
+            );
+        }
+
+    }
+
+    static class InvalidPasswordProvider implements ArgumentsProvider {
+
+        @Override
+        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
+            return Stream.of(
+                Arguments.of(faker.internet().password(1, 7, true, true, true)),
+                Arguments.of(faker.internet().password(31, 50, true, true, true)),
+                Arguments.of(faker.internet().password(8, 30, true, false, true)),
+                Arguments.of(faker.internet().password(8, 30, true, true, false))
+            );
+        }
+
     }
 
 }
