@@ -7,6 +7,7 @@ import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.user.domain.Certificate;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.dto.CertifyDto;
+import com.backendoori.ootw.user.exception.AlreadyCertifiedUserException;
 import com.backendoori.ootw.user.exception.IncorrectEmailCodeException;
 import com.backendoori.ootw.user.repository.CertificateRedisRepository;
 import com.backendoori.ootw.user.repository.UserRepository;
@@ -20,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class CertifyEmailService {
 
     public static final int CERTIFICATE_SIZE = 6;
-    public static final long EXPIRATION = 10 * 60L;
     public static final String TITLE_PREFIX = "[#OOTW] 이메일 인증 코드 : {0}";
 
     private final OotwMailSender ootwMailSender;
@@ -38,14 +38,16 @@ public class CertifyEmailService {
 
     @Transactional
     public void certify(CertifyDto certifyDto) {
+        User user = userRepository.findById(certifyDto.userId())
+            .orElseThrow(UserNotFoundException::new);
+
+        AssertUtil.throwIf(user.getCertified(), AlreadyCertifiedUserException::new);
+
         Certificate certificate = certificateRedisRepository.findByUserId(certifyDto.userId())
             .orElseThrow(UserNotFoundException::new);
         boolean isIncorrectCode = !certifyDto.code().equals(certificate.getCode());
 
         AssertUtil.throwIf(isIncorrectCode, IncorrectEmailCodeException::new);
-
-        User user = userRepository.findById(certifyDto.userId())
-            .orElseThrow(UserNotFoundException::new);
 
         user.certify();
         certificateRedisRepository.delete(certificate);
@@ -57,7 +59,6 @@ public class CertifyEmailService {
         return Certificate.builder()
             .userId(user.getId())
             .code(code)
-            .expiration(EXPIRATION)
             .build();
     }
 
