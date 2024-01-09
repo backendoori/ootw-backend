@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -18,7 +17,7 @@ public class CertifyEmailController {
     private final CertifyEmailService certifyEmailService;
 
     @PostMapping("/certify")
-    public ResponseEntity<Void> login(@RequestParam CertifyDto certifyDto) {
+    public ResponseEntity<Void> login(CertifyDto certifyDto) {
         certifyEmailService.certify(certifyDto);
 
         return ResponseEntity.status(HttpStatus.OK)
