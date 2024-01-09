@@ -37,7 +37,7 @@ public class TemperatureArrange {
         Temperature dayMinTemperature =
             Temperature.of(Double.parseDouble(weatherInfoMap.get(ForecastCategory.TMN)));
         Temperature dayMaxTemperature =
-            Temperature.of(Double.parseDouble(weatherInfoMap.get(ForecastCategory.TMN)));
+            Temperature.of(Double.parseDouble(weatherInfoMap.get(ForecastCategory.TMX)));
 
         validateArrange(dayMinTemperature, dayMaxTemperature);
 
