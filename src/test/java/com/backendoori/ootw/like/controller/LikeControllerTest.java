@@ -2,11 +2,12 @@ package com.backendoori.ootw.like.controller;
 
 import static com.backendoori.ootw.security.jwt.JwtAuthenticationFilter.TOKEN_HEADER;
 import static com.backendoori.ootw.security.jwt.JwtAuthenticationFilter.TOKEN_PREFIX;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.HashMap;
+import java.util.Map;
 import com.backendoori.ootw.like.domain.Like;
 import com.backendoori.ootw.like.dto.controller.LikeRequest;
 import com.backendoori.ootw.like.repository.LikeRepository;
@@ -18,7 +19,8 @@ import com.backendoori.ootw.post.service.PostService;
 import com.backendoori.ootw.security.TokenMockMvcTest;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.repository.UserRepository;
-import com.backendoori.ootw.weather.dto.WeatherDto;
+import com.backendoori.ootw.weather.domain.TemperatureArrange;
+import com.backendoori.ootw.weather.domain.forecast.ForecastCategory;
 import jakarta.transaction.Transactional;
 import net.datafaker.Faker;
 import org.assertj.core.api.Assertions;
@@ -39,9 +41,9 @@ import org.springframework.http.MediaType;
 @ExtendWith(MockitoExtension.class)
 class LikeControllerTest extends TokenMockMvcTest {
 
+    static final int NX = 55;
+    static final int NY = 127;
     static final Faker FAKER = new Faker();
-    static final WeatherDto weatherDto = new WeatherDto(0.0, -10.0, 10.0, 1, 1);
-
     User user;
     User writer;
 
@@ -90,10 +92,18 @@ class LikeControllerTest extends TokenMockMvcTest {
             .build();
     }
 
+    private static TemperatureArrange generateTemperatureArrange() {
+        Map<ForecastCategory, String> weatherInfoMap = new HashMap<>();
+        weatherInfoMap.put(ForecastCategory.TMN, String.valueOf(0.0));
+        weatherInfoMap.put(ForecastCategory.TMX, String.valueOf(15.0));
+
+        return TemperatureArrange.from(weatherInfoMap);
+    }
+
     private Post generatePost(User user) {
         PostSaveRequest postSaveRequest =
-            new PostSaveRequest("title", FAKER.gameOfThrones().quote(), weatherDto);
-        return Post.from(user, postSaveRequest, FAKER.internet().url());
+            new PostSaveRequest("title", FAKER.gameOfThrones().quote(), NX, NY);
+        return Post.from(user, postSaveRequest, FAKER.internet().url(), generateTemperatureArrange());
     }
 
 

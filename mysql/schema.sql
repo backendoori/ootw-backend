@@ -36,11 +36,8 @@ CREATE TABLE posts
     image      VARCHAR(500) NULL,
     created_at DATETIME(6)  NULL,
     updated_at DATETIME(6)  NULL,
-    current_temperature DOUBLE                                                  NOT NULL,
-    day_min_temperature DOUBLE                                                  NOT NULL,
-    day_max_temperature DOUBLE                                                  NOT NULL,
-    pty_type            ENUM ('NONE', 'RAIN', 'RAIN_OR_SNOW', 'SNOW', 'SHOWER') NOT NULL,
-    sky_type            ENUM ('SUNNY', 'CLOUDY', 'OVERCAST')                    NOT NULL,
+    min_temperature DOUBLE NOT NULL,
+    max_temperature DOUBLE NOT NULL,
     CONSTRAINT posts_pk
         PRIMARY KEY (id),
     FOREIGN KEY (user_id)

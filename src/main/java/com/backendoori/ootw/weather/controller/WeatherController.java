@@ -27,6 +27,7 @@ public class WeatherController {
         @NotNull
         @RequestParam
         int nx,
+
         @Min(0)
         @Max(999)
         @NotNull

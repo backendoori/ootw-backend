@@ -3,6 +3,8 @@ package com.backendoori.ootw.like.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.like.domain.Like;
@@ -16,7 +18,8 @@ import com.backendoori.ootw.post.service.PostService;
 import com.backendoori.ootw.security.TokenMockMvcTest;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.repository.UserRepository;
-import com.backendoori.ootw.weather.dto.WeatherDto;
+import com.backendoori.ootw.weather.domain.TemperatureArrange;
+import com.backendoori.ootw.weather.domain.forecast.ForecastCategory;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,10 +33,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 public class LikeServiceTest extends TokenMockMvcTest {
 
-    private static final String POST_NOT_FOUND_MESSAGE = "해당 게시글이 존재하지 않습니다.";
-    static final WeatherDto weatherDto = new WeatherDto(0.0, -10.0, 10.0, 1, 1);
-
+    static final String POST_NOT_FOUND_MESSAGE = "해당 게시글이 존재하지 않습니다.";
     static final Faker FAKER = new Faker();
+    static final int NX = 55;
+    static final int NY = 127;
 
     User user;
 
@@ -87,10 +90,18 @@ public class LikeServiceTest extends TokenMockMvcTest {
             .build();
     }
 
+    private static TemperatureArrange generateTemperatureArrange() {
+        Map<ForecastCategory, String> weatherInfoMap = new HashMap<>();
+        weatherInfoMap.put(ForecastCategory.TMN, String.valueOf(0.0));
+        weatherInfoMap.put(ForecastCategory.TMX, String.valueOf(15.0));
+
+        return TemperatureArrange.from(weatherInfoMap);
+    }
+
     private Post generatePost(User user) {
         PostSaveRequest postSaveRequest =
-            new PostSaveRequest("title", FAKER.gameOfThrones().quote(), weatherDto);
-        return Post.from(user, postSaveRequest, FAKER.internet().url());
+            new PostSaveRequest("title", FAKER.gameOfThrones().quote(), NX, NY);
+        return Post.from(user, postSaveRequest, FAKER.internet().url(), generateTemperatureArrange());
     }
 
     @Test
@@ -156,8 +167,6 @@ public class LikeServiceTest extends TokenMockMvcTest {
         assertThatThrownBy(() -> likeService.requestLike(userId, postId))
             .isInstanceOf(UserNotFoundException.class)
             .hasMessage(UserNotFoundException.DEFAULT_MESSAGE);
-
     }
-
 
 }
