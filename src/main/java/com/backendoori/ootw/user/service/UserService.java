@@ -71,7 +71,7 @@ public class UserService {
     }
 
     private void validateLogin(LoginDto loginDto, User user) {
-        AssertUtil.throwIf(!user.getCertificated(), NonCertifiedUserException::new);
+        AssertUtil.throwIf(!user.getCertified(), NonCertifiedUserException::new);
 
         boolean isIncorrectPassword = !passwordEncoder.matches(loginDto.password(), user.getPassword());
 

@@ -4,14 +4,14 @@ USE ootw;
 
 CREATE TABLE users
 (
-    id           BIGINT AUTO_INCREMENT,
-    email        VARCHAR(255) NOT NULL,
-    password     VARCHAR(255) NOT NULL,
-    nickname     VARCHAR(255) NOT NULL,
-    image        VARCHAR(500) NULL,
-    certificated TINYINT(1)   NOT NULL,
-    created_at   DATETIME(6)  NULL,
-    updated_at   DATETIME(6)  NULL,
+    id         BIGINT AUTO_INCREMENT,
+    email      VARCHAR(255) NOT NULL,
+    password   VARCHAR(255) NOT NULL,
+    nickname   VARCHAR(255) NOT NULL,
+    image      VARCHAR(500) NULL,
+    certified  TINYINT(1)   NOT NULL,
+    created_at DATETIME(6)  NULL,
+    updated_at DATETIME(6)  NULL,
     CONSTRAINT users_pk
         PRIMARY KEY (id),
     CONSTRAINT users_email_index
