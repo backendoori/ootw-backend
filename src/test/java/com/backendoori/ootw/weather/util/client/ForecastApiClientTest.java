@@ -39,11 +39,11 @@ class ForecastApiClientTest {
     }
 
     @Test
-    @DisplayName("정보가 없는 위치 값으로 현재 날씨 불러오기에 실패한다.")
+    @DisplayName("정보가 없는 위치 값으로 현재 초단기예보 불러오기에 실패한다.")
     void requestUltraShortForecastItemsFailByNoSuchElementException() {
         // given
-        Integer nx = 0;
-        Integer ny = 0;
+        int nx = 0;
+        int ny = 0;
 
         // when // then
         assertThrows(NoSuchElementException.class,
@@ -52,11 +52,32 @@ class ForecastApiClientTest {
 
     @ParameterizedTest
     @MethodSource("provideInvalidRange")
-    @DisplayName("유효하지 않은 파라미터 범위로 현재 날씨 불러오기에 실패한다.")
+    @DisplayName("유효하지 않은 파라미터 범위로 현재 초단기예보 불러오기에 실패한다.")
     void requestUltraShortForecastItemsFailByIllegalRange(Integer nx, Integer ny) {
         // given // when // then
         assertThrows(IllegalArgumentException.class,
             () -> forecastApiClient.requestUltraShortForecastItems(TEMP_BASE_DATETIME, nx, ny));
+    }
+
+    @Test
+    @DisplayName("정보가 없는 위치 값으로 현재 단기예보 불러오기에 실패한다.")
+    void requestVillageForecastItemsFailByNoSuchElementException() {
+        // given
+        int nx = 0;
+        int ny = 0;
+
+        // when // then
+        assertThrows(NoSuchElementException.class,
+            () -> forecastApiClient.requestUltraShortForecastItems(TEMP_BASE_DATETIME, nx, ny));
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideInvalidRange")
+    @DisplayName("유효하지 않은 파라미터 범위로 현재 단기예보 불러오기에 실패한다.")
+    void requestVillageForecastItemsFailByIllegalRange(Integer nx, Integer ny) {
+        // given // when // then
+        assertThrows(IllegalArgumentException.class,
+            () -> forecastApiClient.requestVillageForecastItems(TEMP_BASE_DATETIME, nx, ny));
     }
 
 }
