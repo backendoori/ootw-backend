@@ -4,58 +4,59 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Stream;
-import com.backendoori.ootw.weather.dto.TemperatureArrangeDto;
+import com.backendoori.ootw.weather.domain.forecast.ForecastCategory;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 class TemperatureArrangeTest {
 
-    private static Stream<TemperatureArrangeDto> provideValidInfo() {
+    private static Stream<HashMap<ForecastCategory, String>> provideInvalidWeatherInfoMap() {
+        HashMap<ForecastCategory, String> weatherInfoMapWithOnlyTmn = new HashMap<>();
+        weatherInfoMapWithOnlyTmn.put(ForecastCategory.TMN, String.valueOf(0.0));
+
+        HashMap<ForecastCategory, String> weatherInfoMapWithOnlyTmx = new HashMap<>();
+        weatherInfoMapWithOnlyTmx.put(ForecastCategory.TMX, String.valueOf(15.0));
+
+        HashMap<ForecastCategory, String> weatherInfoMapWithNoData = new HashMap<>();
+
         return Stream.of(
-            new TemperatureArrangeDto(0.0, 0.0),
-            new TemperatureArrangeDto(-899.99, -899.99),
-            new TemperatureArrangeDto(899.99, 899.99),
-            new TemperatureArrangeDto(-10.0, 100.0)
+            weatherInfoMapWithOnlyTmn,
+            weatherInfoMapWithOnlyTmx,
+            weatherInfoMapWithNoData
         );
     }
 
-    private static Stream<Arguments> provideInvalidInfo() {
-        return Stream.of(
-            Arguments.of("기온값이 기온 최저값보다 낮은 경우",
-                new TemperatureArrangeDto(-900.0, 0.0)),
-            Arguments.of("기온값이 기온 최고값보다 높은 경우",
-                new TemperatureArrangeDto(0.0, 900.0)),
-            Arguments.of("일 최저 기온이 일 최고 기온보다 낮은 경우",
-                new TemperatureArrangeDto(0.0, -100.0))
+    @Test
+    @DisplayName("TMN, TMX가 포함된 결과 맵(map)으로부터 TemperatureArrange 생성에 성공한다.")
+    void createTemperatureArrangeSuccess() {
+        // given
+        HashMap<ForecastCategory, String> weatherInfoMap = new HashMap<>();
+        Temperature minTemperature = Temperature.of(0.0);
+        weatherInfoMap.put(ForecastCategory.TMN, String.valueOf(minTemperature.getValue()));
+
+        Temperature maxTemperature = Temperature.of(0.0);
+        weatherInfoMap.put(ForecastCategory.TMX, String.valueOf(maxTemperature.getValue()));
+
+        // when // then
+        TemperatureArrange temperatureArrange = TemperatureArrange.from(weatherInfoMap);
+        assertAll(
+            () -> assertThat(temperatureArrange).hasFieldOrPropertyWithValue("min", minTemperature),
+            () -> assertThat(temperatureArrange).hasFieldOrPropertyWithValue("max", maxTemperature)
         );
+
     }
 
     @ParameterizedTest
-    @MethodSource("provideValidInfo")
-    @DisplayName("from 메서드로 유효한 WeatherInfo로부터 Weather를 생성하는 것에 성공한다.")
-    void createWeatherSuccess(TemperatureArrangeDto weatherDto) {
-        // given // when
-        TemperatureArrange createdWeather = TemperatureArrange.from(weatherDto);
-
-        // then
-        assertAll(
-            () -> assertThat(createdWeather.getMin())
-                .hasFieldOrPropertyWithValue("value", weatherDto.min()),
-            () -> assertThat(createdWeather.getMax())
-                .hasFieldOrPropertyWithValue("value", weatherDto.max())
-        );
-    }
-
-    @ParameterizedTest(name = "[{index}] {0}")
-    @MethodSource("provideInvalidInfo")
-    @DisplayName("from 메서드로 유효하지 않은 WeatherInfo로부터 Weather를 생성하는 것에 실패한다.")
-    void createWeatherFail(String info, TemperatureArrangeDto weatherDto) {
-        // given, when, then
-        assertThrows(IllegalArgumentException.class,
-            () -> TemperatureArrange.from(weatherDto));
+    @MethodSource("provideInvalidWeatherInfoMap")
+    @DisplayName("TMN, TMX가 포함되지 않은 결과 맵(map)으로부터 TemperatureArrange 생성에 성공한다.")
+    void createTemperatureArrangeFail(Map<ForecastCategory, String> weatherInfoMap) {
+        // given // when // then
+        assertThrows(IllegalStateException.class, () -> TemperatureArrange.from(weatherInfoMap));
     }
 
 }
