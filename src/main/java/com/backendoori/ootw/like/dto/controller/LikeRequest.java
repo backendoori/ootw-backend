@@ -2,9 +2,10 @@ package com.backendoori.ootw.like.dto.controller;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 public record LikeRequest(
-    @Min(value = 1)
+    @Positive
     @NotNull(message = NULL_MESSAGE)
     Long postId
 ) {

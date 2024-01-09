@@ -27,7 +27,6 @@ public class LikeService {
 
     @Transactional
     public LikeResponse requestLike(Long userId, Long postId) {
-
         User user = userRepository.findById(userId)
             .orElseThrow(UserNotFoundException::new);
 

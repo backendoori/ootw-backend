@@ -19,7 +19,7 @@ public class LikeController {
 
     private final LikeService likeService;
 
-    @PostMapping("")
+    @PostMapping
     public ResponseEntity<LikeResponse> pushLike(Authentication authentication,
                                                  @Valid @RequestBody LikeRequest requestDto) {
         Long userId = (Long) authentication.getPrincipal();

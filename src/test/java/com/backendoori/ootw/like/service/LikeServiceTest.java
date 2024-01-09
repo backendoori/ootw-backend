@@ -33,7 +33,7 @@ public class LikeServiceTest extends TokenMockMvcTest {
     private static final String POST_NOT_FOUND_MESSAGE = "해당 게시글이 존재하지 않습니다.";
     static final WeatherDto weatherDto = new WeatherDto(0.0, -10.0, 10.0, 1, 1);
 
-    static Faker faker = new Faker();
+    static final Faker FAKER = new Faker();
 
     User user;
 
@@ -80,17 +80,17 @@ public class LikeServiceTest extends TokenMockMvcTest {
 
     private User generateUser() {
         return User.builder()
-            .email(faker.internet().emailAddress())
-            .password(faker.internet().password())
-            .nickname(faker.internet().username())
-            .image(faker.internet().url())
+            .email(FAKER.internet().emailAddress())
+            .password(FAKER.internet().password())
+            .nickname(FAKER.internet().username())
+            .image(FAKER.internet().url())
             .build();
     }
 
     private Post generatePost(User user) {
         PostSaveRequest postSaveRequest =
-            new PostSaveRequest("title", faker.gameOfThrones().quote(), weatherDto);
-        return Post.from(user, postSaveRequest, faker.internet().url());
+            new PostSaveRequest("title", FAKER.gameOfThrones().quote(), weatherDto);
+        return Post.from(user, postSaveRequest, FAKER.internet().url());
     }
 
     @Test
