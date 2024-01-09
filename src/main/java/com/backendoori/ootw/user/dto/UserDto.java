@@ -12,7 +12,6 @@ public record UserDto(
     String image,
     LocalDateTime createdAt,
     LocalDateTime updatedAt
-
 ) {
 
     public static UserDto from(User user) {
