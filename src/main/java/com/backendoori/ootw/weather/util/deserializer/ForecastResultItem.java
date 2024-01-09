@@ -14,7 +14,7 @@ public record ForecastResultItem(
     int ny
 ) {
 
-    public boolean matchFcstDateTimeWithBaseDateTime(BaseDateTime baseDateTime) {
+    public boolean matchFcstDateTime(BaseDateTime baseDateTime) {
         return Objects.equals(fcstDateTime, baseDateTime);
     }
 

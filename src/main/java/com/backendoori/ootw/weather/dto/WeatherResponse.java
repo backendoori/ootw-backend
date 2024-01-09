@@ -5,28 +5,41 @@ import java.util.Map;
 import com.backendoori.ootw.weather.domain.PtyType;
 import com.backendoori.ootw.weather.domain.SkyType;
 import com.backendoori.ootw.weather.domain.forecast.ForecastCategory;
+import com.backendoori.ootw.weather.exception.ForecastResultErrorManager;
+import org.springframework.util.Assert;
 
 public record WeatherResponse(
     LocalDateTime currentDateTime,
-    Double currentTemperature,
+    int nx,
+    int ny,
+    double currentTemperature,
     String sky,
-    String pty,
-    Integer nx,
-    Integer ny
+    String pty
 ) {
 
     public static WeatherResponse from(LocalDateTime dateTime, int nx, int ny,
-                                       Map<ForecastCategory, String> currentWeather) {
+                                       Map<ForecastCategory, String> weatherInfoMap) {
+        checkIncludeCurrentWeather(weatherInfoMap);
 
-        Double currentTemperature = Double.valueOf(currentWeather.get(ForecastCategory.T1H));
+        double currentTemperature = Double.parseDouble(weatherInfoMap.get(ForecastCategory.T1H));
 
-        Integer skyCode = Integer.valueOf(currentWeather.get(ForecastCategory.SKY));
-        String sky = SkyType.getByCode(skyCode).name();
+        int skyCode = Integer.parseInt(weatherInfoMap.get(ForecastCategory.SKY));
+        String skyType = SkyType.getByCode(skyCode).name();
 
-        Integer ptyCode = Integer.valueOf(currentWeather.get(ForecastCategory.PTY));
-        String pty = PtyType.getByCode(ptyCode).name();
+        int ptyCode = Integer.parseInt(weatherInfoMap.get(ForecastCategory.PTY));
+        String ptyType = PtyType.getByCode(ptyCode).name();
 
-        return new WeatherResponse(dateTime, currentTemperature, sky, pty, nx, ny);
+        return new WeatherResponse(dateTime, nx, ny, currentTemperature, skyType, ptyType);
+    }
+
+    private static void checkIncludeCurrentWeather(Map<ForecastCategory, String> currentWeatherMap) {
+        Assert.isTrue(
+            currentWeatherMap.containsKey(ForecastCategory.T1H)
+                && currentWeatherMap.containsKey(ForecastCategory.SKY)
+                && currentWeatherMap.containsKey(ForecastCategory.PTY),
+            () -> {
+                throw ForecastResultErrorManager.getApiServerException();
+            });
     }
 
 }
