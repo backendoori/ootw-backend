@@ -85,7 +85,7 @@ class LikeTest {
 
     @ParameterizedTest
     @NullSource
-    @DisplayName("post가 null 인 경우 좋아요 객체를 생성 시 예외가 발생한다.")
+    @DisplayName("user가 null 인 경우 좋아요 객체를 생성 시 예외가 발생한다.")
     public void makeLikeFailByNullUser(User user) {
         //given
         User writer = generateUser();
