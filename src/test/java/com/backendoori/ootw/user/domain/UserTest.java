@@ -112,7 +112,7 @@ class UserTest {
             .password(password)
             .nickname(nickname)
             .image(image)
-            .certificated(false)
+            .certified(false)
             .build();
     }
 

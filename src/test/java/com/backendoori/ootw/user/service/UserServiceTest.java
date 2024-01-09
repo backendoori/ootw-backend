@@ -121,7 +121,7 @@ class UserServiceTest {
         void success() {
             // given
             String password = faker.internet().password();
-            User user = userRepository.save(generateUser(password));
+            User user = userRepository.save(generateUser(password, true));
             LoginDto loginDto = new LoginDto(user.getEmail(), password);
 
             // when
@@ -156,7 +156,7 @@ class UserServiceTest {
         void failIncorrectPassword() {
             // given
             String password = faker.internet().password();
-            User user = userRepository.save(generateUser(password));
+            User user = userRepository.save(generateUser(password, true));
             LoginDto loginDto = new LoginDto(user.getEmail(), password + password);
 
             // when
@@ -182,12 +182,16 @@ class UserServiceTest {
     }
 
     private User generateUser(String password) {
+        return generateUser(password, false);
+    }
+
+    private User generateUser(String password, boolean certified) {
         return User.builder()
             .email(faker.internet().emailAddress())
             .password(passwordEncoder.encode(password))
             .nickname(faker.internet().username())
             .image(faker.internet().url())
-            .certificated(false)
+            .certified(certified)
             .build();
     }
 
