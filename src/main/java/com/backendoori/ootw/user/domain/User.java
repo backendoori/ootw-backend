@@ -55,4 +55,8 @@ public class User extends BaseEntity {
         this.certified = certified;
     }
 
+    public void certify() {
+        this.certified = true;
+    }
+
 }
