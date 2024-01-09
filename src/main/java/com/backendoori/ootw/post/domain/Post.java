@@ -1,8 +1,8 @@
 package com.backendoori.ootw.post.domain;
 
-import static com.backendoori.ootw.post.util.validator.PostValidator.validatePostSaveRequest;
-import static com.backendoori.ootw.post.util.validator.PostValidator.validateTemperatureArrange;
-import static com.backendoori.ootw.post.util.validator.PostValidator.validateUser;
+import static com.backendoori.ootw.post.validation.PostValidator.validatePostSaveRequest;
+import static com.backendoori.ootw.post.validation.PostValidator.validateTemperatureArrange;
+import static com.backendoori.ootw.post.validation.PostValidator.validateUser;
 
 import com.backendoori.ootw.common.BaseEntity;
 import com.backendoori.ootw.post.dto.PostSaveRequest;

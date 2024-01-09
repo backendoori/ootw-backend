@@ -1,4 +1,4 @@
-package com.backendoori.ootw.post.util.validator;
+package com.backendoori.ootw.post.validation;
 
 import com.backendoori.ootw.post.dto.PostSaveRequest;
 import com.backendoori.ootw.user.domain.User;
