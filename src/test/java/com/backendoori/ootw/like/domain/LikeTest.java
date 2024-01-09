@@ -4,10 +4,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.HashMap;
+import java.util.Map;
 import com.backendoori.ootw.post.domain.Post;
 import com.backendoori.ootw.post.dto.PostSaveRequest;
 import com.backendoori.ootw.user.domain.User;
-import com.backendoori.ootw.weather.dto.WeatherDto;
+import com.backendoori.ootw.weather.domain.TemperatureArrange;
+import com.backendoori.ootw.weather.domain.forecast.ForecastCategory;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,8 +19,8 @@ import org.junit.jupiter.params.provider.NullSource;
 
 class LikeTest {
 
-    static final WeatherDto weatherDto = new WeatherDto(0.0, -10.0, 10.0, 1, 1);
-
+    static final int NX = 55;
+    static final int NY = 127;
     static final Faker FAKER = new Faker();
 
     private User generateUser() {
@@ -30,10 +33,18 @@ class LikeTest {
             .build();
     }
 
+    private static TemperatureArrange generateTemperatureArrange() {
+        Map<ForecastCategory, String> weatherInfoMap = new HashMap<>();
+        weatherInfoMap.put(ForecastCategory.TMN, String.valueOf(0.0));
+        weatherInfoMap.put(ForecastCategory.TMX, String.valueOf(15.0));
+
+        return TemperatureArrange.from(weatherInfoMap);
+    }
+
     private Post generatePost(User user) {
         PostSaveRequest postSaveRequest =
-            new PostSaveRequest("title", FAKER.gameOfThrones().quote(), weatherDto);
-        return Post.from(user, postSaveRequest, FAKER.internet().url());
+            new PostSaveRequest("title", FAKER.gameOfThrones().quote(), NX, NY);
+        return Post.from(user, postSaveRequest, FAKER.internet().url(), generateTemperatureArrange());
     }
 
     @Test
