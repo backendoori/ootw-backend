@@ -9,15 +9,13 @@ import org.springframework.stereotype.Component;
 public class HttpRequestsConfigurer
     implements Customizer<AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry> {
 
-    private static final String AUTH_PREFIX = "/api/v1/auth";
+    private static final String AUTH_RESOURCE = "/api/v1/auth/**";
 
     @Override
     public void customize(
         AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorizeRequests) {
         authorizeRequests
-            .requestMatchers(AUTH_PREFIX + "/signup")
-            .permitAll()
-            .requestMatchers(AUTH_PREFIX + "/login")
+            .requestMatchers(AUTH_RESOURCE)
             .permitAll()
             .anyRequest()
             .authenticated();
