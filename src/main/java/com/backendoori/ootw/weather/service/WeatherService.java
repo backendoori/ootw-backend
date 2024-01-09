@@ -23,13 +23,13 @@ public class WeatherService {
         BaseDateTime requestBaseDateTime = BaseDateTimeCalculator.getUltraShortForecastRequestBaseDateTime(dateTime);
         BaseDateTime fcstBaseDateTime = BaseDateTimeCalculator.getCurrentBaseDateTime(dateTime);
 
-        Map<ForecastCategory, String> currentWeather = new HashMap<>();
+        Map<ForecastCategory, String> weatherInfoMap = new HashMap<>();
         forecastApiClient.requestUltraShortForecastItems(requestBaseDateTime, nx, ny)
             .stream()
             .filter(item -> item.matchFcstDateTime(fcstBaseDateTime))
-            .forEach(item -> currentWeather.put(ForecastCategory.valueOf(item.category()), item.fcstValue()));
+            .forEach(item -> weatherInfoMap.put(ForecastCategory.valueOf(item.category()), item.fcstValue()));
 
-        return WeatherResponse.from(dateTime, nx, ny, currentWeather);
+        return WeatherResponse.from(dateTime, nx, ny, weatherInfoMap);
     }
 
     public TemperatureArrange getCurrentTemperatureArrange(int nx, int ny) {
@@ -37,15 +37,15 @@ public class WeatherService {
         BaseDateTime requestBaseDateTime = BaseDateTimeCalculator.getVilageForecastRequestBaseDateTime(dateTime);
         BaseDateTime fcstBaseDateTime = BaseDateTimeCalculator.getCurrentBaseDateTime(dateTime);
 
-        Map<ForecastCategory, String> temperatureArrangeMap = new HashMap<>();
+        Map<ForecastCategory, String> weatherInfoMap = new HashMap<>();
         forecastApiClient.requestVillageForecastItems(requestBaseDateTime, nx, ny)
             .stream()
-            .filter(item -> item.fcstDateTime().baseDate().equals(fcstBaseDateTime.baseDate()))
-            .filter(item -> item.category().equals(ForecastCategory.TMN.name())
-                || item.category().equals(ForecastCategory.TMX.name()))
-            .forEach(item -> temperatureArrangeMap.put(ForecastCategory.valueOf(item.category()), item.fcstValue()));
+            .filter(item -> item.fcstDateTime().baseDate().equals(fcstBaseDateTime.baseDate())
+                && (item.category().equals(ForecastCategory.TMN.name())
+                || item.category().equals(ForecastCategory.TMX.name())))
+            .forEach(item -> weatherInfoMap.put(ForecastCategory.valueOf(item.category()), item.fcstValue()));
 
-        return TemperatureArrange.from(temperatureArrangeMap);
+        return TemperatureArrange.from(weatherInfoMap);
     }
 
 }
