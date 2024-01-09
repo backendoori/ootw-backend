@@ -13,6 +13,7 @@ import com.backendoori.ootw.user.dto.SignupDto;
 import com.backendoori.ootw.user.dto.TokenDto;
 import com.backendoori.ootw.user.exception.AlreadyExistEmailException;
 import com.backendoori.ootw.user.exception.IncorrectPasswordException;
+import com.backendoori.ootw.user.exception.NonCertifiedUserException;
 import com.backendoori.ootw.user.repository.UserRepository;
 import com.backendoori.ootw.user.validation.Message;
 import net.datafaker.Faker;
@@ -166,6 +167,23 @@ class UserServiceTest {
             assertThatExceptionOfType(IncorrectPasswordException.class)
                 .isThrownBy(login)
                 .withMessage(IncorrectPasswordException.DEFAULT_MESSAGE);
+        }
+
+        @DisplayName("이메일이 인증되지 않으면 로그인에 실패한다")
+        @Test
+        void failNonCertified() {
+            // given
+            String password = faker.internet().password();
+            User user = userRepository.save(generateUser(password, false));
+            LoginDto loginDto = new LoginDto(user.getEmail(), password + password);
+
+            // when
+            ThrowingCallable login = () -> userService.login(loginDto);
+
+            // then
+            assertThatExceptionOfType(NonCertifiedUserException.class)
+                .isThrownBy(login)
+                .withMessage(NonCertifiedUserException.DEFAULT_MESSAGE);
         }
 
     }
