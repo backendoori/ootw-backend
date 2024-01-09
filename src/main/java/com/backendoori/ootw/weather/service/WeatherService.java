@@ -32,19 +32,20 @@ public class WeatherService {
         return WeatherResponse.from(dateTime, nx, ny, currentWeather);
     }
 
-    public TemperatureArrange getCurrentTemperatureArrange(LocalDateTime dateTime, int nx, int ny) {
+    public TemperatureArrange getCurrentTemperatureArrange(int nx, int ny) {
+        LocalDateTime dateTime = LocalDateTime.now();
         BaseDateTime requestBaseDateTime = BaseDateTimeCalculator.getVilageForecastRequestBaseDateTime(dateTime);
         BaseDateTime fcstBaseDateTime = BaseDateTimeCalculator.getCurrentBaseDateTime(dateTime);
 
-        Map<ForecastCategory, String> temperatureArrange = new HashMap<>();
-        forecastApiClient.requestUltraShortForecastItems(requestBaseDateTime, nx, ny)
+        Map<ForecastCategory, String> temperatureArrangeMap = new HashMap<>();
+        forecastApiClient.requestVillageForecastItems(requestBaseDateTime, nx, ny)
             .stream()
             .filter(item -> item.fcstDateTime().baseDate().equals(fcstBaseDateTime.baseDate()))
             .filter(item -> item.category().equals(ForecastCategory.TMN.name())
                 || item.category().equals(ForecastCategory.TMX.name()))
-            .forEach(item -> temperatureArrange.put(ForecastCategory.valueOf(item.category()), item.fcstValue()));
+            .forEach(item -> temperatureArrangeMap.put(ForecastCategory.valueOf(item.category()), item.fcstValue()));
 
-        return TemperatureArrange.from(temperatureArrange);
+        return TemperatureArrange.from(temperatureArrangeMap);
     }
 
 }

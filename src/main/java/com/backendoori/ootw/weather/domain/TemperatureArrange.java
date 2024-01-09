@@ -23,16 +23,16 @@ public class TemperatureArrange {
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "min_temperature", nullable = false))
-    private Temperature minTemperature;
+    private Temperature min;
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "max_temperature", nullable = false))
-    private Temperature maxTemperature;
+    private Temperature max;
 
     // TODO: dto에서 생성 vs  vs ModelMapper 사용
     public static TemperatureArrange from(TemperatureArrangeDto weatherDto) {
-        Temperature minTemperature = Temperature.of(weatherDto.minTemperature());
-        Temperature maxTemperature = Temperature.of(weatherDto.maxTemperature());
+        Temperature minTemperature = Temperature.of(weatherDto.min());
+        Temperature maxTemperature = Temperature.of(weatherDto.max());
         validateTemperatureArrange(minTemperature, maxTemperature);
 
         return new TemperatureArrange(minTemperature, maxTemperature);

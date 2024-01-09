@@ -11,7 +11,7 @@ public record PostSaveResponse(
     String image,
     LocalDateTime createdAt,
     LocalDateTime updatedAt,
-    TemperatureArrangeDto weather
+    TemperatureArrangeDto temperatureArrange
 ) {
 
     public static PostSaveResponse from(Post savedPost) {
@@ -22,7 +22,7 @@ public record PostSaveResponse(
             savedPost.getImage(),
             savedPost.getCreatedAt(),
             savedPost.getUpdatedAt(),
-            TemperatureArrangeDto.from(savedPost.getWeather())
+            TemperatureArrangeDto.from(savedPost.getTemperatureArrange())
         );
     }
 

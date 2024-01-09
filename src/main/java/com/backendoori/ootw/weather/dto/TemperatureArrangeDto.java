@@ -10,18 +10,18 @@ public record TemperatureArrangeDto(
     @NotNull
     @Min(value = -900)
     @Max(value = 900)
-    Double minTemperature,
+    Double min,
 
     @NotNull
     @Min(value = -900)
     @Max(value = 900)
-    Double maxTemperature
+    Double max
 ) {
 
     public static TemperatureArrangeDto from(TemperatureArrange weather) {
         return new TemperatureArrangeDto(
-            weather.getMinTemperature().getValue(),
-            weather.getMaxTemperature().getValue()
+            weather.getMin().getValue(),
+            weather.getMax().getValue()
         );
     }
 

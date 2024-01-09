@@ -11,7 +11,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-class WeatherTest {
+class TemperatureArrangeTest {
 
     private static Stream<TemperatureArrangeDto> provideValidInfo() {
         return Stream.of(
@@ -42,10 +42,10 @@ class WeatherTest {
 
         // then
         assertAll(
-            () -> assertThat(createdWeather.getMinTemperature())
-                .hasFieldOrPropertyWithValue("value", weatherDto.minTemperature()),
-            () -> assertThat(createdWeather.getMaxTemperature())
-                .hasFieldOrPropertyWithValue("value", weatherDto.maxTemperature())
+            () -> assertThat(createdWeather.getMin())
+                .hasFieldOrPropertyWithValue("value", weatherDto.min()),
+            () -> assertThat(createdWeather.getMax())
+                .hasFieldOrPropertyWithValue("value", weatherDto.max())
         );
     }
 

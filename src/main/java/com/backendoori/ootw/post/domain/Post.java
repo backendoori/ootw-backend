@@ -47,20 +47,22 @@ public class Post extends BaseEntity {
     private String image;
 
     @Embedded
-    private TemperatureArrange weather;
+    private TemperatureArrange temperatureArrange;
 
-    private Post(User user, PostSaveRequest request, String imgUrl) {
+    private Post(User user, PostSaveRequest request, String imgUrl, TemperatureArrange temperatureArrange) {
         validateUser(user);
         validatePostSaveRequest(request);
+        validateTemperatureArrange(temperatureArrange);
+
         this.user = user;
         this.title = request.title();
         this.content = request.content();
         this.image = imgUrl;
-        this.weather = TemperatureArrange.from(request.weather());
+        this.temperatureArrange = temperatureArrange;
     }
 
-    public static Post from(User user, PostSaveRequest request, String imgUrl) {
-        return new Post(user, request, imgUrl);
+    public static Post from(User user, PostSaveRequest request, String imgUrl, TemperatureArrange temperatureArrange) {
+        return new Post(user, request, imgUrl, temperatureArrange);
     }
 
     // TODO: Validator 클래스를 독립적으로 만드는 것이 나을까..?
@@ -70,9 +72,12 @@ public class Post extends BaseEntity {
 
     private static void validatePostSaveRequest(PostSaveRequest request) {
         Assert.notNull(request, "게시글 생성 요청 정보가 null이어서는 안됩니다.");
-        Assert.notNull(request.weather(), "게시글 기온/날씨 정보가 null이어서는 안됩니다.");
         validateTitle(request.title());
         validateContent(request.content());
+    }
+
+    private static void validateTemperatureArrange(TemperatureArrange temperatureArrange) {
+        Assert.notNull(temperatureArrange, "게시글 기온 범위가 null이어서는 안됩니다.");
     }
 
     private static void validateTitle(String title) {
