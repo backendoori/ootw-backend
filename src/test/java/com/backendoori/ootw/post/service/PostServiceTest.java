@@ -6,7 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import com.backendoori.ootw.common.image.ImageService;
 import com.backendoori.ootw.exception.UserNotFoundException;
@@ -19,6 +21,7 @@ import com.backendoori.ootw.post.repository.PostRepository;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.repository.UserRepository;
 import com.backendoori.ootw.weather.domain.TemperatureArrange;
+import com.backendoori.ootw.weather.domain.forecast.ForecastCategory;
 import com.backendoori.ootw.weather.dto.TemperatureArrangeDto;
 import com.backendoori.ootw.weather.service.WeatherService;
 import net.datafaker.Faker;
@@ -47,8 +50,6 @@ class PostServiceTest {
     static final int NX = 55;
     static final int NY = 127;
     static final Faker FAKER = new Faker();
-    static final TemperatureArrangeDto TEMPERATURE_ARRANGE_DTO = new TemperatureArrangeDto(-10.0, 10.0);
-    static final TemperatureArrange TEMPERATURE_ARRANGE = TemperatureArrange.from(TEMPERATURE_ARRANGE_DTO);
 
     User user;
 
@@ -97,7 +98,7 @@ class PostServiceTest {
 
             given(imageService.uploadImage(postImg)).willReturn("imgUrl");
             given(weatherService.getCurrentTemperatureArrange(request.nx(), request.ny())).willReturn(
-                TEMPERATURE_ARRANGE);
+                generateTemperatureArrange());
 
             // when
             PostSaveResponse postSaveResponse = postService.save(request, postImg);
@@ -109,7 +110,7 @@ class PostServiceTest {
                 () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("image",
                     imageService.uploadImage(postImg)),
                 () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("temperatureArrange",
-                    TEMPERATURE_ARRANGE_DTO)
+                    TemperatureArrangeDto.from(generateTemperatureArrange()))
             );
         }
 
@@ -160,7 +161,7 @@ class PostServiceTest {
         void setUp() {
             Post savedPost = postRepository.save(
                 Post.from(user, new PostSaveRequest("Test Title", "Test Content", NX, NY), "imgUrl",
-                    TEMPERATURE_ARRANGE));
+                    generateTemperatureArrange()));
             postSaveResponse = PostSaveResponse.from(savedPost);
         }
 
@@ -210,7 +211,7 @@ class PostServiceTest {
             for (int i = 0; i < SAVE_COUNT; i++) {
                 Post savedPost = postRepository.save(
                     Post.from(user, new PostSaveRequest("Test Title", "Test Content", NX, NY), "imgUrl",
-                        TEMPERATURE_ARRANGE));
+                        generateTemperatureArrange()));
             }
         }
 
@@ -246,6 +247,14 @@ class PostServiceTest {
             .nickname(FAKER.internet().username())
             .image(FAKER.internet().url())
             .build();
+    }
+
+    private TemperatureArrange generateTemperatureArrange() {
+        Map<ForecastCategory, String> weatherInfoMap = new HashMap<>();
+        weatherInfoMap.put(ForecastCategory.TMN, String.valueOf(0.0));
+        weatherInfoMap.put(ForecastCategory.TMX, String.valueOf(15.0));
+
+        return TemperatureArrange.from(weatherInfoMap);
     }
 
     private void setAuthentication(long userId) {

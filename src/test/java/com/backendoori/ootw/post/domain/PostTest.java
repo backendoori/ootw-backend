@@ -5,11 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Stream;
 import com.backendoori.ootw.post.dto.PostSaveRequest;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.weather.domain.TemperatureArrange;
-import com.backendoori.ootw.weather.dto.TemperatureArrangeDto;
+import com.backendoori.ootw.weather.domain.forecast.ForecastCategory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,22 +24,28 @@ class PostTest {
     private static final int NY = 127;
     private static final String IMG_URL = "imgUrl";
     private static final User MOCK_USER = mock(User.class);
-    private static final TemperatureArrangeDto TEMPERATURE_ARRANGE_DTO = new TemperatureArrangeDto(-10.0, 10.0);
-    private static final TemperatureArrange TEMPERATURE_ARRANGE = TemperatureArrange.from(TEMPERATURE_ARRANGE_DTO);
+
+    private static TemperatureArrange generateTemperatureArrange() {
+        Map<ForecastCategory, String> weatherInfoMap = new HashMap<>();
+        weatherInfoMap.put(ForecastCategory.TMN, String.valueOf(0.0));
+        weatherInfoMap.put(ForecastCategory.TMX, String.valueOf(15.0));
+
+        return TemperatureArrange.from(weatherInfoMap);
+    }
 
     private static Stream<Arguments> provideInvalidInfo() {
         return Stream.of(Arguments.of("title이 null인 경우",
-                new PostSaveRequest(null, "Test Content", NX, NY), TEMPERATURE_ARRANGE),
+                new PostSaveRequest(null, "Test Content", NX, NY), generateTemperatureArrange()),
             Arguments.of("title이 공백인 경우",
-                new PostSaveRequest(" ", "Test Content", NX, NY), TEMPERATURE_ARRANGE),
+                new PostSaveRequest(" ", "Test Content", NX, NY), generateTemperatureArrange()),
             Arguments.of("title이 30자를 넘는 경우",
-                new PostSaveRequest("T".repeat(31), "Test Content", NX, NY), TEMPERATURE_ARRANGE),
+                new PostSaveRequest("T".repeat(31), "Test Content", NX, NY), generateTemperatureArrange()),
             Arguments.of("content가 null인 경우",
-                new PostSaveRequest("Test Title", null, NX, NY), TEMPERATURE_ARRANGE),
+                new PostSaveRequest("Test Title", null, NX, NY), generateTemperatureArrange()),
             Arguments.of("content가 공백인 경우",
-                new PostSaveRequest("Test Title", " ", NX, NY), TEMPERATURE_ARRANGE),
+                new PostSaveRequest("Test Title", " ", NX, NY), generateTemperatureArrange()),
             Arguments.of("content가 500자를 넘는 경우",
-                new PostSaveRequest("Test Title", "T".repeat(501), NX, NY), TEMPERATURE_ARRANGE),
+                new PostSaveRequest("Test Title", "T".repeat(501), NX, NY), generateTemperatureArrange()),
             Arguments.of("temperatureArrange가 null인 경우",
                 new PostSaveRequest("Test Title", "T".repeat(501), NX, NY), null)
         );
@@ -50,15 +58,15 @@ class PostTest {
         PostSaveRequest request = new PostSaveRequest("Test Title", "Test Content", NX, NY);
 
         // when
-        Post createdPost = Post.from(MOCK_USER, request, IMG_URL, TEMPERATURE_ARRANGE);
+        Post createdPost = Post.from(MOCK_USER, request, IMG_URL, generateTemperatureArrange());
 
         // then
         assertAll(() -> assertThat(createdPost).hasFieldOrPropertyWithValue("user", MOCK_USER),
             () -> assertThat(createdPost).hasFieldOrPropertyWithValue("title", request.title()),
             () -> assertThat(createdPost).hasFieldOrPropertyWithValue("content", request.content()),
             () -> assertThat(createdPost).hasFieldOrPropertyWithValue("image", IMG_URL),
-            () -> assertThat(createdPost).hasFieldOrPropertyWithValue("temperatureArrange", TemperatureArrange.from(
-                TEMPERATURE_ARRANGE_DTO)));
+            () -> assertThat(createdPost).hasFieldOrPropertyWithValue("temperatureArrange",
+                generateTemperatureArrange()));
     }
 
     @ParameterizedTest(name = "[{index}] {0}")
