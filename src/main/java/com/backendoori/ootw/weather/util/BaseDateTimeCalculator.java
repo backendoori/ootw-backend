@@ -26,7 +26,7 @@ public class BaseDateTimeCalculator {
         return new BaseDateTime(baseRequestDate, baseRequestTime);
     }
 
-    public static BaseDateTime getVilageForecastRequestBaseDateTime(LocalDateTime dateTime) {
+    public static BaseDateTime getVillageForecastRequestBaseDateTime(LocalDateTime dateTime) {
         String baseRequestDate = BaseDateTimeFormatter.formatBaseDate(dateTime);
         String baseRequestTime = BaseDateTimeFormatter.formatBaseTime(
             dateTime.withHour(TODAY_TEMPERATURE_ARRANGE_ANNOUNCEMENT_TIME));

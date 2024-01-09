@@ -34,7 +34,7 @@ public class WeatherService {
 
     public TemperatureArrange getCurrentTemperatureArrange(int nx, int ny) {
         LocalDateTime dateTime = LocalDateTime.now();
-        BaseDateTime requestBaseDateTime = BaseDateTimeCalculator.getVilageForecastRequestBaseDateTime(dateTime);
+        BaseDateTime requestBaseDateTime = BaseDateTimeCalculator.getVillageForecastRequestBaseDateTime(dateTime);
         BaseDateTime fcstBaseDateTime = BaseDateTimeCalculator.getCurrentBaseDateTime(dateTime);
 
         Map<ForecastCategory, String> weatherInfoMap = new HashMap<>();
