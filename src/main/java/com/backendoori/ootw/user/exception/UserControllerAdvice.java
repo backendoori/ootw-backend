@@ -13,7 +13,7 @@ public class UserControllerAdvice {
     public ResponseEntity<ErrorResponse> handleNonCertifiedUserException(NonCertifiedUserException e) {
         ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
             .body(errorResponse);
     }
 
