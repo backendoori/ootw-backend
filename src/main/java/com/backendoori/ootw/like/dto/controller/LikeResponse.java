@@ -7,7 +7,7 @@ public record LikeResponse(
     Long userId,
     Long postId,
     boolean status
-    ) {
+) {
 
     public static LikeResponse from(Like like) {
         return new LikeResponse(

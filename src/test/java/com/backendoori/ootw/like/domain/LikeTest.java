@@ -1,6 +1,8 @@
 package com.backendoori.ootw.like.domain;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.backendoori.ootw.post.domain.Post;
 import com.backendoori.ootw.post.dto.PostSaveRequest;

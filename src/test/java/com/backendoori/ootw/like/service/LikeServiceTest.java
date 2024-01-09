@@ -1,11 +1,11 @@
 package com.backendoori.ootw.like.service;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.util.NoSuchElementException;
 import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.like.domain.Like;
-import com.backendoori.ootw.like.dto.controller.LikeRequest;
 import com.backendoori.ootw.like.dto.controller.LikeResponse;
 import com.backendoori.ootw.like.repository.LikeRepository;
 import com.backendoori.ootw.post.controller.PostController;
@@ -16,10 +16,8 @@ import com.backendoori.ootw.post.service.PostService;
 import com.backendoori.ootw.security.TokenMockMvcTest;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.repository.UserRepository;
-import com.backendoori.ootw.weather.domain.Weather;
 import com.backendoori.ootw.weather.dto.WeatherDto;
 import net.datafaker.Faker;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -140,7 +138,7 @@ public class LikeServiceTest extends TokenMockMvcTest {
         Long userId = user.getId();
 
         //when, then
-        assertThatThrownBy(() ->likeService.requestLike(userId, postId))
+        assertThatThrownBy(() -> likeService.requestLike(userId, postId))
             .isInstanceOf(NoSuchElementException.class)
             .hasMessage(POST_NOT_FOUND_MESSAGE);
 
@@ -155,7 +153,7 @@ public class LikeServiceTest extends TokenMockMvcTest {
         Long userId = wrongUserId;
 
         //when, then
-        assertThatThrownBy(() ->likeService.requestLike(userId, postId))
+        assertThatThrownBy(() -> likeService.requestLike(userId, postId))
             .isInstanceOf(UserNotFoundException.class)
             .hasMessage(UserNotFoundException.DEFAULT_MESSAGE);
 

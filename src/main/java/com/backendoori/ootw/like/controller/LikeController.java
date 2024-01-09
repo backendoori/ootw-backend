@@ -21,7 +21,7 @@ public class LikeController {
 
     @PostMapping("")
     public ResponseEntity<LikeResponse> pushLike(Authentication authentication,
-                                                 @Valid @RequestBody LikeRequest requestDto){
+                                                 @Valid @RequestBody LikeRequest requestDto) {
         Long userId = (Long) authentication.getPrincipal();
         return ResponseEntity.ok(likeService.requestLike(userId, requestDto.postId()));
     }
