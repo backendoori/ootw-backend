@@ -21,6 +21,10 @@ spring:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
       mail.smtp.starttls.required: true
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
 minio:
   url: ${MINIO_URL}
   bucket: ${MINIO_BUCKET}
