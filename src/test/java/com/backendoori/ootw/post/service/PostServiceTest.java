@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import com.backendoori.ootw.common.image.ImageService;
 import com.backendoori.ootw.exception.UserNotFoundException;
+import com.backendoori.ootw.post.domain.Post;
 import com.backendoori.ootw.post.dto.PostReadResponse;
 import com.backendoori.ootw.post.dto.PostSaveRequest;
 import com.backendoori.ootw.post.dto.PostSaveResponse;
@@ -17,7 +18,9 @@ import com.backendoori.ootw.post.dto.WriterDto;
 import com.backendoori.ootw.post.repository.PostRepository;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.repository.UserRepository;
+import com.backendoori.ootw.weather.domain.TemperatureArrange;
 import com.backendoori.ootw.weather.dto.TemperatureArrangeDto;
+import com.backendoori.ootw.weather.service.WeatherService;
 import net.datafaker.Faker;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.AfterAll;
@@ -41,7 +44,11 @@ import org.springframework.security.test.context.TestSecurityContextHolder;
 @TestInstance(Lifecycle.PER_CLASS)
 class PostServiceTest {
 
-    static Faker faker = new Faker();
+    static final int NX = 55;
+    static final int NY = 127;
+    static final Faker FAKER = new Faker();
+    static final TemperatureArrangeDto TEMPERATURE_ARRANGE_DTO = new TemperatureArrangeDto(-10.0, 10.0);
+    static final TemperatureArrange TEMPERATURE_ARRANGE = TemperatureArrange.from(TEMPERATURE_ARRANGE_DTO);
 
     User user;
 
@@ -56,6 +63,9 @@ class PostServiceTest {
 
     @MockBean
     private ImageService imageService;
+
+    @MockBean
+    private WeatherService weatherService;
 
     @BeforeEach
     void setup() {
@@ -81,12 +91,13 @@ class PostServiceTest {
         @DisplayName("게시글 저장에 성공한다.")
         void saveSuccess() {
             // given
-            TemperatureArrangeDto weatherDto = new TemperatureArrangeDto(-10.0, 10.0);
-            PostSaveRequest request = new PostSaveRequest("Test Title", "Test Content", weatherDto);
+            PostSaveRequest request = new PostSaveRequest("Test Title", "Test Content", NX, NY);
             MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
                 "text/plain", "some xml".getBytes());
 
             given(imageService.uploadImage(postImg)).willReturn("imgUrl");
+            given(weatherService.getCurrentTemperatureArrange(request.nx(), request.ny())).willReturn(
+                TEMPERATURE_ARRANGE);
 
             // when
             PostSaveResponse postSaveResponse = postService.save(request, postImg);
@@ -97,7 +108,8 @@ class PostServiceTest {
                 () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("content", request.content()),
                 () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("image",
                     imageService.uploadImage(postImg)),
-                () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("weather", request.weather())
+                () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("temperatureArrange",
+                    TEMPERATURE_ARRANGE_DTO)
             );
         }
 
@@ -107,11 +119,7 @@ class PostServiceTest {
             // given
             setAuthentication(user.getId() + 1);
 
-            System.out.println(user.getId() + 1);
-            System.out.println(userRepository.findAll().stream().map(User::getId).toList());
-
-            TemperatureArrangeDto weatherDto = new TemperatureArrangeDto(-10.0, 10.0);
-            PostSaveRequest postSaveRequest = new PostSaveRequest("Test Title", "Test Content", weatherDto);
+            PostSaveRequest postSaveRequest = new PostSaveRequest("Test Title", "Test Content", NX, NY);
             MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
                 "text/plain", "some xml".getBytes());
 
@@ -125,14 +133,13 @@ class PostServiceTest {
         }
 
         // TODO: 그 외 파라미터도 일일이 테스트 할까 고민!(일단 보류)
-        @ParameterizedTest(name = "[{index}] 현재 기온이 {0}인 경우")
+        @ParameterizedTest(name = "[{index}] 최저 기온이 {0}인 경우")
         @ValueSource(doubles = {-900.0, 900.0})
         @NullSource
         @DisplayName("유효하지 않은 값(최저 기온)이 들어갈 경우 게시글 저장에 실패한다.")
         void saveFailInvalidValue(Double minTemperature) {
             // given
-            TemperatureArrangeDto weatherDto = new TemperatureArrangeDto(minTemperature, 10.0);
-            PostSaveRequest postSaveRequest = new PostSaveRequest("Test Title", "Test Content", weatherDto);
+            PostSaveRequest postSaveRequest = new PostSaveRequest("Test Title", "Test Content", NX, NY);
             MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
                 "text/plain", "some xml".getBytes());
 
@@ -143,20 +150,18 @@ class PostServiceTest {
 
     }
 
-    // TODO: 조회용 setUp()을 미리 만들어 놓아도 좋을 것 같다.
     @Nested
     @DisplayName("게시글 단건 조회하기")
     class GetDetailByPostId {
 
-        PostSaveResponse savedPost;
+        PostSaveResponse postSaveResponse;
 
         @BeforeEach
         void setUp() {
-            TemperatureArrangeDto weatherDto = new TemperatureArrangeDto(-10.0, 10.0);
-            MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
-                "text/plain", "some xml".getBytes());
-            savedPost = postService.save(
-                new PostSaveRequest("Test Title", "Test Content", weatherDto), postImg);
+            Post savedPost = postRepository.save(
+                Post.from(user, new PostSaveRequest("Test Title", "Test Content", NX, NY), "imgUrl",
+                    TEMPERATURE_ARRANGE));
+            postSaveResponse = PostSaveResponse.from(savedPost);
         }
 
         @Test
@@ -166,29 +171,30 @@ class PostServiceTest {
             WriterDto savedPostWriter = WriterDto.from(user);
 
             // when
-            PostReadResponse postDetailInfo = postService.getDetailByPostId(savedPost.postId());
+            PostReadResponse postDetailInfo = postService.getDetailByPostId(postSaveResponse.postId());
 
             // then
             assertAll(
-                () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("postId", savedPost.postId()),
+                () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("postId", postSaveResponse.postId()),
                 () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("writer", savedPostWriter),
-                () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("title", savedPost.title()),
-                () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("content", savedPost.content()),
-                () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("image", savedPost.image()),
+                () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("title", postSaveResponse.title()),
+                () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("content", postSaveResponse.content()),
+                () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("image", postSaveResponse.image()),
                 () -> assertThat(postDetailInfo)
-                    .hasFieldOrPropertyWithValue("createdAt", savedPost.createdAt()),
+                    .hasFieldOrPropertyWithValue("createdAt", postSaveResponse.createdAt()),
                 () -> assertThat(postDetailInfo)
-                    .hasFieldOrPropertyWithValue("updatedAt", savedPost.updatedAt()),
-                () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("weather", savedPost.weather())
+                    .hasFieldOrPropertyWithValue("updatedAt", postSaveResponse.updatedAt()),
+                () -> assertThat(postDetailInfo).hasFieldOrPropertyWithValue("temperatureArrange",
+                    postSaveResponse.temperatureArrange())
             );
         }
 
         @Test
         @DisplayName("저장되지 않은 게시글 Id로 요청할 경우 게시글 단건 조회에 실패한다.")
-        void getDatailByPostIdFailNotSavedPost() {
+        void getDetailByPostIdFailNotSavedPost() {
             // given, when. then
             assertThrows(NoSuchElementException.class,
-                () -> postService.getDetailByPostId(savedPost.postId() + 1));
+                () -> postService.getDetailByPostId(postSaveResponse.postId() + 1));
         }
 
     }
@@ -201,14 +207,10 @@ class PostServiceTest {
 
         @BeforeEach
         void setUp() {
-
-            TemperatureArrangeDto weatherDto = new TemperatureArrangeDto(-10.0, 10.0);
-            MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
-                "text/plain", "some xml".getBytes());
-            PostSaveRequest request = new PostSaveRequest("Test Title", "Test Content", weatherDto);
-
             for (int i = 0; i < SAVE_COUNT; i++) {
-                postService.save(request, postImg);
+                Post savedPost = postRepository.save(
+                    Post.from(user, new PostSaveRequest("Test Title", "Test Content", NX, NY), "imgUrl",
+                        TEMPERATURE_ARRANGE));
             }
         }
 
@@ -238,11 +240,11 @@ class PostServiceTest {
 
     private User generateUser() {
         return User.builder()
-            .id((long) faker.number().positive())
-            .email(faker.internet().emailAddress())
-            .password(faker.internet().password())
-            .nickname(faker.internet().username())
-            .image(faker.internet().url())
+            .id((long) FAKER.number().positive())
+            .email(FAKER.internet().emailAddress())
+            .password(FAKER.internet().password())
+            .nickname(FAKER.internet().username())
+            .image(FAKER.internet().url())
             .build();
     }
 
