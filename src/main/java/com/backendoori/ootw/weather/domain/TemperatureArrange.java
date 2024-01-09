@@ -33,7 +33,7 @@ public class TemperatureArrange {
     public static TemperatureArrange from(TemperatureArrangeDto weatherDto) {
         Temperature minTemperature = Temperature.of(weatherDto.min());
         Temperature maxTemperature = Temperature.of(weatherDto.max());
-        validateTemperatureArrange(minTemperature, maxTemperature);
+        validateArrange(minTemperature, maxTemperature);
 
         return new TemperatureArrange(minTemperature, maxTemperature);
     }
@@ -47,8 +47,7 @@ public class TemperatureArrange {
         return new TemperatureArrange(dayMinTemperature, dayMaxTemperature);
     }
 
-    private static void validateTemperatureArrange(Temperature dayMinTemperature,
-                                                   Temperature dayMaxTemperature) {
+    private static void validateArrange(Temperature dayMinTemperature, Temperature dayMaxTemperature) {
         Assert.isTrue(dayMinTemperature.getValue() <= dayMaxTemperature.getValue(), "일 최저 기온, 일 최고 기온 값이 적절하지 않습니다.");
     }
 }

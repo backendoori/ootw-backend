@@ -1,5 +1,9 @@
 package com.backendoori.ootw.post.domain;
 
+import static com.backendoori.ootw.post.util.validator.PostValidator.validatePostSaveRequest;
+import static com.backendoori.ootw.post.util.validator.PostValidator.validateTemperatureArrange;
+import static com.backendoori.ootw.post.util.validator.PostValidator.validateUser;
+
 import com.backendoori.ootw.common.BaseEntity;
 import com.backendoori.ootw.post.dto.PostSaveRequest;
 import com.backendoori.ootw.user.domain.User;
@@ -17,16 +21,12 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.util.Assert;
 
 @Table(name = "posts")
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post extends BaseEntity {
-
-    private static final Integer MAX_TITLE_LENGTH = 30;
-    private static final Integer MAX_CONTENT_LENGTH = 500;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -63,33 +63,6 @@ public class Post extends BaseEntity {
 
     public static Post from(User user, PostSaveRequest request, String imgUrl, TemperatureArrange temperatureArrange) {
         return new Post(user, request, imgUrl, temperatureArrange);
-    }
-
-    // TODO: Validator 클래스를 독립적으로 만드는 것이 나을까..?
-    private static void validateUser(User user) {
-        Assert.notNull(user, "게시글 생성 요청 사용자가 null이어서는 안됩니다.");
-    }
-
-    private static void validatePostSaveRequest(PostSaveRequest request) {
-        Assert.notNull(request, "게시글 생성 요청 정보가 null이어서는 안됩니다.");
-        validateTitle(request.title());
-        validateContent(request.content());
-    }
-
-    private static void validateTemperatureArrange(TemperatureArrange temperatureArrange) {
-        Assert.notNull(temperatureArrange, "게시글 기온 범위가 null이어서는 안됩니다.");
-    }
-
-    private static void validateTitle(String title) {
-        Assert.notNull(title, "게시글 제목이 null이어서는 안됩니다.");
-        Assert.isTrue(!title.isBlank(), "게시글 제목이 공백이어서는 안됩니다.");
-        Assert.isTrue(!(title.length() > MAX_TITLE_LENGTH), "게시글 제목은 30자 이내여야 합니다.");
-    }
-
-    private static void validateContent(String content) {
-        Assert.notNull(content, "게시글 내용이 null이어서는 안됩니다.");
-        Assert.isTrue(!content.isBlank(), "게시글 내용이 공백이어서는 안됩니다.");
-        Assert.isTrue(!(content.length() > MAX_CONTENT_LENGTH), "게시글 내용은 500자 이내여야 합니다.");
     }
 
 }
