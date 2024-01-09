@@ -33,6 +33,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class LikeServiceTest extends TokenMockMvcTest {
 
     private static final String POST_NOT_FOUND_MESSAGE = "해당 게시글이 존재하지 않습니다.";
+    static final WeatherDto weatherDto = new WeatherDto(0.0, -10.0, 10.0, 1, 1);
+
     static Faker faker = new Faker();
 
     User user;
@@ -89,12 +91,8 @@ public class LikeServiceTest extends TokenMockMvcTest {
 
     private Post generatePost(User user) {
         PostSaveRequest postSaveRequest =
-            new PostSaveRequest("title", faker.gameOfThrones().quote(), weatherDtoGenerator());
+            new PostSaveRequest("title", faker.gameOfThrones().quote(), weatherDto);
         return Post.from(user, postSaveRequest, faker.internet().url());
-    }
-
-    private WeatherDto weatherDtoGenerator() {
-        return new WeatherDto(0.0, -10.0, 10.0, 1, 1);
     }
 
     @Test

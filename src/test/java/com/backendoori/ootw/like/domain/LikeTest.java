@@ -14,6 +14,8 @@ import org.junit.jupiter.params.provider.NullSource;
 
 class LikeTest {
 
+    static final WeatherDto weatherDto = new WeatherDto(0.0, -10.0, 10.0, 1, 1);
+
     static Faker faker = new Faker();
 
     private User generateUser() {
@@ -28,12 +30,8 @@ class LikeTest {
 
     private Post generatePost(User user) {
         PostSaveRequest postSaveRequest =
-            new PostSaveRequest("title", faker.gameOfThrones().quote(), weatherDtoGenerator());
+            new PostSaveRequest("title", faker.gameOfThrones().quote(), weatherDto);
         return Post.from(user, postSaveRequest, faker.internet().url());
-    }
-
-    private WeatherDto weatherDtoGenerator() {
-        return new WeatherDto(0.0, -10.0, 10.0, 1, 1);
     }
 
     @Test

@@ -18,7 +18,6 @@ import com.backendoori.ootw.post.service.PostService;
 import com.backendoori.ootw.security.TokenMockMvcTest;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.repository.UserRepository;
-import com.backendoori.ootw.weather.domain.Weather;
 import com.backendoori.ootw.weather.dto.WeatherDto;
 import jakarta.transaction.Transactional;
 import net.datafaker.Faker;
@@ -29,7 +28,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -42,6 +40,7 @@ import org.springframework.http.MediaType;
 class LikeControllerTest extends TokenMockMvcTest {
 
     static Faker faker = new Faker();
+    static final WeatherDto weatherDto = new WeatherDto(0.0, -10.0, 10.0, 1, 1);
 
     User user;
     User writer;
@@ -93,13 +92,10 @@ class LikeControllerTest extends TokenMockMvcTest {
 
     private Post generatePost(User user) {
         PostSaveRequest postSaveRequest =
-            new PostSaveRequest("title", faker.gameOfThrones().quote(), weatherDtoGenerator());
+            new PostSaveRequest("title", faker.gameOfThrones().quote(), weatherDto);
         return Post.from(user, postSaveRequest, faker.internet().url());
     }
 
-    private WeatherDto weatherDtoGenerator() {
-        return new WeatherDto(0.0, -10.0, 10.0, 1, 1);
-    }
 
     @Test
     @Transactional
