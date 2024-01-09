@@ -18,57 +18,54 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 class PostTest {
 
-    private static final TemperatureArrangeDto WEATHER_DTO = new TemperatureArrangeDto(-10.0, 10.0);
-    private static final TemperatureArrangeDto INVALID_WEATHER_DTO = new TemperatureArrangeDto(-900.0, 10.0);
+    private static final int NX = 55;
+    private static final int NY = 127;
+    private static final String IMG_URL = "imgUrl";
     private static final User MOCK_USER = mock(User.class);
+    private static final TemperatureArrangeDto TEMPERATURE_ARRANGE_DTO = new TemperatureArrangeDto(-10.0, 10.0);
+    static final TemperatureArrange TEMPERATURE_ARRANGE = TemperatureArrange.from(TEMPERATURE_ARRANGE_DTO);
 
     private static Stream<Arguments> provideInvalidInfo() {
         return Stream.of(Arguments.of("title이 null인 경우",
-                new PostSaveRequest(null, "Test Content", WEATHER_DTO)),
+                new PostSaveRequest(null, "Test Content", NX, NY)),
             Arguments.of("title이 공백인 경우",
-                new PostSaveRequest(" ", "Test Content", WEATHER_DTO)),
+                new PostSaveRequest(" ", "Test Content", NX, NY)),
             Arguments.of("title이 30자를 넘는 경우",
-                new PostSaveRequest("T".repeat(31), "Test Content", WEATHER_DTO)),
+                new PostSaveRequest("T".repeat(31), "Test Content", NX, NY)),
             Arguments.of("content가 null인 경우",
-                new PostSaveRequest("Test Title", null, WEATHER_DTO)),
+                new PostSaveRequest("Test Title", null, NX, NY)),
             Arguments.of("content가 공백인 경우",
-                new PostSaveRequest("Test Title", " ", WEATHER_DTO)),
+                new PostSaveRequest("Test Title", " ", NX, NY)),
             Arguments.of("content가 500자를 넘는 경우",
-                new PostSaveRequest("Test Title", "T".repeat(501), WEATHER_DTO)),
-            Arguments.of("weather가 null인 경우",
-                new PostSaveRequest("Test Title", "Test Content", null)),
-            Arguments.of("weather가 유효하지 않은 값인 경우",
-                new PostSaveRequest("Test Title", "Test Content", INVALID_WEATHER_DTO)));
+                new PostSaveRequest("Test Title", "T".repeat(501), NX, NY))
+        );
     }
 
     @Test
     @DisplayName("PostSaveRequest로부터 Post를 생성하는 것에 성공한다.")
     void createPostSuccess() {
         // given
-        PostSaveRequest request = new PostSaveRequest("Test Title", "Test Content", WEATHER_DTO);
-        String imgUrl = "imgUrl";
+        PostSaveRequest request = new PostSaveRequest("Test Title", "Test Content", NX, NY);
 
         // when
-        Post createdPost = Post.from(MOCK_USER, request, imgUrl);
+        Post createdPost = Post.from(MOCK_USER, request, IMG_URL, TEMPERATURE_ARRANGE);
 
         // then
         assertAll(() -> assertThat(createdPost).hasFieldOrPropertyWithValue("user", MOCK_USER),
             () -> assertThat(createdPost).hasFieldOrPropertyWithValue("title", request.title()),
             () -> assertThat(createdPost).hasFieldOrPropertyWithValue("content", request.content()),
-            () -> assertThat(createdPost).hasFieldOrPropertyWithValue("image", imgUrl),
-            () -> assertThat(createdPost).hasFieldOrPropertyWithValue("weather", TemperatureArrange.from(WEATHER_DTO)));
+            () -> assertThat(createdPost).hasFieldOrPropertyWithValue("image", IMG_URL),
+            () -> assertThat(createdPost).hasFieldOrPropertyWithValue("temperatureArrange", TemperatureArrange.from(
+                TEMPERATURE_ARRANGE_DTO)));
     }
 
     @ParameterizedTest(name = "[{index}] {0}")
     @MethodSource("provideInvalidInfo")
     @DisplayName("from 메서드로 유효하지 않은 User, PostSaveRequest로부터 Post를 생성하는 것에 실패한다.")
     void createPostFail(String info, PostSaveRequest postSaveRequest) {
-        // given, when, then
-        String imgUrl = "imgUrl";
-
-        assertThrows(IllegalArgumentException.class, () -> Post.from(MOCK_USER, postSaveRequest, imgUrl));
-
-        // TODO: 에러 메시지 검증
+        // given // when, then
+        assertThrows(IllegalArgumentException.class,
+            () -> Post.from(MOCK_USER, postSaveRequest, IMG_URL, TEMPERATURE_ARRANGE));
     }
 
 }
