@@ -5,25 +5,34 @@ import java.util.Map;
 import com.backendoori.ootw.weather.domain.PtyType;
 import com.backendoori.ootw.weather.domain.SkyType;
 import com.backendoori.ootw.weather.domain.forecast.ForecastCategory;
+import com.backendoori.ootw.weather.exception.ForecastResultErrorManager;
+import org.springframework.util.Assert;
 
 public record WeatherResponse(
     LocalDateTime currentDateTime,
-    Double currentTemperature,
+    double currentTemperature,
     String sky,
     String pty,
-    Integer nx,
-    Integer ny
+    int nx,
+    int ny
 ) {
 
     public static WeatherResponse from(LocalDateTime dateTime, int nx, int ny,
                                        Map<ForecastCategory, String> currentWeather) {
+        Assert.isTrue(
+            currentWeather.containsKey(ForecastCategory.T1H)
+                && currentWeather.containsKey(ForecastCategory.SKY)
+                && currentWeather.containsKey(ForecastCategory.PTY),
+            () -> {
+                throw ForecastResultErrorManager.getApiServerException();
+            });
 
-        Double currentTemperature = Double.valueOf(currentWeather.get(ForecastCategory.T1H));
+        double currentTemperature = Double.parseDouble(currentWeather.get(ForecastCategory.T1H));
 
-        Integer skyCode = Integer.valueOf(currentWeather.get(ForecastCategory.SKY));
+        int skyCode = Integer.parseInt(currentWeather.get(ForecastCategory.SKY));
         String sky = SkyType.getByCode(skyCode).name();
 
-        Integer ptyCode = Integer.valueOf(currentWeather.get(ForecastCategory.PTY));
+        int ptyCode = Integer.parseInt(currentWeather.get(ForecastCategory.PTY));
         String pty = PtyType.getByCode(ptyCode).name();
 
         return new WeatherResponse(dateTime, currentTemperature, sky, pty, nx, ny);

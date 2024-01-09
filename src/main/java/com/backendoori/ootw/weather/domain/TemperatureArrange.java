@@ -3,6 +3,7 @@ package com.backendoori.ootw.weather.domain;
 import java.util.Map;
 import com.backendoori.ootw.weather.domain.forecast.ForecastCategory;
 import com.backendoori.ootw.weather.dto.TemperatureArrangeDto;
+import com.backendoori.ootw.weather.exception.ForecastResultErrorManager;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -38,11 +39,18 @@ public class TemperatureArrange {
         return new TemperatureArrange(minTemperature, maxTemperature);
     }
 
-    public static TemperatureArrange from(Map<ForecastCategory, String> temperatureArrange) {
+    public static TemperatureArrange from(Map<ForecastCategory, String> temperatureArrangeMap) {
+        Assert.isTrue(
+            temperatureArrangeMap.containsKey(ForecastCategory.TMN)
+                && temperatureArrangeMap.containsKey(ForecastCategory.TMX),
+            () -> {
+                throw ForecastResultErrorManager.getApiServerException();
+            });
+
         Temperature dayMinTemperature =
-            Temperature.of(Double.parseDouble(temperatureArrange.get(ForecastCategory.TMN)));
+            Temperature.of(Double.parseDouble(temperatureArrangeMap.get(ForecastCategory.TMN)));
         Temperature dayMaxTemperature =
-            Temperature.of(Double.parseDouble(temperatureArrange.get(ForecastCategory.TMX)));
+            Temperature.of(Double.parseDouble(temperatureArrangeMap.get(ForecastCategory.TMX)));
 
         return new TemperatureArrange(dayMinTemperature, dayMaxTemperature);
     }
