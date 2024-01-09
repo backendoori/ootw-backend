@@ -20,7 +20,6 @@ import com.backendoori.ootw.post.service.PostService;
 import com.backendoori.ootw.security.TokenMockMvcTest;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.repository.UserRepository;
-import com.backendoori.ootw.weather.dto.TemperatureArrangeDto;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,7 +39,9 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 @TestInstance(Lifecycle.PER_CLASS)
 class PostControllerTest extends TokenMockMvcTest {
 
-    static Faker faker = new Faker();
+    static final int NX = 55;
+    static final int NY = 127;
+    static final Faker FAKER = new Faker();
 
     User user;
 
@@ -73,11 +74,11 @@ class PostControllerTest extends TokenMockMvcTest {
 
     private User generateUser() {
         return User.builder()
-            .id((long) faker.number().positive())
-            .email(faker.internet().emailAddress())
-            .password(faker.internet().password())
-            .nickname(faker.internet().username())
-            .image(faker.internet().url())
+            .id((long) FAKER.number().positive())
+            .email(FAKER.internet().emailAddress())
+            .password(FAKER.internet().password())
+            .nickname(FAKER.internet().username())
+            .image(FAKER.internet().url())
             .build();
     }
 
@@ -89,9 +90,8 @@ class PostControllerTest extends TokenMockMvcTest {
         @DisplayName("게시글 저장에 성공한다.")
         void saveSuccess() throws Exception {
             // given
-            TemperatureArrangeDto weatherDto = new TemperatureArrangeDto(-10.0, 10.0);
             PostSaveRequest postSaveRequest =
-                new PostSaveRequest("Test Title", "Test Content", weatherDto);
+                new PostSaveRequest("Test Title", "Test Content", NX, NY);
             MockMultipartFile request =
                 new MockMultipartFile("request", "request.json", MediaType.APPLICATION_JSON_VALUE,
                     objectMapper.writeValueAsBytes(postSaveRequest));
@@ -124,9 +124,8 @@ class PostControllerTest extends TokenMockMvcTest {
             // given
             setToken(user.getId() + 1);
 
-            TemperatureArrangeDto weatherDto = new TemperatureArrangeDto(-10.0, 10.0);
             PostSaveRequest postSaveRequest =
-                new PostSaveRequest("Test Title", "Test Content", weatherDto);
+                new PostSaveRequest("Test Title", "Test Content", NX, NY);
             MockMultipartFile request =
                 new MockMultipartFile("request", "request.json", MediaType.APPLICATION_JSON_VALUE,
                     objectMapper.writeValueAsBytes(postSaveRequest));
@@ -152,8 +151,7 @@ class PostControllerTest extends TokenMockMvcTest {
         @DisplayName("유효하지 않은 요청 값(게시글 title)이 포함된 게시글 저장에 실패한다.")
         void saveFailByMethodArgumentNotValidException() throws Exception {
             // given
-            TemperatureArrangeDto weatherDto = new TemperatureArrangeDto(-10.0, 10.0);
-            PostSaveRequest postSaveRequest = new PostSaveRequest("", "Test Content", weatherDto);
+            PostSaveRequest postSaveRequest = new PostSaveRequest("", "Test Content", NX, NY);
             MockMultipartFile request =
                 new MockMultipartFile("request", "request.json", MediaType.APPLICATION_JSON_VALUE,
                     objectMapper.writeValueAsBytes(postSaveRequest));
@@ -180,8 +178,7 @@ class PostControllerTest extends TokenMockMvcTest {
         @DisplayName("유효하지 않은 요청 값(최저 기온)이 포함된 게시글 저장에 실패한다.")
         void saveFailInvalidValueByIllegalArgumentException() throws Exception {
             // given
-            TemperatureArrangeDto weatherDto = new TemperatureArrangeDto(-900.0, 10.0);
-            PostSaveRequest postSaveRequest = new PostSaveRequest("", "Test Content", weatherDto);
+            PostSaveRequest postSaveRequest = new PostSaveRequest("", "Test Content", NX, NY);
             MockMultipartFile request =
                 new MockMultipartFile("request", "request.json", MediaType.APPLICATION_JSON_VALUE,
                     objectMapper.writeValueAsBytes(postSaveRequest));
@@ -217,11 +214,10 @@ class PostControllerTest extends TokenMockMvcTest {
         void setUp() {
             TestSecurityContextHolder.setAuthentication(new TestingAuthenticationToken(user.getId(), null));
 
-            TemperatureArrangeDto weatherDto = new TemperatureArrangeDto(-10.0, 10.0);
             MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
                 "text/plain", "some xml".getBytes());
             savedPost = postService.save(
-                new PostSaveRequest("Test Title", "Test Content", weatherDto), postImg);
+                new PostSaveRequest("Test Title", "Test Content", NX, NY), postImg);
         }
 
         @Test
@@ -266,9 +262,8 @@ class PostControllerTest extends TokenMockMvcTest {
         void setUp() {
             TestSecurityContextHolder.setAuthentication(new TestingAuthenticationToken(user.getId(), null));
 
-            TemperatureArrangeDto weatherDto = new TemperatureArrangeDto(-10.0, 10.0);
             PostSaveRequest request =
-                new PostSaveRequest("Test Title", "Test Content", weatherDto);
+                new PostSaveRequest("Test Title", "Test Content", NX, NY);
             MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
                 "text/plain", "some xml".getBytes());
 
