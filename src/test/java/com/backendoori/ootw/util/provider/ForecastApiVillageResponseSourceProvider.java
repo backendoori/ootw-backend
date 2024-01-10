@@ -15,7 +15,8 @@ public class ForecastApiVillageResponseSourceProvider {
 
     public static final String TMX_VALUE = "1.0";
     public static final String TMN_VALUE = "-1.0";
-    public static final List<ForecastResultItem> VALID_VILLAGE_FORECAST_RESPONSE = List.of(
+
+    public static final List<ForecastResultItem> VALID_VILLAGE_FORECAST_ITEMS = List.of(
         new ForecastResultItem(
             VILLAGE_FORECAST_BASE_DATETIME,
             FCST_DATETIME,
