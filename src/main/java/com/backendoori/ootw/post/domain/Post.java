@@ -49,6 +49,9 @@ public class Post extends BaseEntity {
     @Embedded
     private TemperatureArrange temperatureArrange;
 
+    @Column(name = "like_cnt")
+    private int likeCnt;
+
     private Post(User user, PostSaveRequest request, String imgUrl, TemperatureArrange temperatureArrange) {
         validateUser(user);
         validatePostSaveRequest(request);
@@ -63,6 +66,14 @@ public class Post extends BaseEntity {
 
     public static Post from(User user, PostSaveRequest request, String imgUrl, TemperatureArrange temperatureArrange) {
         return new Post(user, request, imgUrl, temperatureArrange);
+    }
+
+    public void increaseLikeCnt() {
+        this.likeCnt++;
+    }
+
+    public void decreaseLikeCnt() {
+        this.likeCnt--;
     }
 
 }
