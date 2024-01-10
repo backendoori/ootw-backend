@@ -30,4 +30,10 @@ public final class AssertUtil extends Assert {
         }
     }
 
+    public static void isFalse(boolean state, String message) {
+        if (!state) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
 }
