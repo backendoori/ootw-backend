@@ -7,6 +7,7 @@ import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.user.domain.Certificate;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.dto.CertifyDto;
+import com.backendoori.ootw.user.dto.SendCertificateDto;
 import com.backendoori.ootw.user.exception.AlreadyCertifiedUserException;
 import com.backendoori.ootw.user.exception.IncorrectCertificateException;
 import com.backendoori.ootw.user.repository.CertificateRedisRepository;
@@ -27,7 +28,9 @@ public class CertificateService {
     private final CertificateRedisRepository certificateRedisRepository;
 
     @Transactional
-    public void sendCertificate(String email) {
+    public void sendCertificate(SendCertificateDto sendCertificateDto) {
+        String email = sendCertificateDto.email();
+
         User user = userRepository.findByEmail(email)
             .orElseThrow(UserNotFoundException::new);
 

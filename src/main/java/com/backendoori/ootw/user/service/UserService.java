@@ -5,6 +5,7 @@ import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.security.jwt.TokenProvider;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.dto.LoginDto;
+import com.backendoori.ootw.user.dto.SendCertificateDto;
 import com.backendoori.ootw.user.dto.SignupDto;
 import com.backendoori.ootw.user.dto.TokenDto;
 import com.backendoori.ootw.user.dto.UserDto;
@@ -36,7 +37,7 @@ public class UserService {
         User user = buildUser(signupDto);
 
         userRepository.save(user);
-        certificateService.sendCertificate(user.getEmail());
+        certificateService.sendCertificate(new SendCertificateDto(user.getEmail()));
 
         return UserDto.from(user);
     }

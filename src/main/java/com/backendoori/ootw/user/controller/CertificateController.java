@@ -1,13 +1,9 @@
 package com.backendoori.ootw.user.controller;
 
 import com.backendoori.ootw.user.dto.CertifyDto;
+import com.backendoori.ootw.user.dto.SendCertificateDto;
 import com.backendoori.ootw.user.service.CertificateService;
-import com.backendoori.ootw.user.validation.RFC5322;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,14 +19,8 @@ public class CertificateController {
     private final CertificateService certificateService;
 
     @PatchMapping("/certificate")
-    public ResponseEntity<Void> sendCertificate(
-        @NotNull
-        @NotBlank
-        @Size(max = 255)
-        @Email(regexp = RFC5322.REGEX)
-        String email
-    ) {
-        certificateService.sendCertificate(email);
+    public ResponseEntity<Void> sendCertificate(@Valid SendCertificateDto sendCertificateDto) {
+        certificateService.sendCertificate(sendCertificateDto);
 
         return ResponseEntity.status(HttpStatus.OK)
             .build();
