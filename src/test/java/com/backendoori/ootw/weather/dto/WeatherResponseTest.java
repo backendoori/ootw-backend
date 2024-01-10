@@ -55,7 +55,7 @@ class WeatherResponseTest {
         weatherInfoMap.put(ForecastCategory.PTY, String.valueOf(ptyCode));
 
         // when // then
-        WeatherResponse weatherResponse = WeatherResponse.from(DATETIME, VALID_COORDINATE, weatherInfoMap);
+        WeatherResponse weatherResponse = WeatherResponse.from(DATETIME, weatherInfoMap);
         assertAll(
             () -> assertThat(weatherResponse).hasFieldOrPropertyWithValue("currentTemperature",
                 currentTemperature.getValue()),
@@ -70,7 +70,7 @@ class WeatherResponseTest {
     void createWeatherResponseFail(Map<ForecastCategory, String> weatherInfoMap) {
         // given // when // then
         assertThrows(IllegalStateException.class,
-            () -> WeatherResponse.from(DATETIME, VALID_COORDINATE, weatherInfoMap));
+            () -> WeatherResponse.from(DATETIME, weatherInfoMap));
     }
 
 }

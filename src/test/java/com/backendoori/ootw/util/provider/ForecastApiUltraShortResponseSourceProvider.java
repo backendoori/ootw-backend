@@ -58,7 +58,7 @@ public class ForecastApiUltraShortResponseSourceProvider {
         weatherInfoMap.put(ForecastCategory.SKY, SKY_VALUE);
         weatherInfoMap.put(ForecastCategory.PTY, PTY_VALUE);
 
-        return WeatherResponse.from(DATETIME, VALID_COORDINATE, weatherInfoMap);
+        return WeatherResponse.from(DATETIME, weatherInfoMap);
     }
 
 }

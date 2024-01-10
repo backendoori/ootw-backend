@@ -60,7 +60,7 @@ class WeatherServiceTest {
         void getCurrentWeatherSuccess() {
             // given
             Map<ForecastCategory, String> weatherInfoMap = generateUltraShortWeatherInfoMap();
-            WeatherResponse expectedResponse = WeatherResponse.from(DATETIME, VALID_COORDINATE, weatherInfoMap);
+            WeatherResponse expectedResponse = WeatherResponse.from(DATETIME, weatherInfoMap);
 
             given(
                 forecastApiClient.requestUltraShortForecastItems(ULTRA_SHORT_FORECAST_BASE_DATETIME, VALID_COORDINATE))

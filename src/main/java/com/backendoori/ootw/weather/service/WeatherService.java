@@ -32,7 +32,7 @@ public class WeatherService {
             .filter(item -> item.matchFcstDateTime(fcstBaseDateTime))
             .forEach(item -> weatherInfoMap.put(ForecastCategory.valueOf(item.category()), item.fcstValue()));
 
-        return WeatherResponse.from(dateTime, location, weatherInfoMap);
+        return WeatherResponse.from(dateTime, weatherInfoMap);
     }
 
     public TemperatureArrange getCurrentTemperatureArrange(Coordinate location) {
