@@ -9,14 +9,20 @@ spring:
       ddl-auto: validate
     open-in-view: false
   mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
+    host: 127.0.0.1
+    port: 3025
+    username: greenmail
+    password: test
     properties:
-      mail.smtp.auth: true
-      mail.smtp.starttls.enable: true
-      mail.smtp.starttls.required: true
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+      transport:
+        protocol: smtp
+      debug: true
+    default-encoding: UTF-8
 minio:
   url: ${MINIO_URL}
   bucket: ${MINIO_BUCKET}
