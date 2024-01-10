@@ -1,19 +1,26 @@
 package com.backendoori.ootw.post.dto;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import com.backendoori.ootw.post.domain.Post;
 import com.backendoori.ootw.weather.dto.TemperatureArrangeDto;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-public record PostReadResponse(
-    Long postId,
-    WriterDto writer,
-    String title,
-    String content,
-    String image,
-    LocalDateTime createdAt,
-    LocalDateTime updatedAt,
-    TemperatureArrangeDto temperatureArrange
-) {
+@Getter
+@AllArgsConstructor
+public final class PostReadResponse {
+
+    private final Long postId;
+    private final WriterDto writer;
+    private final String title;
+    private final String content;
+    private final String image;
+    private final LocalDateTime createdAt;
+    private final LocalDateTime updatedAt;
+    private final TemperatureArrangeDto temperatureArrange;
+    private final int likeCnt;
+    private int isLike;
 
     public static PostReadResponse from(Post post) {
         return new PostReadResponse(
@@ -24,8 +31,14 @@ public record PostReadResponse(
             post.getImage(),
             post.getCreatedAt(),
             post.getUpdatedAt(),
-            TemperatureArrangeDto.from(post.getTemperatureArrange())
-        );
+            TemperatureArrangeDto.from(post.getTemperatureArrange()),
+            post.getLikeCnt(),
+            0
+            );
+    }
+
+    public void updateIsLike() {
+        this.isLike = 1;
     }
 
 }
