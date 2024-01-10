@@ -30,11 +30,19 @@ public class LikeService {
         User user = userRepository.findById(userId)
             .orElseThrow(UserNotFoundException::new);
 
-        Post post = postRepository.findById(postId)
+        Post post = postRepository.findByIdForUpdateLikeCount(postId)
             .orElseThrow(() -> new NoSuchElementException(POST_NOT_FOUND_MESSAGE));
 
         likeRepository.findByUserAndPost(user, post).ifPresentOrElse(
-            Like::updateStatus,
+            like -> {
+                boolean likeStatus = like.updateStatus();
+                if(likeStatus){
+                    post.increaseLikeCnt();
+                }
+                if(!likeStatus){
+                    post.decreaseLikeCnt();
+                }
+            },
             likeNotExist(user, post)
         );
 
@@ -51,8 +59,9 @@ public class LikeService {
                 Like.builder()
                     .user(user)
                     .post(post)
-                    .status(true)
+                    .isLike(true)
                     .build());
+            post.increaseLikeCnt();
         };
     }
 
