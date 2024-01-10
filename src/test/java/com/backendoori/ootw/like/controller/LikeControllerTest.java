@@ -89,6 +89,7 @@ class LikeControllerTest extends TokenMockMvcTest {
             .password(FAKER.internet().password())
             .nickname(FAKER.internet().username())
             .image(FAKER.internet().url())
+            .certified(true)
             .build();
     }
 

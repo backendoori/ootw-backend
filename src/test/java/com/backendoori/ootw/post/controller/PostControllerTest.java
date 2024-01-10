@@ -79,11 +79,11 @@ class PostControllerTest extends TokenMockMvcTest {
 
     private User generateUser() {
         return User.builder()
-            .id((long) faker.number().positive())
-            .email(faker.internet().emailAddress())
-            .password(faker.internet().password())
-            .nickname(faker.internet().username())
-            .image(faker.internet().url())
+            .id((long) FAKER.number().positive())
+            .email(FAKER.internet().emailAddress())
+            .password(FAKER.internet().password())
+            .nickname(FAKER.internet().username())
+            .image(FAKER.internet().url())
             .certified(true)
             .build();
     }
