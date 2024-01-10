@@ -63,13 +63,13 @@ class CertificateServiceTest extends MailTest {
     @Test
     void testSendCertificate() {
         // given // when
-        certificateService.sendCertificate(user);
+        certificateService.sendCertificate(user.getEmail());
 
         // then
         smtp.waitForIncomingEmail(30 * 1000L, 1);
 
         String actualCode = GreenMailUtil.getBody(smtp.getReceivedMessages()[0]);
-        Certificate certificate = certificateRedisRepository.findByUserId(user.getId())
+        Certificate certificate = certificateRedisRepository.findByEmail(user.getEmail())
             .orElseThrow();
 
         assertThat(actualCode).isEqualTo(certificate.getCode());
@@ -83,9 +83,9 @@ class CertificateServiceTest extends MailTest {
 
         @BeforeEach
         void setup() {
-            certifyDto = new CertifyDto(user.getId(), RandomStringUtils.random(CertificateService.CERTIFICATE_SIZE));
+            certifyDto = new CertifyDto(user.getEmail(), RandomStringUtils.random(CertificateService.CERTIFICATE_SIZE));
             certificate = Certificate.builder()
-                .userId(certifyDto.userId())
+                .email(certifyDto.email())
                 .code(certifyDto.code())
                 .build();
         }
@@ -110,8 +110,8 @@ class CertificateServiceTest extends MailTest {
         @Test
         void failUserNotFound() {
             // given
-            int salt = FAKER.number().positive();
-            CertifyDto notExistUserIdDto = new CertifyDto(user.getId() + salt, certifyDto.code());
+            String email = FAKER.animal().name() + "." + user.getEmail();
+            CertifyDto notExistUserIdDto = new CertifyDto(email, certifyDto.code());
 
             // when
             ThrowingCallable certify = () -> certificateService.certify(notExistUserIdDto);
@@ -155,7 +155,7 @@ class CertificateServiceTest extends MailTest {
             certificateRedisRepository.save(certificate);
 
             String incorrectCode = RandomStringUtils.random(CertificateService.CERTIFICATE_SIZE);
-            CertifyDto incorrectCertificateDto = new CertifyDto(user.getId(), incorrectCode);
+            CertifyDto incorrectCertificateDto = new CertifyDto(user.getEmail(), incorrectCode);
 
             // when
             ThrowingCallable certify = () -> certificateService.certify(incorrectCertificateDto);

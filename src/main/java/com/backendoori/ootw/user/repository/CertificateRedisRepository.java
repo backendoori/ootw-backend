@@ -6,6 +6,6 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface CertificateRedisRepository extends CrudRepository<Certificate, String> {
 
-    Optional<Certificate> findByUserId(Long userId);
+    Optional<Certificate> findByEmail(String email);
 
 }

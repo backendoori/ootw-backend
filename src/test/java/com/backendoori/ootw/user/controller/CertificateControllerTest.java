@@ -43,10 +43,10 @@ class CertificateControllerTest {
 
     @BeforeEach
     void setup() {
-        long userId = FAKER.number().positive();
+        String email = FAKER.internet().safeEmailAddress();
         String code = RandomStringUtils.random(CertificateService.CERTIFICATE_SIZE);
 
-        certifyDto = new CertifyDto(userId, code);
+        certifyDto = new CertifyDto(email, code);
     }
 
     @DisplayName("이메일 인증에 성공하면 200 status를 반환한다")
@@ -55,7 +55,7 @@ class CertificateControllerTest {
         // given
         MockHttpServletRequestBuilder requestBuilder = patch("/api/v1/auth/certify")
             .with(csrf())
-            .param("userId", certifyDto.userId().toString())
+            .param("email", certifyDto.email())
             .param("code", certifyDto.code())
             .contentType(MediaType.APPLICATION_JSON);
 
@@ -72,7 +72,7 @@ class CertificateControllerTest {
         // given
         MockHttpServletRequestBuilder requestBuilder = patch("/api/v1/auth/certify")
             .with(csrf())
-            .param("userId", certifyDto.userId().toString())
+            .param("email", certifyDto.email())
             .param("code", certifyDto.code())
             .contentType(MediaType.APPLICATION_JSON);
 
@@ -93,7 +93,7 @@ class CertificateControllerTest {
         // given
         MockHttpServletRequestBuilder requestBuilder = patch("/api/v1/auth/certify")
             .with(csrf())
-            .param("userId", certifyDto.userId().toString())
+            .param("email", certifyDto.email())
             .param("code", certifyDto.code())
             .contentType(MediaType.APPLICATION_JSON);
 
@@ -114,7 +114,7 @@ class CertificateControllerTest {
         // given
         MockHttpServletRequestBuilder requestBuilder = patch("/api/v1/auth/certify")
             .with(csrf())
-            .param("userId", certifyDto.userId().toString())
+            .param("email", certifyDto.email())
             .param("code", certifyDto.code())
             .contentType(MediaType.APPLICATION_JSON);
 

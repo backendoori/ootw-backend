@@ -28,22 +28,27 @@ public class CertificateService {
     private final CertificateRedisRepository certificateRedisRepository;
 
     @Transactional
-    public void sendCertificate(User user) {
-        Certificate certificate = generateCertificate(user);
-        String title = generateTitle(certificate);
-
-        certificateRedisRepository.save(certificate);
-        ootwMailSender.sendMail(user.getEmail(), title, certificate.getCode());
-    }
-
-    @Transactional
-    public void certify(CertifyDto certifyDto) {
-        User user = userRepository.findById(certifyDto.userId())
+    public void sendCertificate(String email) {
+        User user = userRepository.findByEmail(email)
             .orElseThrow(UserNotFoundException::new);
 
         AssertUtil.throwIf(user.getCertified(), AlreadyCertifiedUserException::new);
 
-        Certificate certificate = certificateRedisRepository.findByUserId(certifyDto.userId())
+        Certificate certificate = generateCertificate(email);
+        String title = generateTitle(certificate);
+
+        certificateRedisRepository.save(certificate);
+        ootwMailSender.sendMail(email, title, certificate.getCode());
+    }
+
+    @Transactional
+    public void certify(CertifyDto certifyDto) {
+        User user = userRepository.findByEmail(certifyDto.email())
+            .orElseThrow(UserNotFoundException::new);
+
+        AssertUtil.throwIf(user.getCertified(), AlreadyCertifiedUserException::new);
+
+        Certificate certificate = certificateRedisRepository.findByEmail(certifyDto.email())
             .orElseThrow(UserNotFoundException::new);
         boolean isIncorrectCertificate = !certifyDto.code().equals(certificate.getCode());
 
@@ -53,11 +58,11 @@ public class CertificateService {
         certificateRedisRepository.delete(certificate);
     }
 
-    private Certificate generateCertificate(User user) {
+    private Certificate generateCertificate(String email) {
         String code = RandomStringUtils.randomAlphanumeric(CERTIFICATE_SIZE);
 
         return Certificate.builder()
-            .userId(user.getId())
+            .email(email)
             .code(code)
             .build();
     }

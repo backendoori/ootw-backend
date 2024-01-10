@@ -16,6 +16,14 @@ public class CertificateController {
 
     private final CertificateService certificateService;
 
+    @PatchMapping("/certificate")
+    public ResponseEntity<Void> sendCertificate(String email) {
+        certificateService.sendCertificate(email);
+
+        return ResponseEntity.status(HttpStatus.OK)
+            .build();
+    }
+
     @PatchMapping("/certify")
     public ResponseEntity<Void> certify(CertifyDto certifyDto) {
         certificateService.certify(certifyDto);
