@@ -1,12 +1,18 @@
 package com.backendoori.ootw.weather.util.client;
 
+import static com.backendoori.ootw.weather.util.client.ForecastApiSourceProvider.INVALID_PARAMETER_FORECAST_RESPONSE;
+import static com.backendoori.ootw.weather.util.client.ForecastApiSourceProvider.NO_DATA_FORECAST_RESPONSE;
+import static com.backendoori.ootw.weather.util.client.ForecastApiSourceProvider.TEMP_BASE_DATETIME;
+import static com.backendoori.ootw.weather.util.client.ForecastApiSourceProvider.VALID_NX;
+import static com.backendoori.ootw.weather.util.client.ForecastApiSourceProvider.VALID_NY;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
 
-import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
-import com.backendoori.ootw.weather.dto.forecast.BaseDateTime;
-import com.backendoori.ootw.weather.util.BaseDateTimeCalculator;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,18 +21,16 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 @SpringBootTest
 class ForecastApiClientTest {
 
-    static final Integer VALID_NX = 50;
-    static final Integer VALID_NY = 127;
-    static final BaseDateTime TEMP_BASE_DATETIME =
-        BaseDateTimeCalculator.getUltraShortForecastRequestBaseDateTime(LocalDateTime.now());
     static final Faker FAKER = new Faker();
 
-    @Autowired
+    @MockBean
     ForecastApi forecastApi;
+
     @Autowired
     ForecastApiClient forecastApiClient;
 
@@ -45,6 +49,8 @@ class ForecastApiClientTest {
         int nx = 0;
         int ny = 0;
 
+        givenForecastApiResponse(nx, ny, NO_DATA_FORECAST_RESPONSE);
+
         // when // then
         assertThrows(NoSuchElementException.class,
             () -> forecastApiClient.requestUltraShortForecastItems(TEMP_BASE_DATETIME, nx, ny));
@@ -54,7 +60,10 @@ class ForecastApiClientTest {
     @MethodSource("provideInvalidRange")
     @DisplayName("유효하지 않은 파라미터 범위로 현재 초단기예보 불러오기에 실패한다.")
     void requestUltraShortForecastItemsFailByIllegalRange(Integer nx, Integer ny) {
-        // given // when // then
+        // given
+        givenForecastApiResponse(nx, ny, INVALID_PARAMETER_FORECAST_RESPONSE);
+
+        // when // then
         assertThrows(IllegalArgumentException.class,
             () -> forecastApiClient.requestUltraShortForecastItems(TEMP_BASE_DATETIME, nx, ny));
     }
@@ -66,6 +75,8 @@ class ForecastApiClientTest {
         int nx = 0;
         int ny = 0;
 
+        givenForecastApiResponse(nx, ny, NO_DATA_FORECAST_RESPONSE);
+
         // when // then
         assertThrows(NoSuchElementException.class,
             () -> forecastApiClient.requestUltraShortForecastItems(TEMP_BASE_DATETIME, nx, ny));
@@ -75,9 +86,25 @@ class ForecastApiClientTest {
     @MethodSource("provideInvalidRange")
     @DisplayName("유효하지 않은 파라미터 범위로 현재 단기예보 불러오기에 실패한다.")
     void requestVillageForecastItemsFailByIllegalRange(Integer nx, Integer ny) {
-        // given // when // then
+        // given
+        givenForecastApiResponse(nx, ny, INVALID_PARAMETER_FORECAST_RESPONSE);
+
+        // when // then
         assertThrows(IllegalArgumentException.class,
             () -> forecastApiClient.requestVillageForecastItems(TEMP_BASE_DATETIME, nx, ny));
+    }
+
+    void givenForecastApiResponse(int nx, int ny, String response) {
+        given(forecastApi.getUltraShortForecast(
+            anyString(),
+            anyInt(),
+            anyInt(),
+            anyString(),
+            eq(TEMP_BASE_DATETIME.baseDate()),
+            eq(TEMP_BASE_DATETIME.baseTime()),
+            eq(nx),
+            eq(ny)))
+            .willReturn(response);
     }
 
 }
