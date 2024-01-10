@@ -1,7 +1,7 @@
 package com.backendoori.ootw.user.controller;
 
 import com.backendoori.ootw.user.dto.CertifyDto;
-import com.backendoori.ootw.user.service.CertifyEmailService;
+import com.backendoori.ootw.user.service.CertificateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
-public class CertifyEmailController {
+public class CertificateController {
 
-    private final CertifyEmailService certifyEmailService;
+    private final CertificateService certificateService;
 
     @PostMapping("/certify")
     public ResponseEntity<Void> login(CertifyDto certifyDto) {
-        certifyEmailService.certify(certifyDto);
+        certificateService.certify(certifyDto);
 
         return ResponseEntity.status(HttpStatus.OK)
             .build();

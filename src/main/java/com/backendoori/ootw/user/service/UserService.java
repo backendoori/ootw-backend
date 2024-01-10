@@ -24,7 +24,7 @@ import org.springframework.util.StringUtils;
 @RequiredArgsConstructor
 public class UserService {
 
-    private final CertifyEmailService certifyEmailService;
+    private final CertificateService certificateService;
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
     private final PasswordEncoder passwordEncoder;
@@ -36,7 +36,7 @@ public class UserService {
         User user = buildUser(signupDto);
 
         userRepository.save(user);
-        certifyEmailService.sendCertificate(user);
+        certificateService.sendCertificate(user);
 
         return UserDto.from(user);
     }

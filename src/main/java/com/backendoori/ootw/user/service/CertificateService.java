@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class CertifyEmailService {
+public class CertificateService {
 
     public static final int CERTIFICATE_SIZE = 6;
     public static final String TITLE_FORMAT = "[#OOTW] 이메일 인증 코드 : {0}";

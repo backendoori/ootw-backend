@@ -25,12 +25,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class CertifyEmailServiceTest extends MailTest {
+class CertificateServiceTest extends MailTest {
 
     static final Faker FAKER = new Faker();
 
     @Autowired
-    CertifyEmailService certifyEmailService;
+    CertificateService certificateService;
     @Autowired
     UserRepository userRepository;
     @Autowired
@@ -63,7 +63,7 @@ class CertifyEmailServiceTest extends MailTest {
     @Test
     void testSendCertificate() {
         // given // when
-        certifyEmailService.sendCertificate(user);
+        certificateService.sendCertificate(user);
 
         // then
         smtp.waitForIncomingEmail(30 * 1000L, 1);
@@ -83,7 +83,7 @@ class CertifyEmailServiceTest extends MailTest {
 
         @BeforeEach
         void setup() {
-            certifyDto = new CertifyDto(user.getId(), RandomStringUtils.random(CertifyEmailService.CERTIFICATE_SIZE));
+            certifyDto = new CertifyDto(user.getId(), RandomStringUtils.random(CertificateService.CERTIFICATE_SIZE));
             certificate = Certificate.builder()
                 .userId(certifyDto.userId())
                 .code(certifyDto.code())
@@ -97,7 +97,7 @@ class CertifyEmailServiceTest extends MailTest {
             certificateRedisRepository.save(certificate);
 
             // when
-            certifyEmailService.certify(certifyDto);
+            certificateService.certify(certifyDto);
 
             // then
             User actualUser = userRepository.findById(user.getId())
@@ -114,7 +114,7 @@ class CertifyEmailServiceTest extends MailTest {
             CertifyDto notExistUserIdDto = new CertifyDto(user.getId() + salt, certifyDto.code());
 
             // when
-            ThrowingCallable certify = () -> certifyEmailService.certify(notExistUserIdDto);
+            ThrowingCallable certify = () -> certificateService.certify(notExistUserIdDto);
 
             // then
             assertThatExceptionOfType(UserNotFoundException.class)
@@ -130,7 +130,7 @@ class CertifyEmailServiceTest extends MailTest {
             userRepository.save(user);
 
             // when
-            ThrowingCallable certify = () -> certifyEmailService.certify(certifyDto);
+            ThrowingCallable certify = () -> certificateService.certify(certifyDto);
 
             // then
             assertThatExceptionOfType(AlreadyCertifiedUserException.class)
@@ -141,7 +141,7 @@ class CertifyEmailServiceTest extends MailTest {
         @Test
         void failCertificateNotFound() {
             // given // when
-            ThrowingCallable certify = () -> certifyEmailService.certify(certifyDto);
+            ThrowingCallable certify = () -> certificateService.certify(certifyDto);
 
             // then
             assertThatExceptionOfType(UserNotFoundException.class)
@@ -154,11 +154,11 @@ class CertifyEmailServiceTest extends MailTest {
             // given
             certificateRedisRepository.save(certificate);
 
-            String incorrectCode = RandomStringUtils.random(CertifyEmailService.CERTIFICATE_SIZE);
+            String incorrectCode = RandomStringUtils.random(CertificateService.CERTIFICATE_SIZE);
             CertifyDto incorrectCertificateDto = new CertifyDto(user.getId(), incorrectCode);
 
             // when
-            ThrowingCallable certify = () -> certifyEmailService.certify(incorrectCertificateDto);
+            ThrowingCallable certify = () -> certificateService.certify(incorrectCertificateDto);
 
             // then
             assertThatExceptionOfType(IncorrectCertificateException.class)
