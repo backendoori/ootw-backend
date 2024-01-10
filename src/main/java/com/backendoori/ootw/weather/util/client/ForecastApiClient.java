@@ -1,5 +1,7 @@
 package com.backendoori.ootw.weather.util.client;
 
+import static com.backendoori.ootw.weather.validation.Message.INVALID_LOCATION_MESSAGE;
+
 import java.util.List;
 import com.backendoori.ootw.weather.domain.Coordinate;
 import com.backendoori.ootw.weather.dto.forecast.BaseDateTime;
@@ -21,7 +23,6 @@ public class ForecastApiClient {
     private static final int NUM_OF_ROWS = 500;
     private static final int PAGE_NO = 1;
     private static final String DATA_TYPE = "JSON";
-    private static final String INVALID_LOCATION_MESSAGE = "위치값이 유효하지 않습니다.";
 
     private final ForecastApi forecastApi;
     private final ObjectMapper objectMapper;

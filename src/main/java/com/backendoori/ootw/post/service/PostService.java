@@ -1,5 +1,7 @@
 package com.backendoori.ootw.post.service;
 
+import static com.backendoori.ootw.post.validation.Message.POST_NOT_FOUND;
+
 import java.util.List;
 import java.util.NoSuchElementException;
 import com.backendoori.ootw.common.image.ImageService;
@@ -43,7 +45,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public PostReadResponse getDetailByPostId(Long postId) {
         Post post = postRepository.findByIdWithUserEntityGraph(postId)
-            .orElseThrow(() -> new NoSuchElementException("해당하는 게시글이 없습니다."));
+            .orElseThrow(() -> new NoSuchElementException(POST_NOT_FOUND));
 
         return PostReadResponse.from(post);
     }

@@ -1,9 +1,15 @@
 package com.backendoori.ootw.post.domain;
 
+import static com.backendoori.ootw.post.validation.Message.BLANK_POST_CONTENT;
+import static com.backendoori.ootw.post.validation.Message.BLANK_POST_TITLE;
+import static com.backendoori.ootw.post.validation.Message.INVALID_POST_CONTENT;
+import static com.backendoori.ootw.post.validation.Message.INVALID_POST_TITLE;
+import static com.backendoori.ootw.post.validation.Message.NULL_TEMPERATURE_ARRANGE;
+import static com.backendoori.ootw.post.validation.Message.NULL_WRITER;
 import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_COORDINATE;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 
 import java.util.HashMap;
@@ -13,6 +19,7 @@ import com.backendoori.ootw.post.dto.PostSaveRequest;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.weather.domain.TemperatureArrange;
 import com.backendoori.ootw.weather.domain.forecast.ForecastCategory;
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -33,20 +40,27 @@ class PostTest {
     }
 
     private static Stream<Arguments> provideInvalidInfo() {
-        return Stream.of(Arguments.of("title이 null인 경우",
-                new PostSaveRequest(null, "Test Content", VALID_COORDINATE), generateTemperatureArrange()),
+        return Stream.of(
+            Arguments.of("title이 null인 경우",
+                new PostSaveRequest(null, "Test Content", VALID_COORDINATE), generateTemperatureArrange(),
+                BLANK_POST_TITLE),
             Arguments.of("title이 공백인 경우",
-                new PostSaveRequest(" ", "Test Content", VALID_COORDINATE), generateTemperatureArrange()),
+                new PostSaveRequest(" ", "Test Content", VALID_COORDINATE), generateTemperatureArrange(),
+                BLANK_POST_TITLE),
             Arguments.of("title이 30자를 넘는 경우",
-                new PostSaveRequest("T".repeat(31), "Test Content", VALID_COORDINATE), generateTemperatureArrange()),
+                new PostSaveRequest("T".repeat(31), "Test Content", VALID_COORDINATE), generateTemperatureArrange(),
+                INVALID_POST_TITLE),
             Arguments.of("content가 null인 경우",
-                new PostSaveRequest("Test Title", null, VALID_COORDINATE), generateTemperatureArrange()),
+                new PostSaveRequest("Test Title", null, VALID_COORDINATE), generateTemperatureArrange(),
+                BLANK_POST_CONTENT),
             Arguments.of("content가 공백인 경우",
-                new PostSaveRequest("Test Title", " ", VALID_COORDINATE), generateTemperatureArrange()),
+                new PostSaveRequest("Test Title", " ", VALID_COORDINATE), generateTemperatureArrange(),
+                BLANK_POST_CONTENT),
             Arguments.of("content가 500자를 넘는 경우",
-                new PostSaveRequest("Test Title", "T".repeat(501), VALID_COORDINATE), generateTemperatureArrange()),
+                new PostSaveRequest("Test Title", "T".repeat(501), VALID_COORDINATE), generateTemperatureArrange(),
+                INVALID_POST_CONTENT),
             Arguments.of("temperatureArrange가 null인 경우",
-                new PostSaveRequest("Test Title", "T".repeat(501), VALID_COORDINATE), null)
+                new PostSaveRequest("Test Title", "T", VALID_COORDINATE), null, NULL_TEMPERATURE_ARRANGE)
         );
     }
 
@@ -70,11 +84,32 @@ class PostTest {
 
     @ParameterizedTest(name = "[{index}] {0}")
     @MethodSource("provideInvalidInfo")
-    @DisplayName("from 메서드로 유효하지 않은 User, PostSaveRequest로부터 Post를 생성하는 것에 실패한다.")
-    void createPostFail(String info, PostSaveRequest postSaveRequest, TemperatureArrange temperatureArrange) {
-        // given // when, then
-        assertThrows(IllegalArgumentException.class,
-            () -> Post.from(MOCK_USER, postSaveRequest, IMG_URL, temperatureArrange));
+    @DisplayName("from 메서드로 유효하지 않은 PostSaveRequest로부터 Post를 생성하는 것에 실패한다.")
+    void createPostFailWithInvalidInfo(String info, PostSaveRequest postSaveRequest,
+                                       TemperatureArrange temperatureArrange,
+                                       String message) {
+        // given // when
+        ThrowingCallable createPost = () -> Post.from(MOCK_USER, postSaveRequest, IMG_URL, temperatureArrange);
+
+        // then
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(createPost)
+            .withMessage(message);
+    }
+
+    @Test
+    @DisplayName("from 메서드로 null User로부터 Post를 생성하는 것에 실패한다.")
+    void createPostFailWithNullUser() {
+        // given
+        PostSaveRequest request = new PostSaveRequest("T".repeat(31), "Test Content", VALID_COORDINATE);
+
+        // when
+        ThrowingCallable createPost = () -> Post.from(null, request, IMG_URL, generateTemperatureArrange());
+
+        // then
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(createPost)
+            .withMessage(NULL_WRITER);
     }
 
 }

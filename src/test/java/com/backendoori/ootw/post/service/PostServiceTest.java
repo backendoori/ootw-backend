@@ -1,5 +1,6 @@
 package com.backendoori.ootw.post.service;
 
+import static com.backendoori.ootw.post.validation.Message.POST_NOT_FOUND;
 import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_COORDINATE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -11,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.stream.Stream;
 import com.backendoori.ootw.common.image.ImageService;
 import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.post.domain.Post;
@@ -35,8 +37,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -132,13 +134,30 @@ class PostServiceTest {
                 .withMessage(UserNotFoundException.DEFAULT_MESSAGE);
         }
 
-        @ParameterizedTest(name = "[{index}] 최저 기온이 {0}인 경우")
-        @ValueSource(doubles = {-900.0, 900.0})
-        @NullSource
-        @DisplayName("유효하지 않은 값(최저 기온)이 들어갈 경우 게시글 저장에 실패한다.")
-        void saveFailInvalidValue(Double minTemperature) {
+        static Stream<Arguments> provideInvalidPostInfo() {
+            String validTitle = "title";
+            String validContent = "content";
+            return Stream.of(
+                Arguments.of(null, validContent),
+                Arguments.of(validTitle, null),
+                Arguments.of("", validContent),
+                Arguments.of(validTitle, ""),
+                Arguments.of(" ", validContent),
+                Arguments.of(validTitle, " "),
+                Arguments.of("a".repeat(40), validContent),
+                Arguments.of(validTitle, "a".repeat(600))
+            );
+        }
+
+        @ParameterizedTest(name = "[{index}] 제목이 {0}이고 내용이 {1}인 경우")
+        @MethodSource("provideInvalidPostInfo")
+        @DisplayName("유효하지 않은 값(게시글 정보)가 들어갈 경우 게시글 저장에 실패한다.")
+        void saveFailWithInvalidValue(String title, String content) {
             // given
-            PostSaveRequest postSaveRequest = new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE);
+            given(weatherService.getCurrentTemperatureArrange(VALID_COORDINATE)).willReturn(
+                generateTemperatureArrange());
+
+            PostSaveRequest postSaveRequest = new PostSaveRequest(title, content, VALID_COORDINATE);
             MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
                 "text/plain", "some xml".getBytes());
 
@@ -191,9 +210,13 @@ class PostServiceTest {
         @Test
         @DisplayName("저장되지 않은 게시글 Id로 요청할 경우 게시글 단건 조회에 실패한다.")
         void getDetailByPostIdFailNotSavedPost() {
-            // given, when. then
-            assertThrows(NoSuchElementException.class,
-                () -> postService.getDetailByPostId(postSaveResponse.postId() + 1));
+            // given, when.
+            ThrowingCallable getDetailByPostId = () -> postService.getDetailByPostId(postSaveResponse.postId() + 1);
+
+            // then
+            assertThatExceptionOfType(NoSuchElementException.class)
+                .isThrownBy(getDetailByPostId)
+                .withMessage(POST_NOT_FOUND);
         }
 
     }

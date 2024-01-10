@@ -5,9 +5,12 @@ import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceP
 import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_NX;
 import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_NY;
 import static com.backendoori.ootw.util.provider.ForecastApiUltraShortResponseSourceProvider.generateWeatherResponse;
+import static com.backendoori.ootw.weather.validation.Message.INVALID_LOCATION_MESSAGE;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.NoSuchElementException;
@@ -75,21 +78,22 @@ class WeatherControllerTest {
     @MethodSource("provideInvalidCoordinate")
     @DisplayName("유효하지 않은 위치 값으로 현재 날씨 불러오기에 실패한다.")
     void readCurrentWeatherFailByIllegalLocation(Coordinate invalidCoordinate) throws Exception {
-        // given // when
+        // given
         MockHttpServletRequestBuilder requestBuilder = get(URL)
             .param("nx", String.valueOf(invalidCoordinate.nx()))
             .param("ny", String.valueOf(invalidCoordinate.ny()))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON);
 
-        // then
+        // when // then
         mockMvc.perform(requestBuilder)
             .andExpect(status().isBadRequest())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.message", is(INVALID_LOCATION_MESSAGE)));
     }
 
     @Test
-    @DisplayName("없는 위치 값으로 현재 날씨 불러오기에 실패한다.")
+    @DisplayName("위치 값을 보내주지 않아 현재 날씨 불러오기에 실패한다.")
     void readCurrentWeatherFailByNullLocation() throws Exception {
         // given // when
         MockHttpServletRequestBuilder requestBuilder = get(URL)
@@ -99,7 +103,8 @@ class WeatherControllerTest {
         // then
         mockMvc.perform(requestBuilder)
             .andExpect(status().isBadRequest())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.message", is(INVALID_LOCATION_MESSAGE)));
     }
 
     @Test
