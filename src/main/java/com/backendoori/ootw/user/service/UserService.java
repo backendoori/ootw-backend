@@ -8,7 +8,6 @@ import com.backendoori.ootw.user.dto.LoginDto;
 import com.backendoori.ootw.user.dto.SendCertificateDto;
 import com.backendoori.ootw.user.dto.SignupDto;
 import com.backendoori.ootw.user.dto.TokenDto;
-import com.backendoori.ootw.user.dto.UserDto;
 import com.backendoori.ootw.user.exception.AlreadyExistEmailException;
 import com.backendoori.ootw.user.exception.IncorrectPasswordException;
 import com.backendoori.ootw.user.exception.NonCertifiedUserException;
@@ -31,15 +30,13 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public UserDto signup(SignupDto signupDto) {
+    public void signup(SignupDto signupDto) {
         validateSignup(signupDto);
 
         User user = buildUser(signupDto);
 
         userRepository.save(user);
         certificateService.sendCertificate(new SendCertificateDto(user.getEmail()));
-
-        return UserDto.from(user);
     }
 
     public TokenDto login(LoginDto loginDto) {
