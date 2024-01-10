@@ -62,6 +62,21 @@ class UserTest {
             .withMessage(Message.INVALID_EMAIL);
     }
 
+    @DisplayName("이메일이 255자를 초과하는 경우 생성에 실패한다.")
+    @Test
+    void testCreateTooLongEmail() {
+        // given
+        this.email = faker.natoPhoneticAlphabet().codeWord().repeat(65) + "@" + faker.internet().domainName();
+
+        // when
+        ThrowingCallable createUser = this::buildUser;
+
+        // then
+        assertThatIllegalArgumentException()
+            .isThrownBy(createUser)
+            .withMessage(Message.TOO_LONG_EMAIL);
+    }
+
     @DisplayName("비밀번호가 공백인 경우 생성에 실패한다.")
     @NullAndEmptySource
     @ParameterizedTest
@@ -92,6 +107,21 @@ class UserTest {
         assertThatIllegalArgumentException()
             .isThrownBy(createUser)
             .withMessage(Message.BLANK_NICKNAME);
+    }
+
+    @DisplayName("닉네임이 255자를 초과하는 경우 생성에 실패한다.")
+    @Test
+    void testCreateTooLongNickname() {
+        // given
+        this.nickname = faker.natoPhoneticAlphabet().codeWord().repeat(65);
+
+        // when
+        ThrowingCallable createUser = this::buildUser;
+
+        // then
+        assertThatIllegalArgumentException()
+            .isThrownBy(createUser)
+            .withMessage(Message.TOO_LONG_NICKNAME);
     }
 
     private static Stream<String> generateInvalidEmails() {

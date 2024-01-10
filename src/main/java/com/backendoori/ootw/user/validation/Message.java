@@ -7,13 +7,13 @@ import lombok.NoArgsConstructor;
 public final class Message {
 
     public static final String INVALID_EMAIL = "이메일 형식이 올바르지 않습니다.";
-
+    public static final String TOO_LONG_EMAIL = "이메일은 255자 이내여야 합니다.";
     public static final String INVALID_PASSWORD = "비밀번호는 숫자, 영문자, 특수문자를 포함한 "
         + Password.MIN_SIZE + "자 이상, "
         + Password.MAX_SIZE + "자 이내의 문자여야 합니다.";
-
     public static final String BLANK_PASSWORD = "비밀번호는 공백일 수 없습니다.";
     public static final String BLANK_NICKNAME = "닉네임은 공백일 수 없습니다.";
+    public static final String TOO_LONG_NICKNAME = "닉네임은 255자 이내여야 합니다.";
     public static final String INVALID_CERTIFICATE_CODE = "인증 코드 형식이 올바르지 않습니다.";
 
 }
