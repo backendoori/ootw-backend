@@ -1,4 +1,6 @@
-package com.backendoori.ootw.common.validation;
+package com.backendoori.ootw.weather.validation;
+
+import static com.backendoori.ootw.weather.validation.Message.INVALID_LOCATION_MESSAGE;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -12,7 +14,7 @@ import jakarta.validation.Payload;
 @Constraint(validatedBy = CoordinateValidator.class)
 public @interface Grid {
 
-    String message = "위치 좌표값이 유효하지 않습니다.";
+    String message = INVALID_LOCATION_MESSAGE;
 
     String message() default message;
 
