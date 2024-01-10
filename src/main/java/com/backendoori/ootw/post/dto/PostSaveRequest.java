@@ -17,7 +17,7 @@ public record PostSaveRequest(
 
     @NotNull
     @Grid
-    Coordinate location
+    Coordinate coordinate
 ) {
 
 }
