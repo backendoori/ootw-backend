@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.security.jwt.TokenProvider;
+import com.backendoori.ootw.user.domain.Certificate;
 import com.backendoori.ootw.user.dto.CertifyDto;
 import com.backendoori.ootw.user.exception.AlreadyCertifiedUserException;
 import com.backendoori.ootw.user.exception.IncorrectCertificateException;
@@ -44,7 +45,7 @@ class CertificateControllerTest {
     @BeforeEach
     void setup() {
         String email = FAKER.internet().safeEmailAddress();
-        String code = RandomStringUtils.random(CertificateService.CERTIFICATE_SIZE);
+        String code = RandomStringUtils.randomAlphanumeric(Certificate.SIZE);
 
         certifyDto = new CertifyDto(email, code);
     }

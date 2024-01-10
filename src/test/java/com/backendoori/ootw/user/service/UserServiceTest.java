@@ -14,6 +14,7 @@ import com.backendoori.ootw.user.dto.TokenDto;
 import com.backendoori.ootw.user.exception.AlreadyExistEmailException;
 import com.backendoori.ootw.user.exception.IncorrectPasswordException;
 import com.backendoori.ootw.user.exception.NonCertifiedUserException;
+import com.backendoori.ootw.user.repository.CertificateRedisRepository;
 import com.backendoori.ootw.user.repository.UserRepository;
 import com.backendoori.ootw.user.validation.Message;
 import net.datafaker.Faker;
@@ -39,15 +40,18 @@ class UserServiceTest {
     static Faker faker = new Faker();
 
     @Autowired
-    UserRepository userRepository;
-    @Autowired
     PasswordEncoder passwordEncoder;
+    @Autowired
+    CertificateRedisRepository certificateRedisRepository;
+    @Autowired
+    UserRepository userRepository;
     @Autowired
     UserService userService;
 
     @BeforeAll
     @AfterEach
     void cleanup() {
+        certificateRedisRepository.deleteAll();
         userRepository.deleteAll();
     }
 

@@ -69,7 +69,7 @@ class CertificateServiceTest extends MailTest {
         smtp.waitForIncomingEmail(30 * 1000L, 1);
 
         String actualCode = GreenMailUtil.getBody(smtp.getReceivedMessages()[0]);
-        Certificate certificate = certificateRedisRepository.findByEmail(user.getEmail())
+        Certificate certificate = certificateRedisRepository.findById(user.getEmail())
             .orElseThrow();
 
         assertThat(actualCode).isEqualTo(certificate.getCode());
@@ -83,9 +83,9 @@ class CertificateServiceTest extends MailTest {
 
         @BeforeEach
         void setup() {
-            certifyDto = new CertifyDto(user.getEmail(), RandomStringUtils.random(CertificateService.CERTIFICATE_SIZE));
+            certifyDto = new CertifyDto(user.getEmail(), RandomStringUtils.randomAlphanumeric(Certificate.SIZE));
             certificate = Certificate.builder()
-                .email(certifyDto.email())
+                .id(certifyDto.email())
                 .code(certifyDto.code())
                 .build();
         }
@@ -154,7 +154,7 @@ class CertificateServiceTest extends MailTest {
             // given
             certificateRedisRepository.save(certificate);
 
-            String incorrectCode = RandomStringUtils.random(CertificateService.CERTIFICATE_SIZE);
+            String incorrectCode = RandomStringUtils.random(Certificate.SIZE);
             CertifyDto incorrectCertificateDto = new CertifyDto(user.getEmail(), incorrectCode);
 
             // when

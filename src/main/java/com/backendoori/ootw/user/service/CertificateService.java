@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CertificateService {
 
-    public static final int CERTIFICATE_SIZE = 6;
     public static final String TITLE_FORMAT = "[#OOTW] 이메일 인증 코드 : {0}";
 
     private final OotwMailSender ootwMailSender;
@@ -48,7 +47,7 @@ public class CertificateService {
 
         AssertUtil.throwIf(user.getCertified(), AlreadyCertifiedUserException::new);
 
-        Certificate certificate = certificateRedisRepository.findByEmail(certifyDto.email())
+        Certificate certificate = certificateRedisRepository.findById(certifyDto.email())
             .orElseThrow(UserNotFoundException::new);
         boolean isIncorrectCertificate = !certifyDto.code().equals(certificate.getCode());
 
@@ -59,10 +58,10 @@ public class CertificateService {
     }
 
     private Certificate generateCertificate(String email) {
-        String code = RandomStringUtils.randomAlphanumeric(CERTIFICATE_SIZE);
+        String code = RandomStringUtils.randomAlphanumeric(Certificate.SIZE);
 
         return Certificate.builder()
-            .email(email)
+            .id(email)
             .code(code)
             .build();
     }

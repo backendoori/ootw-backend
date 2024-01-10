@@ -14,5 +14,6 @@ public final class Message {
 
     public static final String BLANK_PASSWORD = "비밀번호는 공백일 수 없습니다.";
     public static final String BLANK_NICKNAME = "닉네임은 공백일 수 없습니다.";
+    public static final String INVALID_CERTIFICATE_CODE = "인증 코드 형식이 올바르지 않습니다.";
 
 }
