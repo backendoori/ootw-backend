@@ -40,4 +40,3 @@ openfeign:
     url: ${FORECAST_URL}
 server:
   port: 8080
-
