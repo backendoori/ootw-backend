@@ -2,6 +2,8 @@ package com.backendoori.ootw.like.controller;
 
 import static com.backendoori.ootw.security.jwt.JwtAuthenticationFilter.TOKEN_HEADER;
 import static com.backendoori.ootw.security.jwt.JwtAuthenticationFilter.TOKEN_PREFIX;
+import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_NX;
+import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_NY;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -41,8 +43,6 @@ import org.springframework.http.MediaType;
 @ExtendWith(MockitoExtension.class)
 class LikeControllerTest extends TokenMockMvcTest {
 
-    static final int NX = 55;
-    static final int NY = 127;
     static final Faker FAKER = new Faker();
     User user;
     User writer;
@@ -102,7 +102,7 @@ class LikeControllerTest extends TokenMockMvcTest {
 
     private Post generatePost(User user) {
         PostSaveRequest postSaveRequest =
-            new PostSaveRequest("title", FAKER.gameOfThrones().quote(), NX, NY);
+            new PostSaveRequest("title", FAKER.gameOfThrones().quote(), VALID_NX, VALID_NY);
         return Post.from(user, postSaveRequest, FAKER.internet().url(), generateTemperatureArrange());
     }
 
