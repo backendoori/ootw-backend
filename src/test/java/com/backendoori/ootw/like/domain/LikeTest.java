@@ -59,13 +59,13 @@ class LikeTest {
         assertThatCode(() -> Like.builder()
             .user(user)
             .post(post)
-            .status(true)
+            .isLike(true)
             .build()).doesNotThrowAnyException();
 
         assertThatCode(() -> Like.builder()
             .user(user)
             .post(post)
-            .status(false)
+            .isLike(false)
             .build()).doesNotThrowAnyException();
 
     }
@@ -81,14 +81,14 @@ class LikeTest {
         assertThatThrownBy(() -> Like.builder()
             .user(user)
             .post(post)
-            .status(true)
+            .isLike(true)
             .build())
             .isInstanceOf(IllegalArgumentException.class);
 
         assertThatThrownBy(() -> Like.builder()
             .user(user)
             .post(post)
-            .status(false)
+            .isLike(false)
             .build())
             .isInstanceOf(IllegalArgumentException.class);
 
@@ -106,14 +106,14 @@ class LikeTest {
         assertThatThrownBy(() -> Like.builder()
             .user(user)
             .post(post)
-            .status(true)
+            .isLike(true)
             .build())
             .isInstanceOf(IllegalArgumentException.class);
 
         assertThatThrownBy(() -> Like.builder()
             .user(user)
             .post(post)
-            .status(false)
+            .isLike(false)
             .build())
             .isInstanceOf(IllegalArgumentException.class);
 
@@ -148,14 +148,14 @@ class LikeTest {
         Like like = Like.builder()
             .user(user)
             .post(post)
-            .status(true)
+            .isLike(true)
             .build();
 
         like.updateStatus();
-        assertThat(like.getStatus()).isEqualTo(false);
+        assertThat(like.getIsLike()).isEqualTo(false);
 
         like.updateStatus();
-        assertThat(like.getStatus()).isEqualTo(true);
+        assertThat(like.getIsLike()).isEqualTo(true);
 
     }
 
