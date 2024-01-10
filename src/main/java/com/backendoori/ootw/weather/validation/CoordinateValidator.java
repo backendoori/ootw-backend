@@ -1,4 +1,4 @@
-package com.backendoori.ootw.common.validation;
+package com.backendoori.ootw.weather.validation;
 
 import java.util.Objects;
 import com.backendoori.ootw.weather.domain.Coordinate;
@@ -12,9 +12,10 @@ public class CoordinateValidator implements ConstraintValidator<Grid, Coordinate
 
     @Override
     public boolean isValid(Coordinate coordinate, ConstraintValidatorContext context) {
-        if (Objects.isNull(coordinate)) {
+        if (Objects.isNull(coordinate) || Objects.isNull(coordinate.nx()) || Objects.isNull(coordinate.ny())) {
             return false;
         }
+
         return coordinate.nx() >= MIN_COORDINATE
                && MAX_COORDINATE >= coordinate.nx()
                && coordinate.ny() >= MIN_COORDINATE
