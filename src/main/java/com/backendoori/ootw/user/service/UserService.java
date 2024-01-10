@@ -43,7 +43,7 @@ public class UserService {
         User user = userRepository.findByEmail(loginDto.email())
             .orElseThrow(UserNotFoundException::new);
 
-        validateLogin(loginDto, user);
+        validateLogin(user, loginDto.password());
 
         String token = tokenProvider.createToken(user.getId());
 
@@ -70,12 +70,9 @@ public class UserService {
         return StringUtils.hasLength(password) && password.matches(Password.REGEX);
     }
 
-    private void validateLogin(LoginDto loginDto, User user) {
+    private void validateLogin(User user, String decrypted) {
         AssertUtil.throwIf(!user.getCertified(), NonCertifiedUserException::new);
-
-        boolean isIncorrectPassword = !passwordEncoder.matches(loginDto.password(), user.getPassword());
-
-        AssertUtil.throwIf(isIncorrectPassword, IncorrectPasswordException::new);
+        AssertUtil.throwIf(!user.matchPassword(passwordEncoder, decrypted), IncorrectPasswordException::new);
     }
 
 }

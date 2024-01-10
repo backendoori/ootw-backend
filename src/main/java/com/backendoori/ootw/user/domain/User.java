@@ -14,6 +14,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Table(name = "users")
 @Entity
@@ -59,6 +60,10 @@ public class User extends BaseEntity {
 
     public void certify() {
         this.certified = true;
+    }
+
+    public boolean matchPassword(PasswordEncoder passwordEncoder, String decrypted) {
+        return passwordEncoder.matches(decrypted, password);
     }
 
 }
