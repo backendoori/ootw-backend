@@ -17,7 +17,7 @@ public class CertificateController {
     private final CertificateService certificateService;
 
     @PostMapping("/certify")
-    public ResponseEntity<Void> login(CertifyDto certifyDto) {
+    public ResponseEntity<Void> certify(CertifyDto certifyDto) {
         certificateService.certify(certifyDto);
 
         return ResponseEntity.status(HttpStatus.OK)
