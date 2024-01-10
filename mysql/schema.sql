@@ -22,7 +22,7 @@ CREATE TABLE avatar_items
     id    BIGINT AUTO_INCREMENT,
     image VARCHAR(500) NOT NULL,
     type  VARCHAR(30)  NOT NULL,
-    sex   TINYINT      NOT NULL,
+    sex   VARCHAR(10)  NOT NULL,
     CONSTRAINT avatar_items_pk
         PRIMARY KEY (id)
 );
@@ -36,6 +36,7 @@ CREATE TABLE posts
     image      VARCHAR(500) NULL,
     created_at DATETIME(6)  NULL,
     updated_at DATETIME(6)  NULL,
+    like_cnt   INTEGER      NULL,
     min_temperature DOUBLE NOT NULL,
     max_temperature DOUBLE NOT NULL,
     CONSTRAINT posts_pk
@@ -49,7 +50,7 @@ CREATE TABLE likes
     id         BIGINT AUTO_INCREMENT,
     user_id    BIGINT       NOT NULL,
     post_id    BIGINT       NOT NULL,
-    status     TINYINT      NOT NULL,
+    is_like    TINYINT      NOT NULL,
     created_at DATETIME(6)  NULL,
     updated_at DATETIME(6)  NULL,
     CONSTRAINT posts_pk
