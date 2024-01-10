@@ -6,12 +6,15 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import com.backendoori.ootw.common.image.ImageService;
 import com.backendoori.ootw.exception.UserNotFoundException;
+import com.backendoori.ootw.like.repository.LikeRepository;
+import com.backendoori.ootw.like.service.LikeService;
 import com.backendoori.ootw.post.domain.Post;
 import com.backendoori.ootw.post.dto.PostReadResponse;
 import com.backendoori.ootw.post.dto.PostSaveRequest;
@@ -27,6 +30,7 @@ import com.backendoori.ootw.weather.service.WeatherService;
 import net.datafaker.Faker;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -40,7 +44,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.TestingAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.TestSecurityContextHolder;
 
 @SpringBootTest
@@ -57,10 +64,16 @@ class PostServiceTest {
     private PostService postService;
 
     @Autowired
+    private LikeRepository likeRepository;
+
+    @Autowired
     private PostRepository postRepository;
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private LikeService likeService;
 
     @MockBean
     private ImageService imageService;
@@ -70,16 +83,17 @@ class PostServiceTest {
 
     @BeforeEach
     void setup() {
+        likeRepository.deleteAll();
         postRepository.deleteAll();
         userRepository.deleteAll();
 
         user = userRepository.save(generateUser());
-
         setAuthentication(user.getId());
     }
 
     @AfterAll
     void cleanup() {
+        likeRepository.deleteAll();
         postRepository.deleteAll();
         userRepository.deleteAll();
     }
@@ -169,6 +183,7 @@ class PostServiceTest {
         @DisplayName("게시글 단건 조회에 성공한다.")
         void getDetailByPostIdSuccess() {
             // given
+            setAuthentication(user.getId());
             WriterDto savedPostWriter = WriterDto.from(user);
 
             // when
@@ -198,6 +213,54 @@ class PostServiceTest {
                 () -> postService.getDetailByPostId(postSaveResponse.postId() + 1));
         }
 
+        @Test
+        @DisplayName("로그인 후 좋아요 여부가 포함된 게시글 단건 조회에 성공한다.")
+        void getAllSuccessWithLogin() {
+            // given
+            List<Post> postList = postRepository.findAll();
+            setAuthentication(user.getId());
+
+            for (Post likePost : postList) {
+                likeService.requestLike(user.getId(), likePost.getId());
+            }
+
+            // when
+            PostReadResponse findPost = postService.getDetailByPostId(postSaveResponse.postId());
+
+            // then
+            assertThat(findPost.getIsLike()).isEqualTo(1);
+            assertThat(findPost.getLikeCnt()).isEqualTo(1);
+
+        }
+
+        @Test
+        @DisplayName("로그인은 했지만 좋아요를 누르지 않은 경우에도 게시글 단건 조회에 성공한다.")
+        void getAllSuccessWithLoginNoLike() {
+            // given
+            setAuthentication(user.getId());
+
+            // when
+            PostReadResponse findPost = postService.getDetailByPostId(postSaveResponse.postId());
+
+            // then
+            assertThat(findPost.getIsLike()).isEqualTo(0);
+            assertThat(findPost.getLikeCnt()).isEqualTo(0);
+        }
+
+        @Test
+        @DisplayName("로그인은 안했을 때 좋아요를 누르지 않은 경우에도 게시글 단건 조회에 성공한다.")
+        void getAllSuccessWithoutLogin() {
+            // given, when
+            setAnonymousAuthentication();
+            PostReadResponse findPost = postService.getDetailByPostId(postSaveResponse.postId());
+
+            // then
+            assertThat(findPost.getIsLike()).isEqualTo(0);
+            assertThat(findPost.getLikeCnt()).isEqualTo(0);
+
+        }
+
+
     }
 
     @Nested
@@ -209,9 +272,18 @@ class PostServiceTest {
         @BeforeEach
         void setUp() {
             for (int i = 0; i < SAVE_COUNT; i++) {
-                Post savedPost = postRepository.save(
+                postRepository.save(
                     Post.from(user, new PostSaveRequest("Test Title", "Test Content", NX, NY), "imgUrl",
                         generateTemperatureArrange()));
+            }
+        }
+
+        @AfterEach
+        void clearUp() {
+            for (int i = 0; i < SAVE_COUNT; i++) {
+                likeRepository.deleteAll();
+                postRepository.deleteAll();
+                userRepository.deleteAll();
             }
         }
 
@@ -219,12 +291,13 @@ class PostServiceTest {
         @DisplayName("게시글 목록 최신순(default) 조회에 성공한다.")
         void getAllSuccess() {
             // given, when
+            setAnonymousAuthentication();
             List<PostReadResponse> posts = postService.getAll();
             List<PostReadResponse> expectedSortedPosts = posts.stream().sorted((post1, post2) -> {
-                if (post1.createdAt().isAfter(post2.createdAt())) {
+                if (post1.getCreatedAt().isAfter(post2.getCreatedAt())) {
                     return -1;
                 }
-                if (post1.createdAt().isBefore(post2.createdAt())) {
+                if (post1.getCreatedAt().isBefore(post2.getCreatedAt())) {
                     return 1;
                 }
                 return 0;
@@ -237,6 +310,68 @@ class PostServiceTest {
             );
         }
 
+        @Test
+        @DisplayName("로그인 후 좋아요 여부가 포함된 게시글 목록 최신순(default) 조회에 성공한다.")
+        void getAllSuccessWithLogin() {
+            // given
+            List<Post> postList = postRepository.findAll();
+
+            for (Post likePost : postList) {
+                likeService.requestLike(user.getId(), likePost.getId());
+            }
+
+            // when
+            List<PostReadResponse> posts = postService.getAll();
+
+            // then
+            for (PostReadResponse response : posts) {
+                assertThat(response.getIsLike()).isEqualTo(1);
+                assertThat(response.getLikeCnt()).isEqualTo(1);
+            }
+
+        }
+
+        @Test
+        @DisplayName("로그인은 했지만 좋아요를 누르지 않은 경우에도 게시글 목록 최신순(default) 조회에 성공한다.")
+        void getAllSuccessWithLoginNoLike() {
+            // given, when
+            List<PostReadResponse> posts = postService.getAll();
+
+            // then
+            for (PostReadResponse response : posts) {
+                assertThat(response.getIsLike()).isEqualTo(0);
+            }
+
+        }
+
+        @Test
+        @DisplayName("다른 사람이 좋아요를 눌렀어도 로그인을 안한 경우에도 게시글 목록 최신순(default) 조회에 성공한다.")
+        void getAllSuccessWithLikedPost() {
+            // given
+            List<Post> postList = postRepository.findAll();
+
+            for (Post likePost : postList) {
+                likeService.requestLike(user.getId(), likePost.getId());
+            }
+            setAnonymousAuthentication();
+
+            // when
+            List<PostReadResponse> posts = postService.getAll();
+
+            // then
+            for (PostReadResponse response : posts) {
+                assertThat(response.getIsLike()).isEqualTo(0);
+                assertThat(response.getLikeCnt()).isEqualTo(1);
+            }
+
+        }
+
+    }
+
+    private static void setAnonymousAuthentication() {
+        SecurityContextHolder.getContext()
+            .setAuthentication(new AnonymousAuthenticationToken("key", "anonymousUser",
+                Collections.singleton(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))));
     }
 
     private User generateUser() {
