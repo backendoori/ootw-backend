@@ -1,5 +1,7 @@
 package com.backendoori.ootw.post.service;
 
+import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_NX;
+import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_NY;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -47,8 +49,6 @@ import org.springframework.security.test.context.TestSecurityContextHolder;
 @TestInstance(Lifecycle.PER_CLASS)
 class PostServiceTest {
 
-    static final int NX = 55;
-    static final int NY = 127;
     static final Faker FAKER = new Faker();
 
     User user;
@@ -92,7 +92,7 @@ class PostServiceTest {
         @DisplayName("게시글 저장에 성공한다.")
         void saveSuccess() {
             // given
-            PostSaveRequest request = new PostSaveRequest("Test Title", "Test Content", NX, NY);
+            PostSaveRequest request = new PostSaveRequest("Test Title", "Test Content", VALID_NX, VALID_NY);
             MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
                 "text/plain", "some xml".getBytes());
 
@@ -120,7 +120,7 @@ class PostServiceTest {
             // given
             setAuthentication(user.getId() + 1);
 
-            PostSaveRequest postSaveRequest = new PostSaveRequest("Test Title", "Test Content", NX, NY);
+            PostSaveRequest postSaveRequest = new PostSaveRequest("Test Title", "Test Content", VALID_NX, VALID_NY);
             MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
                 "text/plain", "some xml".getBytes());
 
@@ -133,14 +133,13 @@ class PostServiceTest {
                 .withMessage(UserNotFoundException.DEFAULT_MESSAGE);
         }
 
-        // TODO: 그 외 파라미터도 일일이 테스트 할까 고민!(일단 보류)
         @ParameterizedTest(name = "[{index}] 최저 기온이 {0}인 경우")
         @ValueSource(doubles = {-900.0, 900.0})
         @NullSource
         @DisplayName("유효하지 않은 값(최저 기온)이 들어갈 경우 게시글 저장에 실패한다.")
         void saveFailInvalidValue(Double minTemperature) {
             // given
-            PostSaveRequest postSaveRequest = new PostSaveRequest("Test Title", "Test Content", NX, NY);
+            PostSaveRequest postSaveRequest = new PostSaveRequest("Test Title", "Test Content", VALID_NX, VALID_NY);
             MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
                 "text/plain", "some xml".getBytes());
 
@@ -160,7 +159,7 @@ class PostServiceTest {
         @BeforeEach
         void setUp() {
             Post savedPost = postRepository.save(
-                Post.from(user, new PostSaveRequest("Test Title", "Test Content", NX, NY), "imgUrl",
+                Post.from(user, new PostSaveRequest("Test Title", "Test Content", VALID_NX, VALID_NY), "imgUrl",
                     generateTemperatureArrange()));
             postSaveResponse = PostSaveResponse.from(savedPost);
         }
@@ -210,7 +209,7 @@ class PostServiceTest {
         void setUp() {
             for (int i = 0; i < SAVE_COUNT; i++) {
                 Post savedPost = postRepository.save(
-                    Post.from(user, new PostSaveRequest("Test Title", "Test Content", NX, NY), "imgUrl",
+                    Post.from(user, new PostSaveRequest("Test Title", "Test Content", VALID_NX, VALID_NY), "imgUrl",
                         generateTemperatureArrange()));
             }
         }
