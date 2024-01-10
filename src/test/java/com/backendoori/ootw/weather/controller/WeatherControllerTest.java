@@ -1,15 +1,22 @@
 package com.backendoori.ootw.weather.controller;
 
+import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_NX;
+import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_NY;
+import static com.backendoori.ootw.util.provider.ForecastApiUltraShortResponseSourceProvider.generateWeatherResponse;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.NoSuchElementException;
+import com.backendoori.ootw.weather.service.WeatherService;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,17 +33,19 @@ class WeatherControllerTest {
     @Autowired
     MockMvc mockMvc;
 
+    @MockBean
+    WeatherService weatherService;
+
     @Test
     @DisplayName("현재 날씨 불러오기에 성공한다.")
     void readCurrentWeatherSuccess() throws Exception {
         // given
-        Integer nx = 60;
-        Integer ny = 127;
+        given(weatherService.getCurrentWeather(VALID_NX, VALID_NY)).willReturn(generateWeatherResponse());
 
         // when
         MockHttpServletRequestBuilder requestBuilder = get(URL)
-            .param("nx", String.valueOf(nx))
-            .param("ny", String.valueOf(ny))
+            .param("nx", String.valueOf(VALID_NX))
+            .param("ny", String.valueOf(VALID_NY))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON);
 
@@ -73,6 +82,9 @@ class WeatherControllerTest {
         Integer nx = 0;
         Integer ny = 0;
 
+        given(weatherService.getCurrentWeather(nx, ny))
+            .willThrow(NoSuchElementException.class);
+
         // when
         MockHttpServletRequestBuilder requestBuilder = get(URL)
             .param("nx", String.valueOf(nx))
@@ -85,5 +97,6 @@ class WeatherControllerTest {
             .andExpect(status().isNotFound())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
+
 
 }
