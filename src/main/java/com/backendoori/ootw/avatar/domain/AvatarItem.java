@@ -31,13 +31,13 @@ public class AvatarItem {
     @Enumerated(EnumType.STRING)
     private ItemType itemType;
 
-    @Column(name = "sex", nullable = false, columnDefinition = "tinyint")
-    private boolean sex;
+    @Column(name = "sex", nullable = false, columnDefinition = "varchar(10)")
+    private Sex sex;
 
-    private AvatarItem(String image, String type, boolean sex) {
+    private AvatarItem(String image, String type, String sex) {
         this.image = image;
         this.itemType = ItemType.valueOf(type);
-        this.sex = sex;
+        this.sex = Sex.valueOf(sex);
     }
 
     public static AvatarItem create(AvatarItemRequest requestDto, String url) {
