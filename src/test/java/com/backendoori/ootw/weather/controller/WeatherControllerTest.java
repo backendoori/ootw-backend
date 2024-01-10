@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.NullSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -73,7 +72,6 @@ class WeatherControllerTest {
     }
 
     @ParameterizedTest
-    @NullSource
     @MethodSource("provideInvalidCoordinate")
     @DisplayName("유효하지 않은 위치 값으로 현재 날씨 불러오기에 실패한다.")
     void readCurrentWeatherFailByIllegalLocation(Coordinate invalidCoordinate) throws Exception {
@@ -81,6 +79,20 @@ class WeatherControllerTest {
         MockHttpServletRequestBuilder requestBuilder = get(URL)
             .param("nx", String.valueOf(invalidCoordinate.nx()))
             .param("ny", String.valueOf(invalidCoordinate.ny()))
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON);
+
+        // then
+        mockMvc.perform(requestBuilder)
+            .andExpect(status().isBadRequest())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    @DisplayName("없는 위치 값으로 현재 날씨 불러오기에 실패한다.")
+    void readCurrentWeatherFailByNullLocation() throws Exception {
+        // given // when
+        MockHttpServletRequestBuilder requestBuilder = get(URL)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON);
 
