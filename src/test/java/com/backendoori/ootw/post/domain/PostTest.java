@@ -1,5 +1,6 @@
 package com.backendoori.ootw.post.domain;
 
+import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_COORDINATE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -20,8 +21,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 class PostTest {
 
-    private static final int NX = 55;
-    private static final int NY = 127;
     private static final String IMG_URL = "imgUrl";
     private static final User MOCK_USER = mock(User.class);
 
@@ -35,19 +34,19 @@ class PostTest {
 
     private static Stream<Arguments> provideInvalidInfo() {
         return Stream.of(Arguments.of("title이 null인 경우",
-                new PostSaveRequest(null, "Test Content", NX, NY), generateTemperatureArrange()),
+                new PostSaveRequest(null, "Test Content", VALID_COORDINATE), generateTemperatureArrange()),
             Arguments.of("title이 공백인 경우",
-                new PostSaveRequest(" ", "Test Content", NX, NY), generateTemperatureArrange()),
+                new PostSaveRequest(" ", "Test Content", VALID_COORDINATE), generateTemperatureArrange()),
             Arguments.of("title이 30자를 넘는 경우",
-                new PostSaveRequest("T".repeat(31), "Test Content", NX, NY), generateTemperatureArrange()),
+                new PostSaveRequest("T".repeat(31), "Test Content", VALID_COORDINATE), generateTemperatureArrange()),
             Arguments.of("content가 null인 경우",
-                new PostSaveRequest("Test Title", null, NX, NY), generateTemperatureArrange()),
+                new PostSaveRequest("Test Title", null, VALID_COORDINATE), generateTemperatureArrange()),
             Arguments.of("content가 공백인 경우",
-                new PostSaveRequest("Test Title", " ", NX, NY), generateTemperatureArrange()),
+                new PostSaveRequest("Test Title", " ", VALID_COORDINATE), generateTemperatureArrange()),
             Arguments.of("content가 500자를 넘는 경우",
-                new PostSaveRequest("Test Title", "T".repeat(501), NX, NY), generateTemperatureArrange()),
+                new PostSaveRequest("Test Title", "T".repeat(501), VALID_COORDINATE), generateTemperatureArrange()),
             Arguments.of("temperatureArrange가 null인 경우",
-                new PostSaveRequest("Test Title", "T".repeat(501), NX, NY), null)
+                new PostSaveRequest("Test Title", "T".repeat(501), VALID_COORDINATE), null)
         );
     }
 
@@ -55,7 +54,7 @@ class PostTest {
     @DisplayName("PostSaveRequest로부터 Post를 생성하는 것에 성공한다.")
     void createPostSuccess() {
         // given
-        PostSaveRequest request = new PostSaveRequest("Test Title", "Test Content", NX, NY);
+        PostSaveRequest request = new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE);
 
         // when
         Post createdPost = Post.from(MOCK_USER, request, IMG_URL, generateTemperatureArrange());

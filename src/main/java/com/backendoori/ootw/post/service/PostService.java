@@ -33,7 +33,7 @@ public class PostService {
         User user = userRepository.findById(getUserId())
             .orElseThrow(UserNotFoundException::new);
         String imgUrl = imageService.uploadImage(postImg);
-        TemperatureArrange temperatureArrange = weatherService.getCurrentTemperatureArrange(request.nx(), request.ny());
+        TemperatureArrange temperatureArrange = weatherService.getCurrentTemperatureArrange(request.location());
 
         Post savedPost = postRepository.save(Post.from(user, request, imgUrl, temperatureArrange));
 

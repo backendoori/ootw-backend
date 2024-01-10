@@ -1,11 +1,9 @@
 package com.backendoori.ootw.weather.service;
 
 import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.DATETIME;
-import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.NO_DATA_NX;
-import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.NO_DATA_NY;
+import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.NO_DATA_COORDINATE;
 import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.ULTRA_SHORT_FORECAST_BASE_DATETIME;
-import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_NX;
-import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_NY;
+import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_COORDINATE;
 import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VILLAGE_FORECAST_BASE_DATETIME;
 import static com.backendoori.ootw.util.provider.ForecastApiUltraShortResponseSourceProvider.VALID_ULTRA_SHORT_FORECAST_ITEMS;
 import static com.backendoori.ootw.util.provider.ForecastApiUltraShortResponseSourceProvider.generateUltraShortWeatherInfoMap;
@@ -17,6 +15,7 @@ import static org.mockito.BDDMockito.given;
 
 import java.util.Map;
 import java.util.NoSuchElementException;
+import com.backendoori.ootw.weather.domain.Coordinate;
 import com.backendoori.ootw.weather.domain.TemperatureArrange;
 import com.backendoori.ootw.weather.domain.forecast.ForecastCategory;
 import com.backendoori.ootw.weather.dto.WeatherResponse;
@@ -36,8 +35,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 class WeatherServiceTest {
 
     static final Faker FAKER = new Faker();
-    static final int invalidNx = FAKER.number().negative();
-    static final int invalidNy = FAKER.number().negative();
+    static final Coordinate invalidLocation = new Coordinate(FAKER.number().negative(), FAKER.number().negative());
 
     @MockBean
     DateTimeProvider dateTimeProvider;
@@ -62,14 +60,14 @@ class WeatherServiceTest {
         void getCurrentWeatherSuccess() {
             // given
             Map<ForecastCategory, String> weatherInfoMap = generateUltraShortWeatherInfoMap();
-            WeatherResponse expectedResponse = WeatherResponse.from(DATETIME, VALID_NX, VALID_NY, weatherInfoMap);
+            WeatherResponse expectedResponse = WeatherResponse.from(DATETIME, VALID_COORDINATE, weatherInfoMap);
 
-            given(forecastApiClient.requestUltraShortForecastItems(ULTRA_SHORT_FORECAST_BASE_DATETIME, VALID_NX,
-                VALID_NY))
+            given(
+                forecastApiClient.requestUltraShortForecastItems(ULTRA_SHORT_FORECAST_BASE_DATETIME, VALID_COORDINATE))
                 .willReturn(VALID_ULTRA_SHORT_FORECAST_ITEMS);
 
             // when
-            WeatherResponse response = weatherService.getCurrentWeather(VALID_NX, VALID_NY);
+            WeatherResponse response = weatherService.getCurrentWeather(VALID_COORDINATE);
 
             // then
             assertThat(response).isEqualTo(expectedResponse);
@@ -80,12 +78,13 @@ class WeatherServiceTest {
         @DisplayName("위치에 해당하는 날씨 데이터가 없어서 현재 날씨 정보 조회에 실패한다.")
         void getCurrentWeatherFailWithNoData() {
             // given
-            given(forecastApiClient.requestUltraShortForecastItems(ULTRA_SHORT_FORECAST_BASE_DATETIME, NO_DATA_NX,
-                NO_DATA_NY))
+            given(
+                forecastApiClient.requestUltraShortForecastItems(ULTRA_SHORT_FORECAST_BASE_DATETIME,
+                    NO_DATA_COORDINATE))
                 .willThrow(NoSuchElementException.class);
 
             // when
-            ThrowingCallable requestCurrentWeather = () -> weatherService.getCurrentWeather(NO_DATA_NX, NO_DATA_NY);
+            ThrowingCallable requestCurrentWeather = () -> weatherService.getCurrentWeather(NO_DATA_COORDINATE);
 
             // then
             assertThatExceptionOfType(NoSuchElementException.class)
@@ -96,12 +95,11 @@ class WeatherServiceTest {
         @DisplayName("파라미터 값이 유효하지 않아 현재 날씨 정보 조회에 실패한다.")
         void getCurrentWeatherFailWithInvalidParameter() {
             // given
-            given(forecastApiClient.requestUltraShortForecastItems(ULTRA_SHORT_FORECAST_BASE_DATETIME, invalidNx,
-                invalidNy))
+            given(forecastApiClient.requestUltraShortForecastItems(ULTRA_SHORT_FORECAST_BASE_DATETIME, invalidLocation))
                 .willThrow(IllegalArgumentException.class);
 
             // when
-            ThrowingCallable requestCurrentWeather = () -> weatherService.getCurrentWeather(invalidNx, invalidNy);
+            ThrowingCallable requestCurrentWeather = () -> weatherService.getCurrentWeather(invalidLocation);
 
             // then
             assertThatExceptionOfType(IllegalArgumentException.class)
@@ -112,12 +110,12 @@ class WeatherServiceTest {
         @DisplayName("기상청 API에서 기타 오류가 발생한 경우 현재 날씨 정보 조회에 실패한다.")
         void getCurrentWeatherFailWithApiServerError() {
             // given
-            given(forecastApiClient.requestUltraShortForecastItems(ULTRA_SHORT_FORECAST_BASE_DATETIME, VALID_NX,
-                VALID_NY))
+            given(
+                forecastApiClient.requestUltraShortForecastItems(ULTRA_SHORT_FORECAST_BASE_DATETIME, VALID_COORDINATE))
                 .willThrow(IllegalStateException.class);
 
             // when
-            ThrowingCallable requestCurrentWeather = () -> weatherService.getCurrentWeather(VALID_NX, VALID_NY);
+            ThrowingCallable requestCurrentWeather = () -> weatherService.getCurrentWeather(VALID_COORDINATE);
 
             // then
             assertThatExceptionOfType(IllegalStateException.class)
@@ -137,11 +135,11 @@ class WeatherServiceTest {
             Map<ForecastCategory, String> weatherInfoMap = generateVillageWeatherInfoMap();
             TemperatureArrange expectedTemperatureArrange = TemperatureArrange.from(weatherInfoMap);
 
-            given(forecastApiClient.requestVillageForecastItems(VILLAGE_FORECAST_BASE_DATETIME, VALID_NX, VALID_NY))
+            given(forecastApiClient.requestVillageForecastItems(VILLAGE_FORECAST_BASE_DATETIME, VALID_COORDINATE))
                 .willReturn(VALID_VILLAGE_FORECAST_ITEMS);
 
             // when
-            TemperatureArrange temperatureArrange = weatherService.getCurrentTemperatureArrange(VALID_NX, VALID_NY);
+            TemperatureArrange temperatureArrange = weatherService.getCurrentTemperatureArrange(VALID_COORDINATE);
 
             // then
             assertThat(temperatureArrange).isEqualTo(expectedTemperatureArrange);
@@ -151,13 +149,12 @@ class WeatherServiceTest {
         @DisplayName("위치에 해당하는 날씨 데이터가 없어서 오늘의 일교차 정보 조회에 실패한다.")
         void getCurrentTemperatureArrangeFailWithNoData() {
             // given
-            given(forecastApiClient.requestVillageForecastItems(VILLAGE_FORECAST_BASE_DATETIME, NO_DATA_NX,
-                NO_DATA_NY))
+            given(forecastApiClient.requestVillageForecastItems(VILLAGE_FORECAST_BASE_DATETIME, NO_DATA_COORDINATE))
                 .willThrow(NoSuchElementException.class);
 
             // when
             ThrowingCallable requestCurrentTemperatureArrange = () ->
-                weatherService.getCurrentTemperatureArrange(NO_DATA_NX, NO_DATA_NY);
+                weatherService.getCurrentTemperatureArrange(NO_DATA_COORDINATE);
 
             // then
             assertThatExceptionOfType(NoSuchElementException.class)
@@ -169,12 +166,12 @@ class WeatherServiceTest {
         void getCurrentTemperatureArrangeFailWithInvalidParameter() {
             // given
             given(
-                forecastApiClient.requestVillageForecastItems(VILLAGE_FORECAST_BASE_DATETIME, invalidNx, invalidNy))
+                forecastApiClient.requestVillageForecastItems(VILLAGE_FORECAST_BASE_DATETIME, invalidLocation))
                 .willThrow(IllegalArgumentException.class);
 
             // when
             ThrowingCallable requestCurrentTemperatureArrange = () ->
-                weatherService.getCurrentTemperatureArrange(invalidNx, invalidNy);
+                weatherService.getCurrentTemperatureArrange(invalidLocation);
 
             // then
             assertThatExceptionOfType(IllegalArgumentException.class)
@@ -185,13 +182,13 @@ class WeatherServiceTest {
         @DisplayName("기상청 API에서 기타 오류가 발생한 경우 오늘의 일교차 정보 조회에 실패한다.")
         void getCurrentTemperatureArrangeFailWithApiServerError() {
             // given
-            given(forecastApiClient.requestVillageForecastItems(VILLAGE_FORECAST_BASE_DATETIME, VALID_NX, VALID_NY))
+            given(forecastApiClient.requestVillageForecastItems(VILLAGE_FORECAST_BASE_DATETIME, VALID_COORDINATE))
                 .willThrow(IllegalStateException.class);
 
             // when
             ThrowingCallable
                 requestCurrentTemperatureArrange = () ->
-                weatherService.getCurrentTemperatureArrange(VALID_NX, VALID_NY);
+                weatherService.getCurrentTemperatureArrange(VALID_COORDINATE);
 
             // then
             assertThatExceptionOfType(IllegalStateException.class)

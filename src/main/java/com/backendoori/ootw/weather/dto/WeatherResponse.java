@@ -2,6 +2,7 @@ package com.backendoori.ootw.weather.dto;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import com.backendoori.ootw.weather.domain.Coordinate;
 import com.backendoori.ootw.weather.domain.PtyType;
 import com.backendoori.ootw.weather.domain.SkyType;
 import com.backendoori.ootw.weather.domain.forecast.ForecastCategory;
@@ -10,14 +11,13 @@ import org.springframework.util.Assert;
 
 public record WeatherResponse(
     LocalDateTime currentDateTime,
-    int nx,
-    int ny,
+    Coordinate location,
     double currentTemperature,
     String sky,
     String pty
 ) {
 
-    public static WeatherResponse from(LocalDateTime dateTime, int nx, int ny,
+    public static WeatherResponse from(LocalDateTime dateTime, Coordinate location,
                                        Map<ForecastCategory, String> weatherInfoMap) {
         checkIncludeCurrentWeather(weatherInfoMap);
 
@@ -29,7 +29,7 @@ public record WeatherResponse(
         int ptyCode = Integer.parseInt(weatherInfoMap.get(ForecastCategory.PTY));
         String ptyType = PtyType.getByCode(ptyCode).name();
 
-        return new WeatherResponse(dateTime, nx, ny, currentTemperature, skyType, ptyType);
+        return new WeatherResponse(dateTime, location, currentTemperature, skyType, ptyType);
     }
 
     private static void checkIncludeCurrentWeather(Map<ForecastCategory, String> currentWeatherMap) {

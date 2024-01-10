@@ -1,10 +1,11 @@
 package com.backendoori.ootw.weather.dto;
 
+import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.DATETIME;
+import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_COORDINATE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -18,10 +19,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
 class WeatherResponseTest {
-
-    static final LocalDateTime DATE_TIME = LocalDateTime.of(2024, 1, 9, 0, 0);
-    static final int NX = 55;
-    static final int NY = 127;
 
     private static Stream<HashMap<ForecastCategory, String>> provideInvalidWeatherInfoMap() {
         HashMap<ForecastCategory, String> weatherInfoMapWithOnlyT1h = new HashMap<>();
@@ -58,7 +55,7 @@ class WeatherResponseTest {
         weatherInfoMap.put(ForecastCategory.PTY, String.valueOf(ptyCode));
 
         // when // then
-        WeatherResponse weatherResponse = WeatherResponse.from(DATE_TIME, NX, NY, weatherInfoMap);
+        WeatherResponse weatherResponse = WeatherResponse.from(DATETIME, VALID_COORDINATE, weatherInfoMap);
         assertAll(
             () -> assertThat(weatherResponse).hasFieldOrPropertyWithValue("currentTemperature",
                 currentTemperature.getValue()),
@@ -72,7 +69,8 @@ class WeatherResponseTest {
     @DisplayName("SKY, PTY, T1H가 포함되지 않은 결과 맵(map)으로부터 WeatherResponse 생성에 성공한다.")
     void createWeatherResponseFail(Map<ForecastCategory, String> weatherInfoMap) {
         // given // when // then
-        assertThrows(IllegalStateException.class, () -> WeatherResponse.from(DATE_TIME, NX, NY, weatherInfoMap));
+        assertThrows(IllegalStateException.class,
+            () -> WeatherResponse.from(DATETIME, VALID_COORDINATE, weatherInfoMap));
     }
 
 }

@@ -2,8 +2,7 @@ package com.backendoori.ootw.post.controller;
 
 import static com.backendoori.ootw.security.jwt.JwtAuthenticationFilter.TOKEN_HEADER;
 import static com.backendoori.ootw.security.jwt.JwtAuthenticationFilter.TOKEN_PREFIX;
-import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_NX;
-import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_NY;
+import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_COORDINATE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.mockito.BDDMockito.given;
@@ -100,11 +99,11 @@ class PostControllerTest extends TokenMockMvcTest {
         @DisplayName("게시글 저장에 성공한다.")
         void saveSuccess() throws Exception {
             // given
-            given(weatherService.getCurrentTemperatureArrange(VALID_NX, VALID_NY))
+            given(weatherService.getCurrentTemperatureArrange(VALID_COORDINATE))
                 .willReturn(generateTemperatureArrange());
 
             PostSaveRequest postSaveRequest =
-                new PostSaveRequest("Test Title", "Test Content", VALID_NX, VALID_NY);
+                new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE);
             MockMultipartFile request =
                 new MockMultipartFile("request", "request.json", MediaType.APPLICATION_JSON_VALUE,
                     objectMapper.writeValueAsBytes(postSaveRequest));
@@ -137,11 +136,11 @@ class PostControllerTest extends TokenMockMvcTest {
             // given
             setToken(user.getId() + 1);
 
-            given(weatherService.getCurrentTemperatureArrange(VALID_NX, VALID_NY))
+            given(weatherService.getCurrentTemperatureArrange(VALID_COORDINATE))
                 .willReturn(generateTemperatureArrange());
 
             PostSaveRequest postSaveRequest =
-                new PostSaveRequest("Test Title", "Test Content", VALID_NX, VALID_NY);
+                new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE);
             MockMultipartFile request =
                 new MockMultipartFile("request", "request.json", MediaType.APPLICATION_JSON_VALUE,
                     objectMapper.writeValueAsBytes(postSaveRequest));
@@ -167,10 +166,10 @@ class PostControllerTest extends TokenMockMvcTest {
         @DisplayName("유효하지 않은 요청 값(게시글 title)이 포함된 게시글 저장에 실패한다.")
         void saveFailByMethodArgumentNotValidException() throws Exception {
             // given
-            given(weatherService.getCurrentTemperatureArrange(VALID_NX, VALID_NY))
+            given(weatherService.getCurrentTemperatureArrange(VALID_COORDINATE))
                 .willReturn(generateTemperatureArrange());
 
-            PostSaveRequest postSaveRequest = new PostSaveRequest("", "Test Content", VALID_NX, VALID_NY);
+            PostSaveRequest postSaveRequest = new PostSaveRequest("", "Test Content", VALID_COORDINATE);
             MockMultipartFile request =
                 new MockMultipartFile("request", "request.json", MediaType.APPLICATION_JSON_VALUE,
                     objectMapper.writeValueAsBytes(postSaveRequest));
@@ -197,7 +196,7 @@ class PostControllerTest extends TokenMockMvcTest {
         @DisplayName("유효하지 않은 요청 값(게시글 제목)이 포함된 게시글 저장에 실패한다.")
         void saveFailInvalidValueByIllegalArgumentException() throws Exception {
             // given
-            PostSaveRequest postSaveRequest = new PostSaveRequest("", "Test Content", VALID_NX, VALID_NY);
+            PostSaveRequest postSaveRequest = new PostSaveRequest("", "Test Content", VALID_COORDINATE);
             MockMultipartFile request =
                 new MockMultipartFile("request", "request.json", MediaType.APPLICATION_JSON_VALUE,
                     objectMapper.writeValueAsBytes(postSaveRequest));
@@ -234,7 +233,7 @@ class PostControllerTest extends TokenMockMvcTest {
             TestSecurityContextHolder.setAuthentication(new TestingAuthenticationToken(user.getId(), null));
 
             Post savedPost = postRepository.save(
-                Post.from(user, new PostSaveRequest("Test Title", "Test Content", VALID_NX, VALID_NY), "imgUrl",
+                Post.from(user, new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE), "imgUrl",
                     generateTemperatureArrange()));
             postSaveResponse = PostSaveResponse.from(savedPost);
         }
@@ -283,7 +282,7 @@ class PostControllerTest extends TokenMockMvcTest {
 
             for (int i = 0; i < SAVE_COUNT; i++) {
                 Post savedPost = postRepository.save(
-                    Post.from(user, new PostSaveRequest("Test Title", "Test Content", VALID_NX, VALID_NY), "imgUrl",
+                    Post.from(user, new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE), "imgUrl",
                         generateTemperatureArrange()));
             }
         }

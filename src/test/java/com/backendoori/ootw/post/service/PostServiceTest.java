@@ -1,7 +1,6 @@
 package com.backendoori.ootw.post.service;
 
-import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_NX;
-import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_NY;
+import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_COORDINATE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -92,12 +91,12 @@ class PostServiceTest {
         @DisplayName("게시글 저장에 성공한다.")
         void saveSuccess() {
             // given
-            PostSaveRequest request = new PostSaveRequest("Test Title", "Test Content", VALID_NX, VALID_NY);
+            PostSaveRequest request = new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE);
             MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
                 "text/plain", "some xml".getBytes());
 
             given(imageService.uploadImage(postImg)).willReturn("imgUrl");
-            given(weatherService.getCurrentTemperatureArrange(request.nx(), request.ny())).willReturn(
+            given(weatherService.getCurrentTemperatureArrange(VALID_COORDINATE)).willReturn(
                 generateTemperatureArrange());
 
             // when
@@ -120,7 +119,7 @@ class PostServiceTest {
             // given
             setAuthentication(user.getId() + 1);
 
-            PostSaveRequest postSaveRequest = new PostSaveRequest("Test Title", "Test Content", VALID_NX, VALID_NY);
+            PostSaveRequest postSaveRequest = new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE);
             MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
                 "text/plain", "some xml".getBytes());
 
@@ -139,7 +138,7 @@ class PostServiceTest {
         @DisplayName("유효하지 않은 값(최저 기온)이 들어갈 경우 게시글 저장에 실패한다.")
         void saveFailInvalidValue(Double minTemperature) {
             // given
-            PostSaveRequest postSaveRequest = new PostSaveRequest("Test Title", "Test Content", VALID_NX, VALID_NY);
+            PostSaveRequest postSaveRequest = new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE);
             MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
                 "text/plain", "some xml".getBytes());
 
@@ -159,7 +158,7 @@ class PostServiceTest {
         @BeforeEach
         void setUp() {
             Post savedPost = postRepository.save(
-                Post.from(user, new PostSaveRequest("Test Title", "Test Content", VALID_NX, VALID_NY), "imgUrl",
+                Post.from(user, new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE), "imgUrl",
                     generateTemperatureArrange()));
             postSaveResponse = PostSaveResponse.from(savedPost);
         }
@@ -209,7 +208,7 @@ class PostServiceTest {
         void setUp() {
             for (int i = 0; i < SAVE_COUNT; i++) {
                 Post savedPost = postRepository.save(
-                    Post.from(user, new PostSaveRequest("Test Title", "Test Content", VALID_NX, VALID_NY), "imgUrl",
+                    Post.from(user, new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE), "imgUrl",
                         generateTemperatureArrange()));
             }
         }

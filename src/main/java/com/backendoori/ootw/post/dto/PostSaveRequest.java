@@ -1,7 +1,7 @@
 package com.backendoori.ootw.post.dto;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
+import com.backendoori.ootw.common.validation.Grid;
+import com.backendoori.ootw.weather.domain.Coordinate;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -15,15 +15,9 @@ public record PostSaveRequest(
     @Size(max = 500)
     String content,
 
-    @Min(0)
-    @Max(999)
     @NotNull
-    int nx,
-
-    @Min(0)
-    @Max(999)
-    @NotNull
-    int ny
+    @Grid
+    Coordinate location
 ) {
 
 }

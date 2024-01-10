@@ -3,6 +3,7 @@ package com.backendoori.ootw.util.provider;
 import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.DATETIME;
 import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.FCST_DATETIME;
 import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.ULTRA_SHORT_FORECAST_BASE_DATETIME;
+import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_COORDINATE;
 import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_NX;
 import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_NY;
 
@@ -57,7 +58,7 @@ public class ForecastApiUltraShortResponseSourceProvider {
         weatherInfoMap.put(ForecastCategory.SKY, SKY_VALUE);
         weatherInfoMap.put(ForecastCategory.PTY, PTY_VALUE);
 
-        return WeatherResponse.from(DATETIME, VALID_NX, VALID_NY, weatherInfoMap);
+        return WeatherResponse.from(DATETIME, VALID_COORDINATE, weatherInfoMap);
     }
 
 }
