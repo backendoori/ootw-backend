@@ -2,7 +2,7 @@ package com.backendoori.ootw.post.dto;
 
 import java.time.LocalDateTime;
 import com.backendoori.ootw.post.domain.Post;
-import com.backendoori.ootw.weather.dto.WeatherDto;
+import com.backendoori.ootw.weather.dto.TemperatureArrangeDto;
 
 public record PostSaveResponse(
     Long postId,
@@ -11,7 +11,7 @@ public record PostSaveResponse(
     String image,
     LocalDateTime createdAt,
     LocalDateTime updatedAt,
-    WeatherDto weather
+    TemperatureArrangeDto temperatureArrange
 ) {
 
     public static PostSaveResponse from(Post savedPost) {
@@ -22,7 +22,7 @@ public record PostSaveResponse(
             savedPost.getImage(),
             savedPost.getCreatedAt(),
             savedPost.getUpdatedAt(),
-            WeatherDto.from(savedPost.getWeather())
+            TemperatureArrangeDto.from(savedPost.getTemperatureArrange())
         );
     }
 

@@ -3,6 +3,7 @@ package com.backendoori.ootw.weather.service;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import com.backendoori.ootw.weather.domain.TemperatureArrange;
 import com.backendoori.ootw.weather.domain.forecast.ForecastCategory;
 import com.backendoori.ootw.weather.dto.WeatherResponse;
 import com.backendoori.ootw.weather.dto.forecast.BaseDateTime;
@@ -19,16 +20,32 @@ public class WeatherService {
 
     public WeatherResponse getCurrentWeather(int nx, int ny) {
         LocalDateTime dateTime = LocalDateTime.now();
-        BaseDateTime requestBaseDateTime = BaseDateTimeCalculator.getRequestBaseDateTime(dateTime);
-        BaseDateTime currentBaseDateTime = BaseDateTimeCalculator.getCurrentBaseDateTime(dateTime);
+        BaseDateTime requestBaseDateTime = BaseDateTimeCalculator.getUltraShortForecastRequestBaseDateTime(dateTime);
+        BaseDateTime fcstBaseDateTime = BaseDateTimeCalculator.getCurrentBaseDateTime(dateTime);
 
-        Map<ForecastCategory, String> currentWeather = new HashMap<>();
+        Map<ForecastCategory, String> weatherInfoMap = new HashMap<>();
         forecastApiClient.requestUltraShortForecastItems(requestBaseDateTime, nx, ny)
             .stream()
-            .filter(item -> item.matchFcstDateTimeWithBaseDateTime(currentBaseDateTime))
-            .forEach(item -> currentWeather.put(ForecastCategory.valueOf(item.category()), item.fcstValue()));
+            .filter(item -> item.matchFcstDateTime(fcstBaseDateTime))
+            .forEach(item -> weatherInfoMap.put(ForecastCategory.valueOf(item.category()), item.fcstValue()));
 
-        return WeatherResponse.from(dateTime, nx, ny, currentWeather);
+        return WeatherResponse.from(dateTime, nx, ny, weatherInfoMap);
+    }
+
+    public TemperatureArrange getCurrentTemperatureArrange(int nx, int ny) {
+        LocalDateTime dateTime = LocalDateTime.now();
+        BaseDateTime requestBaseDateTime = BaseDateTimeCalculator.getVillageForecastRequestBaseDateTime(dateTime);
+        BaseDateTime fcstBaseDateTime = BaseDateTimeCalculator.getCurrentBaseDateTime(dateTime);
+
+        Map<ForecastCategory, String> weatherInfoMap = new HashMap<>();
+        forecastApiClient.requestVillageForecastItems(requestBaseDateTime, nx, ny)
+            .stream()
+            .filter(item -> item.fcstDateTime().baseDate().equals(fcstBaseDateTime.baseDate())
+                && (item.category().equals(ForecastCategory.TMN.name())
+                || item.category().equals(ForecastCategory.TMX.name())))
+            .forEach(item -> weatherInfoMap.put(ForecastCategory.valueOf(item.category()), item.fcstValue()));
+
+        return TemperatureArrange.from(weatherInfoMap);
     }
 
 }

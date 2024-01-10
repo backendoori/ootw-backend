@@ -30,20 +30,33 @@ CREATE TABLE avatar_items
 
 CREATE TABLE posts
 (
-    id                  BIGINT AUTO_INCREMENT,
-    user_id             BIGINT                                                  NOT NULL,
-    title               VARCHAR(30)                                             NOT NULL,
-    content             VARCHAR(255)                                            NOT NULL,
-    image               VARCHAR(500)                                            NULL,
-    created_at          DATETIME(6)                                             NULL,
-    updated_at          DATETIME(6)                                             NULL,
-    current_temperature DOUBLE                                                  NOT NULL,
-    day_min_temperature DOUBLE                                                  NOT NULL,
-    day_max_temperature DOUBLE                                                  NOT NULL,
-    pty_type            ENUM ('NONE', 'RAIN', 'RAIN_OR_SNOW', 'SNOW', 'SHOWER') NOT NULL,
-    sky_type            ENUM ('SUNNY', 'CLOUDY', 'OVERCAST')                    NOT NULL,
+    id         BIGINT AUTO_INCREMENT,
+    user_id    BIGINT       NOT NULL,
+    title      VARCHAR(30)  NOT NULL,
+    content    VARCHAR(255) NOT NULL,
+    image      VARCHAR(500) NULL,
+    created_at DATETIME(6)  NULL,
+    updated_at DATETIME(6)  NULL,
+    min_temperature DOUBLE NOT NULL,
+    max_temperature DOUBLE NOT NULL,
     CONSTRAINT posts_pk
         PRIMARY KEY (id),
     FOREIGN KEY (user_id)
         REFERENCES users (id)
+);
+
+CREATE TABLE likes
+(
+    id         BIGINT AUTO_INCREMENT,
+    user_id    BIGINT       NOT NULL,
+    post_id    BIGINT       NOT NULL,
+    status     TINYINT      NOT NULL,
+    created_at DATETIME(6)  NULL,
+    updated_at DATETIME(6)  NULL,
+    CONSTRAINT posts_pk
+        PRIMARY KEY (id),
+    FOREIGN KEY (user_id)
+        REFERENCES users (id),
+    FOREIGN KEY (post_id)
+        REFERENCES posts (id)
 );

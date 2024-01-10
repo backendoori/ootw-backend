@@ -16,8 +16,8 @@ public @interface Password {
 
     int MIN_SIZE = 8;
     int MAX_SIZE = 30;
-    String REGEX = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&^])[A-Za-z\\d@$!%*#?&^]" +
-        "{" + MIN_SIZE + "," + MAX_SIZE + "}$";
+    String REGEX = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&^])[A-Za-z\\d@$!%*#?&^]"
+        + "{" + MIN_SIZE + "," + MAX_SIZE + "}$";
 
     String message() default Message.INVALID_PASSWORD;
 

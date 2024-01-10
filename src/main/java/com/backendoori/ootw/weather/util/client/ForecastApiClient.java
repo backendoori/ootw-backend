@@ -40,6 +40,22 @@ public class ForecastApiClient {
         return parseForecastResult(response);
     }
 
+    public List<ForecastResultItem> requestVillageForecastItems(BaseDateTime requestBaseDateTime,
+                                                                int nx,
+                                                                int ny) {
+        String response = forecastApi.getVillageForecast(
+            forecastProperties.serviceKey(),
+            NUM_OF_ROWS,
+            PAGE_NO,
+            DATA_TYPE,
+            requestBaseDateTime.baseDate(),
+            requestBaseDateTime.baseTime(),
+            nx,
+            ny);
+
+        return parseForecastResult(response);
+    }
+
     private List<ForecastResultItem> parseForecastResult(String response) {
         try {
             ForecastResultHeader header = objectMapper.readValue(response, ForecastResultHeader.class);
@@ -48,8 +64,7 @@ public class ForecastApiClient {
             return objectMapper.readValue(response, ForecastSuccessResultBody.class)
                 .items();
         } catch (JacksonException e) {
-            // TODO: 리팩토링
-            throw new IllegalStateException(ForecastResultErrorManager.API_SERVER_ERROR_MESSAGE);
+            throw ForecastResultErrorManager.getApiServerException();
         }
     }
 

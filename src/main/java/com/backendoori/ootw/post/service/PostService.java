@@ -11,6 +11,8 @@ import com.backendoori.ootw.post.dto.PostSaveResponse;
 import com.backendoori.ootw.post.repository.PostRepository;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.repository.UserRepository;
+import com.backendoori.ootw.weather.domain.TemperatureArrange;
+import com.backendoori.ootw.weather.service.WeatherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -24,14 +26,16 @@ public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final ImageService imageService;
+    private final WeatherService weatherService;
 
     @Transactional
     public PostSaveResponse save(PostSaveRequest request, MultipartFile postImg) {
         User user = userRepository.findById(getUserId())
             .orElseThrow(UserNotFoundException::new);
         String imgUrl = imageService.uploadImage(postImg);
+        TemperatureArrange temperatureArrange = weatherService.getCurrentTemperatureArrange(request.nx(), request.ny());
 
-        Post savedPost = postRepository.save(Post.from(user, request, imgUrl));
+        Post savedPost = postRepository.save(Post.from(user, request, imgUrl, temperatureArrange));
 
         return PostSaveResponse.from(savedPost);
     }
