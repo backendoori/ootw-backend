@@ -12,7 +12,7 @@ class AvatarItemTest {
     @DisplayName("아바타 옷 생성 테스트")
     public void createTest() throws Exception {
         //given
-        AvatarItemRequest request = new AvatarItemRequest("HAIR", true);
+        AvatarItemRequest request = new AvatarItemRequest("HAIR", Sex.MALE.name());
         String url = "url";
 
         //when
@@ -21,7 +21,7 @@ class AvatarItemTest {
 
         //then
         assertThat(request.type()).isEqualTo(avatarItem.getItemType().name());
-        assertThat(request.sex()).isEqualTo(avatarItem.isSex());
+        assertThat(request.sex()).isEqualTo(avatarItem.getSex().name());
     }
 
 }

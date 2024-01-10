@@ -2,6 +2,7 @@ package com.backendoori.ootw.avatar.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.backendoori.ootw.avatar.domain.Sex;
 import com.backendoori.ootw.avatar.dto.AvatarItemRequest;
 import com.backendoori.ootw.avatar.dto.AvatarItemResponse;
 import com.backendoori.ootw.avatar.repository.AvatarItemRepository;
@@ -32,7 +33,7 @@ class AvatarItemServiceTest {
         //given
         MockMultipartFile file = new MockMultipartFile("file", "filename.txt",
             "text/plain", "some xml".getBytes());
-        AvatarItemRequest request = new AvatarItemRequest("HAIR", true);
+        AvatarItemRequest request = new AvatarItemRequest("HAIR", Sex.MALE.name());
 
         //when
         AvatarItemResponse avatarItemResponse = avatarItemService.uploadItem(file, request);

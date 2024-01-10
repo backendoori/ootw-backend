@@ -4,13 +4,13 @@ import com.backendoori.ootw.avatar.domain.AvatarItem;
 
 public record AvatarItemResponse(
     String type,
-    boolean sex,
+    String sex,
     String url
 ) {
 
     public static AvatarItemResponse from(AvatarItem avatarItem) {
         return new AvatarItemResponse(avatarItem.getItemType().name(),
-            avatarItem.isSex(),
+            avatarItem.getSex().name(),
             avatarItem.getImage());
     }
 
