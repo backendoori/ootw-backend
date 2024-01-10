@@ -17,11 +17,6 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
-    configureEach {
-        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
-        exclude group: 'ch.qos.logback', module: 'logback-classic'
-        exclude group: 'org.apache.logging.log4j', module: 'log4j-to-slf4j'
-    }
 }
 
 repositories {
@@ -47,7 +42,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
     testImplementation 'net.datafaker:datafaker:2.0.2'
-    testImplementation 'it.ozimov:embedded-redis:0.7.3'
+    testImplementation 'com.icegreen:greenmail-junit5:2.0.1'
 }
 
 jacoco {
