@@ -19,6 +19,7 @@ import com.backendoori.ootw.user.dto.TokenDto;
 import com.backendoori.ootw.user.dto.UserDto;
 import com.backendoori.ootw.user.exception.AlreadyExistEmailException;
 import com.backendoori.ootw.user.exception.IncorrectPasswordException;
+import com.backendoori.ootw.user.exception.NonCertifiedUserException;
 import com.backendoori.ootw.user.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.datafaker.Faker;
@@ -211,6 +212,25 @@ class UserControllerTest {
 
             // then
             actions.andExpect(status().isBadRequest());
+        }
+
+        @DisplayName("이메일이 인증되지 않은 경우 403 status를 반환한다")
+        @Test
+        void nonCertifiedEmail() throws Exception {
+            // given
+            LoginDto loginDto = generateLoginDto();
+
+            given(userService.login(loginDto)).willThrow(new NonCertifiedUserException());
+
+            // when
+            ResultActions actions = mockMvc.perform(
+                post("/api/v1/auth/login")
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(loginDto)));
+
+            // then
+            actions.andExpect(status().isForbidden());
         }
 
         @DisplayName("email이 일치하는 사용자가 없으면 404 status를 반환한다")
