@@ -8,6 +8,7 @@ import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.user.domain.Certificate;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.dto.CertifyDto;
+import com.backendoori.ootw.user.dto.SendCertificateDto;
 import com.backendoori.ootw.user.exception.AlreadyCertifiedUserException;
 import com.backendoori.ootw.user.exception.IncorrectCertificateException;
 import com.backendoori.ootw.user.repository.CertificateRedisRepository;
@@ -54,27 +55,55 @@ class CertificateServiceTest extends MailTest {
 
     @AfterEach
     void cleanup() {
-        certificateRedisRepository.deleteAll();
+        certificateRedisRepository.deleteById(user.getEmail());
         userRepository.deleteById(user.getId());
     }
 
+    @DisplayName("인증 코드 발송 테스트")
+    @Nested
+    class SendCertificateTest {
 
-    @DisplayName("사용자 이메일로 인증 코드를 보내는데 성공한다.")
-    @Test
-    void testSendCertificate() {
-        // given // when
-        certificateService.sendCertificate(user.getEmail());
+        SendCertificateDto sendCertificateDto;
 
-        // then
-        smtp.waitForIncomingEmail(30 * 1000L, 1);
+        @BeforeEach
+        void setSendCertificateDto() {
+            sendCertificateDto = new SendCertificateDto(user.getEmail());
+        }
 
-        String actualCode = GreenMailUtil.getBody(smtp.getReceivedMessages()[0]);
-        Certificate certificate = certificateRedisRepository.findById(user.getEmail())
-            .orElseThrow();
+        @DisplayName("사용자 이메일로 인증 코드를 보내는데 성공한다")
+        @Test
+        void success() {
+            // given // when
+            certificateService.sendCertificate(sendCertificateDto);
 
-        assertThat(actualCode).isEqualTo(certificate.getCode());
+            // then
+            smtp.waitForIncomingEmail(30 * 1000L, 1);
+
+            String actualCode = GreenMailUtil.getBody(smtp.getReceivedMessages()[0]);
+            Certificate certificate = certificateRedisRepository.findById(user.getEmail())
+                .orElseThrow();
+
+            assertThat(actualCode).isEqualTo(certificate.getCode());
+        }
+
+        @DisplayName("이미 인증된 사용자의 경우 예외가 발생한다")
+        @Test
+        void failAlreadyCertified() {
+            // given
+            user.certify();
+            userRepository.save(user);
+
+            // when
+            ThrowingCallable sendCertificate = () -> certificateService.sendCertificate(sendCertificateDto);
+
+            // then
+            assertThatExceptionOfType(AlreadyCertifiedUserException.class)
+                .isThrownBy(sendCertificate);
+        }
+
     }
 
+    @DisplayName("코드 인증 테스트")
     @Nested
     class CertifyTest {
 
