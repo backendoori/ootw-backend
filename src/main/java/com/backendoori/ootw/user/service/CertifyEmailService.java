@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class CertifyEmailService {
 
     public static final int CERTIFICATE_SIZE = 6;
-    public static final String TITLE_PREFIX = "[#OOTW] 이메일 인증 코드 : {0}";
+    public static final String TITLE_FORMAT = "[#OOTW] 이메일 인증 코드 : {0}";
 
     private final OotwMailSender ootwMailSender;
     private final UserRepository userRepository;
@@ -63,7 +63,7 @@ public class CertifyEmailService {
     }
 
     private String generateTitle(Certificate certificate) {
-        return MessageFormat.format(TITLE_PREFIX, certificate.getCode());
+        return MessageFormat.format(TITLE_FORMAT, certificate.getCode());
     }
 
 }
