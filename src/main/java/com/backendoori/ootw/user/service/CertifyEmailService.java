@@ -8,7 +8,7 @@ import com.backendoori.ootw.user.domain.Certificate;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.dto.CertifyDto;
 import com.backendoori.ootw.user.exception.AlreadyCertifiedUserException;
-import com.backendoori.ootw.user.exception.IncorrectEmailCodeException;
+import com.backendoori.ootw.user.exception.IncorrectCertificateException;
 import com.backendoori.ootw.user.repository.CertificateRedisRepository;
 import com.backendoori.ootw.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -45,9 +45,9 @@ public class CertifyEmailService {
 
         Certificate certificate = certificateRedisRepository.findByUserId(certifyDto.userId())
             .orElseThrow(UserNotFoundException::new);
-        boolean isIncorrectCode = !certifyDto.code().equals(certificate.getCode());
+        boolean isIncorrectCertificate = !certifyDto.code().equals(certificate.getCode());
 
-        AssertUtil.throwIf(isIncorrectCode, IncorrectEmailCodeException::new);
+        AssertUtil.throwIf(isIncorrectCertificate, IncorrectCertificateException::new);
 
         user.certify();
         certificateRedisRepository.delete(certificate);
