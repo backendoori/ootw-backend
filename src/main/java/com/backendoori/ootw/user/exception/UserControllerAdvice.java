@@ -16,7 +16,7 @@ public class UserControllerAdvice {
 
     @ExceptionHandler(AlreadyCertifiedUserException.class)
     public ResponseEntity<ErrorResponse> handleAlreadyCertifiedUserException() {
-        return ResponseEntity.status(HttpStatus.NOT_MODIFIED)
+        return ResponseEntity.status(HttpStatus.ALREADY_REPORTED)
             .build();
     }
 
