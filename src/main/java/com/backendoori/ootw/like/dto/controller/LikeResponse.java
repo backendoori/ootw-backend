@@ -14,7 +14,7 @@ public record LikeResponse(
             like.getId(),
             like.getUser().getId(),
             like.getPost().getId(),
-            like.getStatus());
+            like.getIsLike());
     }
 
 }
