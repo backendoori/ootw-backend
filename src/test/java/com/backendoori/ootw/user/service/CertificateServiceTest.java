@@ -61,12 +61,12 @@ class CertificateServiceTest extends MailTest {
 
     @DisplayName("인증 코드 발송 테스트")
     @Nested
-    class SendCertificateTest {
+    class SendCodeTest {
 
         SendCodeDto sendCodeDto;
 
         @BeforeEach
-        void setSendCertificateDto() {
+        void setSendCodeDto() {
             sendCodeDto = new SendCodeDto(user.getEmail());
         }
 
@@ -74,7 +74,7 @@ class CertificateServiceTest extends MailTest {
         @Test
         void success() {
             // given // when
-            certificateService.sendCertificate(sendCodeDto);
+            certificateService.sendCode(sendCodeDto);
 
             // then
             smtp.waitForIncomingEmail(30 * 1000L, 1);
@@ -94,7 +94,7 @@ class CertificateServiceTest extends MailTest {
             userRepository.save(user);
 
             // when
-            ThrowingCallable sendCertificate = () -> certificateService.sendCertificate(sendCodeDto);
+            ThrowingCallable sendCertificate = () -> certificateService.sendCode(sendCodeDto);
 
             // then
             assertThatExceptionOfType(AlreadyCertifiedUserException.class)

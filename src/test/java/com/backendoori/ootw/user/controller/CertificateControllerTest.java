@@ -56,7 +56,7 @@ class CertificateControllerTest {
         SendCodeDto sendCodeDto;
 
         @BeforeEach
-        void setSendCertificateDto() {
+        void setSendCodeDto() {
             sendCodeDto = new SendCodeDto(FAKER.internet().emailAddress());
         }
 
@@ -87,7 +87,7 @@ class CertificateControllerTest {
 
             doThrow(AlreadyCertifiedUserException.class)
                 .when(certificateService)
-                .sendCertificate(sendCodeDto);
+                .sendCode(sendCodeDto);
 
             // when
             ResultActions actions = mockMvc.perform(requestBuilder);

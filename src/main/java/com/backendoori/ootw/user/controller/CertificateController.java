@@ -20,7 +20,7 @@ public class CertificateController {
 
     @PatchMapping("/certificate")
     public ResponseEntity<Void> sendCode(@Valid SendCodeDto sendCodeDto) {
-        certificateService.sendCertificate(sendCodeDto);
+        certificateService.sendCode(sendCodeDto);
 
         return ResponseEntity.status(HttpStatus.OK)
             .build();

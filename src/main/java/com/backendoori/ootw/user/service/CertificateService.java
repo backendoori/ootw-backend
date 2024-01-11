@@ -28,7 +28,7 @@ public class CertificateService {
     private final CertificateRedisRepository certificateRedisRepository;
 
     @Transactional
-    public void sendCertificate(SendCodeDto sendCodeDto) {
+    public void sendCode(SendCodeDto sendCodeDto) {
         String email = sendCodeDto.email();
 
         User user = userRepository.findByEmail(email)

@@ -36,7 +36,7 @@ public class UserService {
         User user = buildUser(signupDto);
 
         userRepository.save(user);
-        certificateService.sendCertificate(new SendCodeDto(user.getEmail()));
+        certificateService.sendCode(new SendCodeDto(user.getEmail()));
     }
 
     public TokenDto login(LoginDto loginDto) {
