@@ -43,7 +43,7 @@ public class User extends BaseEntity {
     @Column(name = "certified", nullable = false, columnDefinition = "TINYINT(1)")
     private boolean certified;
 
-    public User(Long id, String email, String password, String nickname, String profileImageUrl, Boolean certified) {
+    public User(Long id, String email, String password, String nickname, String profileImageUrl, boolean certified) {
         AssertUtil.hasPattern(email, RFC5322.REGEX, Message.INVALID_EMAIL);
         AssertUtil.isTrue(email.length() <= 255, Message.TOO_LONG_EMAIL);
         AssertUtil.notBlank(password, Message.BLANK_PASSWORD);
