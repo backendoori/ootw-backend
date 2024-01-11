@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -94,6 +95,17 @@ public class PostService {
             }).toList();
     }
 
+    @Transactional
+    public void delete(Long postId) {
+        Post post = postRepository.findById(postId)
+            .orElseThrow(() -> new NoSuchElementException(POST_NOT_FOUND));
+
+        checkUserHasPostPermission(post);
+
+        postRepository.delete(post);
+    }
+
+
     private List<Long> getLikedPostId(long userId) {
         return likeRepository.findByUserAndIsLike(userId, true)
             .stream().map(like -> like.getPost().getId())
@@ -113,6 +125,12 @@ public class PostService {
             .getContext()
             .getAuthentication()
             .getPrincipal() != ANONYMOUS_USER_PRINCIPLE;
+    }
+
+    private void checkUserHasPostPermission(Post post) {
+        Assert.isTrue(getUserId() == post.getUser().getId(), () -> {
+            throw new NoPostPermissionException();
+        });
     }
 
 }
