@@ -10,7 +10,7 @@ import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.security.jwt.TokenProvider;
 import com.backendoori.ootw.user.domain.Certificate;
 import com.backendoori.ootw.user.dto.CertifyDto;
-import com.backendoori.ootw.user.dto.SendCertificateDto;
+import com.backendoori.ootw.user.dto.SendCodeDto;
 import com.backendoori.ootw.user.exception.AlreadyCertifiedUserException;
 import com.backendoori.ootw.user.exception.IncorrectCertificateException;
 import com.backendoori.ootw.user.service.CertificateService;
@@ -53,11 +53,11 @@ class CertificateControllerTest {
     @Nested
     class CertificationTest {
 
-        SendCertificateDto sendCertificateDto;
+        SendCodeDto sendCodeDto;
 
         @BeforeEach
         void setSendCertificateDto() {
-            sendCertificateDto = new SendCertificateDto(FAKER.internet().emailAddress());
+            sendCodeDto = new SendCodeDto(FAKER.internet().emailAddress());
         }
 
         @DisplayName("인증 코드 발송에 성공할 경우 200 status를 반환한다.")
@@ -66,7 +66,7 @@ class CertificateControllerTest {
             // given
             MockHttpServletRequestBuilder requestBuilder = patch("/api/v1/auth/certificate")
                 .with(csrf())
-                .param("email", sendCertificateDto.email())
+                .param("email", sendCodeDto.email())
                 .contentType(MediaType.APPLICATION_JSON);
 
             // when
@@ -82,12 +82,12 @@ class CertificateControllerTest {
             // given
             MockHttpServletRequestBuilder requestBuilder = patch("/api/v1/auth/certificate")
                 .with(csrf())
-                .param("email", sendCertificateDto.email())
+                .param("email", sendCodeDto.email())
                 .contentType(MediaType.APPLICATION_JSON);
 
             doThrow(AlreadyCertifiedUserException.class)
                 .when(certificateService)
-                .sendCertificate(sendCertificateDto);
+                .sendCertificate(sendCodeDto);
 
             // when
             ResultActions actions = mockMvc.perform(requestBuilder);

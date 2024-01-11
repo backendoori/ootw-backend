@@ -8,7 +8,7 @@ import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.user.domain.Certificate;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.dto.CertifyDto;
-import com.backendoori.ootw.user.dto.SendCertificateDto;
+import com.backendoori.ootw.user.dto.SendCodeDto;
 import com.backendoori.ootw.user.exception.AlreadyCertifiedUserException;
 import com.backendoori.ootw.user.exception.IncorrectCertificateException;
 import com.backendoori.ootw.user.repository.CertificateRedisRepository;
@@ -63,18 +63,18 @@ class CertificateServiceTest extends MailTest {
     @Nested
     class SendCertificateTest {
 
-        SendCertificateDto sendCertificateDto;
+        SendCodeDto sendCodeDto;
 
         @BeforeEach
         void setSendCertificateDto() {
-            sendCertificateDto = new SendCertificateDto(user.getEmail());
+            sendCodeDto = new SendCodeDto(user.getEmail());
         }
 
         @DisplayName("사용자 이메일로 인증 코드를 보내는데 성공한다")
         @Test
         void success() {
             // given // when
-            certificateService.sendCertificate(sendCertificateDto);
+            certificateService.sendCertificate(sendCodeDto);
 
             // then
             smtp.waitForIncomingEmail(30 * 1000L, 1);
@@ -94,7 +94,7 @@ class CertificateServiceTest extends MailTest {
             userRepository.save(user);
 
             // when
-            ThrowingCallable sendCertificate = () -> certificateService.sendCertificate(sendCertificateDto);
+            ThrowingCallable sendCertificate = () -> certificateService.sendCertificate(sendCodeDto);
 
             // then
             assertThatExceptionOfType(AlreadyCertifiedUserException.class)
