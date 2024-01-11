@@ -1,5 +1,13 @@
 package com.backendoori.ootw.post.validation;
 
+import static com.backendoori.ootw.post.validation.Message.BLANK_POST_CONTENT;
+import static com.backendoori.ootw.post.validation.Message.BLANK_POST_TITLE;
+import static com.backendoori.ootw.post.validation.Message.INVALID_POST_CONTENT;
+import static com.backendoori.ootw.post.validation.Message.INVALID_POST_TITLE;
+import static com.backendoori.ootw.post.validation.Message.NULL_POST;
+import static com.backendoori.ootw.post.validation.Message.NULL_TEMPERATURE_ARRANGE;
+import static com.backendoori.ootw.post.validation.Message.NULL_WRITER;
+
 import com.backendoori.ootw.post.dto.PostSaveRequest;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.weather.domain.TemperatureArrange;
@@ -11,29 +19,29 @@ public class PostValidator {
     private static final Integer MAX_CONTENT_LENGTH = 500;
 
     public static void validateUser(User user) {
-        Assert.notNull(user, "게시글 생성 요청 사용자가 null이어서는 안됩니다.");
+        Assert.notNull(user, NULL_WRITER);
     }
 
     public static void validatePostSaveRequest(PostSaveRequest request) {
-        Assert.notNull(request, "게시글 생성 요청 정보가 null이어서는 안됩니다.");
+        Assert.notNull(request, NULL_POST);
         validateTitle(request.title());
         validateContent(request.content());
     }
 
     public static void validateTemperatureArrange(TemperatureArrange temperatureArrange) {
-        Assert.notNull(temperatureArrange, "게시글 기온 범위가 null이어서는 안됩니다.");
+        Assert.notNull(temperatureArrange, NULL_TEMPERATURE_ARRANGE);
     }
 
     private static void validateTitle(String title) {
-        Assert.notNull(title, "게시글 제목이 null이어서는 안됩니다.");
-        Assert.isTrue(!title.isBlank(), "게시글 제목이 공백이어서는 안됩니다.");
-        Assert.isTrue(!(title.length() > MAX_TITLE_LENGTH), "게시글 제목은 30자 이내여야 합니다.");
+        Assert.notNull(title, BLANK_POST_TITLE);
+        Assert.isTrue(!title.isBlank(), BLANK_POST_TITLE);
+        Assert.isTrue(!(title.length() > MAX_TITLE_LENGTH), INVALID_POST_TITLE);
     }
 
     private static void validateContent(String content) {
-        Assert.notNull(content, "게시글 내용이 null이어서는 안됩니다.");
-        Assert.isTrue(!content.isBlank(), "게시글 내용이 공백이어서는 안됩니다.");
-        Assert.isTrue(!(content.length() > MAX_CONTENT_LENGTH), "게시글 내용은 500자 이내여야 합니다.");
+        Assert.notNull(content, BLANK_POST_CONTENT);
+        Assert.isTrue(!content.isBlank(), BLANK_POST_CONTENT);
+        Assert.isTrue(!(content.length() > MAX_CONTENT_LENGTH), INVALID_POST_CONTENT);
     }
 
 }

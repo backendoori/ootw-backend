@@ -2,8 +2,10 @@ package com.backendoori.ootw.post.controller;
 
 import static com.backendoori.ootw.security.jwt.JwtAuthenticationFilter.TOKEN_HEADER;
 import static com.backendoori.ootw.security.jwt.JwtAuthenticationFilter.TOKEN_PREFIX;
+import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_COORDINATE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -25,6 +27,7 @@ import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.repository.UserRepository;
 import com.backendoori.ootw.weather.domain.TemperatureArrange;
 import com.backendoori.ootw.weather.domain.forecast.ForecastCategory;
+import com.backendoori.ootw.weather.service.WeatherService;
 import net.datafaker.Faker;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,6 +37,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
@@ -43,9 +47,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 
 @TestInstance(Lifecycle.PER_CLASS)
 class PostControllerTest extends TokenMockMvcTest {
-
-    static final int NX = 55;
-    static final int NY = 127;
     static final Faker FAKER = new Faker();
 
     User user;
@@ -61,6 +62,9 @@ class PostControllerTest extends TokenMockMvcTest {
 
     @Autowired
     UserRepository userRepository;
+
+    @MockBean
+    WeatherService weatherService;
 
     @BeforeEach
     void setup() {
@@ -95,8 +99,11 @@ class PostControllerTest extends TokenMockMvcTest {
         @DisplayName("게시글 저장에 성공한다.")
         void saveSuccess() throws Exception {
             // given
+            given(weatherService.getCurrentTemperatureArrange(VALID_COORDINATE))
+                .willReturn(generateTemperatureArrange());
+
             PostSaveRequest postSaveRequest =
-                new PostSaveRequest("Test Title", "Test Content", NX, NY);
+                new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE);
             MockMultipartFile request =
                 new MockMultipartFile("request", "request.json", MediaType.APPLICATION_JSON_VALUE,
                     objectMapper.writeValueAsBytes(postSaveRequest));
@@ -129,8 +136,11 @@ class PostControllerTest extends TokenMockMvcTest {
             // given
             setToken(user.getId() + 1);
 
+            given(weatherService.getCurrentTemperatureArrange(VALID_COORDINATE))
+                .willReturn(generateTemperatureArrange());
+
             PostSaveRequest postSaveRequest =
-                new PostSaveRequest("Test Title", "Test Content", NX, NY);
+                new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE);
             MockMultipartFile request =
                 new MockMultipartFile("request", "request.json", MediaType.APPLICATION_JSON_VALUE,
                     objectMapper.writeValueAsBytes(postSaveRequest));
@@ -156,7 +166,10 @@ class PostControllerTest extends TokenMockMvcTest {
         @DisplayName("유효하지 않은 요청 값(게시글 title)이 포함된 게시글 저장에 실패한다.")
         void saveFailByMethodArgumentNotValidException() throws Exception {
             // given
-            PostSaveRequest postSaveRequest = new PostSaveRequest("", "Test Content", NX, NY);
+            given(weatherService.getCurrentTemperatureArrange(VALID_COORDINATE))
+                .willReturn(generateTemperatureArrange());
+
+            PostSaveRequest postSaveRequest = new PostSaveRequest("", "Test Content", VALID_COORDINATE);
             MockMultipartFile request =
                 new MockMultipartFile("request", "request.json", MediaType.APPLICATION_JSON_VALUE,
                     objectMapper.writeValueAsBytes(postSaveRequest));
@@ -180,10 +193,10 @@ class PostControllerTest extends TokenMockMvcTest {
         }
 
         @Test
-        @DisplayName("유효하지 않은 요청 값(최저 기온)이 포함된 게시글 저장에 실패한다.")
+        @DisplayName("유효하지 않은 요청 값(게시글 제목)이 포함된 게시글 저장에 실패한다.")
         void saveFailInvalidValueByIllegalArgumentException() throws Exception {
             // given
-            PostSaveRequest postSaveRequest = new PostSaveRequest("", "Test Content", NX, NY);
+            PostSaveRequest postSaveRequest = new PostSaveRequest("", "Test Content", VALID_COORDINATE);
             MockMultipartFile request =
                 new MockMultipartFile("request", "request.json", MediaType.APPLICATION_JSON_VALUE,
                     objectMapper.writeValueAsBytes(postSaveRequest));
@@ -220,7 +233,7 @@ class PostControllerTest extends TokenMockMvcTest {
             TestSecurityContextHolder.setAuthentication(new TestingAuthenticationToken(user.getId(), null));
 
             Post savedPost = postRepository.save(
-                Post.from(user, new PostSaveRequest("Test Title", "Test Content", NX, NY), "imgUrl",
+                Post.from(user, new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE), "imgUrl",
                     generateTemperatureArrange()));
             postSaveResponse = PostSaveResponse.from(savedPost);
         }
@@ -269,7 +282,7 @@ class PostControllerTest extends TokenMockMvcTest {
 
             for (int i = 0; i < SAVE_COUNT; i++) {
                 Post savedPost = postRepository.save(
-                    Post.from(user, new PostSaveRequest("Test Title", "Test Content", NX, NY), "imgUrl",
+                    Post.from(user, new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE), "imgUrl",
                         generateTemperatureArrange()));
             }
         }

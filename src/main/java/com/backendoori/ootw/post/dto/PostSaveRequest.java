@@ -1,29 +1,26 @@
 package com.backendoori.ootw.post.dto;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
+import static com.backendoori.ootw.post.validation.Message.BLANK_POST_CONTENT;
+import static com.backendoori.ootw.post.validation.Message.BLANK_POST_TITLE;
+import static com.backendoori.ootw.post.validation.Message.INVALID_POST_CONTENT;
+import static com.backendoori.ootw.post.validation.Message.INVALID_POST_TITLE;
+
+import com.backendoori.ootw.weather.domain.Coordinate;
+import com.backendoori.ootw.weather.validation.Grid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public record PostSaveRequest(
-    @NotBlank
-    @Size(max = 30)
+    @NotBlank(message = BLANK_POST_TITLE)
+    @Size(max = 30, message = INVALID_POST_TITLE)
     String title,
 
-    @NotBlank
-    @Size(max = 500)
+    @NotBlank(message = BLANK_POST_CONTENT)
+    @Size(max = 500, message = INVALID_POST_CONTENT)
     String content,
 
-    @Min(0)
-    @Max(999)
-    @NotNull
-    int nx,
-
-    @Min(0)
-    @Max(999)
-    @NotNull
-    int ny
+    @Grid
+    Coordinate coordinate
 ) {
 
 }

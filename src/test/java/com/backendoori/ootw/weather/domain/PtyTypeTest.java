@@ -1,8 +1,10 @@
 package com.backendoori.ootw.weather.domain;
 
+import static com.backendoori.ootw.weather.validation.Message.CAN_NOT_RETRIEVE_PTYTYPE;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -16,8 +18,13 @@ class PtyTypeTest {
     @ValueSource(ints = {-1, 100})
     @NullSource
     void getByCodeFail(Integer code) {
-        // given, when, then
-        assertThrows(IllegalArgumentException.class, () -> PtyType.getByCode(code));
+        // given // when
+        ThrowingCallable getByCode = () -> PtyType.getByCode(code);
+
+        // then
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(getByCode)
+            .withMessage(CAN_NOT_RETRIEVE_PTYTYPE);
     }
 
     @DisplayName("강수 형태 코드가 유효한 값인 경우")

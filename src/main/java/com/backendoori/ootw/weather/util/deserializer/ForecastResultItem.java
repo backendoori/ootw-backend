@@ -18,4 +18,8 @@ public record ForecastResultItem(
         return Objects.equals(fcstDateTime, baseDateTime);
     }
 
+    public boolean matchFcstDate(BaseDateTime baseDateTime) {
+        return Objects.equals(fcstDateTime.baseDate(), baseDateTime.baseDate());
+    }
+
 }
