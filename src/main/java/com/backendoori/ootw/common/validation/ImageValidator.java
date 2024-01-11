@@ -6,8 +6,19 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class ImageValidator implements ConstraintValidator<Image, MultipartFile> {
 
+    private Image annotation;
+
+    @Override
+    public void initialize(Image constraintAnnotation) {
+        this.annotation = constraintAnnotation;
+    }
+
     @Override
     public boolean isValid(MultipartFile img, ConstraintValidatorContext context) {
+        if (this.annotation.ignoreCase()) {
+            return true;
+        }
+
         if (img == null || img.isEmpty()) {
             return false;
         }

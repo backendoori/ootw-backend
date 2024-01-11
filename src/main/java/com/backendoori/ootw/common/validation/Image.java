@@ -20,4 +20,6 @@ public @interface Image {
 
     Class<? extends Payload>[] payload() default {};
 
+    boolean ignoreCase() default false;
+
 }
