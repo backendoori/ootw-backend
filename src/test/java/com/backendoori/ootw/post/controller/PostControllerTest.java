@@ -109,7 +109,7 @@ class PostControllerTest extends TokenMockMvcTest {
                 new MockMultipartFile("request", "request.json", MediaType.APPLICATION_JSON_VALUE,
                     objectMapper.writeValueAsBytes(postSaveRequest));
             MockMultipartFile postImg =
-                new MockMultipartFile("postImg", "filename.txt", MediaType.MULTIPART_FORM_DATA_VALUE,
+                new MockMultipartFile("postImg", "filename.jpeg", MediaType.IMAGE_JPEG_VALUE,
                     "some xml".getBytes());
 
             // when

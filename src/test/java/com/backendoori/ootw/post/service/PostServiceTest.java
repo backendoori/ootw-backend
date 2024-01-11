@@ -8,13 +8,16 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
+import com.backendoori.ootw.common.image.ImageFile;
 import com.backendoori.ootw.common.image.ImageService;
+import com.backendoori.ootw.common.image.exception.SaveException;
 import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.like.repository.LikeRepository;
 import com.backendoori.ootw.like.service.LikeService;
@@ -105,13 +108,14 @@ class PostServiceTest {
 
         @Test
         @DisplayName("게시글 저장에 성공한다.")
-        void saveSuccess() {
+        void saveSuccess() throws IOException {
             // given
             PostSaveRequest request = new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE);
-            MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
-                "text/plain", "some xml".getBytes());
+            MockMultipartFile postImg = new MockMultipartFile("file", "filename.jpeg",
+                "image/jpeg", "some xml".getBytes());
 
-            given(imageService.uploadImage(postImg)).willReturn("imgUrl");
+            given(imageService.uploadImage(postImg)).willReturn(
+                new ImageFile("http://mock.server.com/filename.jpeg", "filename.jpeg"));
             given(weatherService.getCurrentTemperatureArrange(VALID_COORDINATE)).willReturn(
                 generateTemperatureArrange());
 
@@ -119,14 +123,12 @@ class PostServiceTest {
             PostSaveResponse postSaveResponse = postService.save(request, postImg);
 
             //then
-            assertAll(
-                () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("title", request.title()),
-                () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("content", request.content()),
-                () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("image",
-                    imageService.uploadImage(postImg)),
-                () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("temperatureArrange",
-                    TemperatureArrangeDto.from(generateTemperatureArrange()))
-            );
+            assertThat(postSaveResponse).hasFieldOrPropertyWithValue("title", request.title());
+            assertThat(postSaveResponse).hasFieldOrPropertyWithValue("content", request.content());
+            assertThat(postSaveResponse).hasFieldOrPropertyWithValue("image",
+                imageService.uploadImage(postImg).url());
+            assertThat(postSaveResponse).hasFieldOrPropertyWithValue("temperatureArrange",
+                TemperatureArrangeDto.from(generateTemperatureArrange()));
         }
 
         @Test
@@ -172,11 +174,13 @@ class PostServiceTest {
                 generateTemperatureArrange());
 
             PostSaveRequest postSaveRequest = new PostSaveRequest(title, content, VALID_COORDINATE);
-            MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
-                "text/plain", "some xml".getBytes());
+            MockMultipartFile postImg = new MockMultipartFile("file", "filename.jpeg",
+                "image/jpeg", "some xml".getBytes());
+            given(imageService.uploadImage(postImg)).willReturn(
+                new ImageFile("http://mock.server.com/filename.jpeg", "filename.jpeg"));
 
             // when, then
-            assertThrows(IllegalArgumentException.class,
+            assertThrows(SaveException.class,
                 () -> postService.save(postSaveRequest, postImg));
         }
 
