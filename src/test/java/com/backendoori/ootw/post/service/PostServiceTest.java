@@ -21,7 +21,7 @@ import com.backendoori.ootw.like.service.LikeService;
 import com.backendoori.ootw.post.domain.Post;
 import com.backendoori.ootw.post.dto.response.PostReadResponse;
 import com.backendoori.ootw.post.dto.request.PostSaveRequest;
-import com.backendoori.ootw.post.dto.response.PostSaveResponse;
+import com.backendoori.ootw.post.dto.response.PostSaveUpdateResponse;
 import com.backendoori.ootw.post.dto.response.WriterDto;
 import com.backendoori.ootw.post.repository.PostRepository;
 import com.backendoori.ootw.user.domain.User;
@@ -116,7 +116,7 @@ class PostServiceTest {
                 generateTemperatureArrange());
 
             // when
-            PostSaveResponse postSaveResponse = postService.save(request, postImg);
+            PostSaveUpdateResponse postSaveResponse = postService.save(request, postImg);
 
             //then
             assertAll(
@@ -186,14 +186,14 @@ class PostServiceTest {
     @DisplayName("게시글 단건 조회하기")
     class GetDetailByPostId {
 
-        PostSaveResponse postSaveResponse;
+        PostSaveUpdateResponse postSaveResponse;
 
         @BeforeEach
         void setUp() {
             Post savedPost = postRepository.save(
                 Post.from(user, new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE), "imgUrl",
                     generateTemperatureArrange()));
-            postSaveResponse = PostSaveResponse.from(savedPost);
+            postSaveResponse = PostSaveUpdateResponse.from(savedPost);
         }
 
         @Test

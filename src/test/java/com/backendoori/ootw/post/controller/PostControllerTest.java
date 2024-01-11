@@ -19,7 +19,7 @@ import java.util.Map;
 import com.backendoori.ootw.post.domain.Post;
 import com.backendoori.ootw.post.dto.response.PostReadResponse;
 import com.backendoori.ootw.post.dto.request.PostSaveRequest;
-import com.backendoori.ootw.post.dto.response.PostSaveResponse;
+import com.backendoori.ootw.post.dto.response.PostSaveUpdateResponse;
 import com.backendoori.ootw.post.repository.PostRepository;
 import com.backendoori.ootw.post.service.PostService;
 import com.backendoori.ootw.security.TokenMockMvcTest;
@@ -227,7 +227,7 @@ class PostControllerTest extends TokenMockMvcTest {
 
         private static final String URL = "http://localhost:8080/api/v1/posts/";
 
-        PostSaveResponse postSaveResponse;
+        PostSaveUpdateResponse postSaveResponse;
 
         @BeforeEach
         void setUp() {
@@ -236,7 +236,7 @@ class PostControllerTest extends TokenMockMvcTest {
             Post savedPost = postRepository.save(
                 Post.from(user, new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE), "imgUrl",
                     generateTemperatureArrange()));
-            postSaveResponse = PostSaveResponse.from(savedPost);
+            postSaveResponse = PostSaveUpdateResponse.from(savedPost);
         }
 
         @Test

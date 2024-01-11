@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import com.backendoori.ootw.post.domain.Post;
 import com.backendoori.ootw.weather.dto.TemperatureArrangeDto;
 
-public record PostSaveResponse(
+public record PostSaveUpdateResponse(
     Long postId,
     String title,
     String content,
@@ -14,8 +14,8 @@ public record PostSaveResponse(
     TemperatureArrangeDto temperatureArrange
 ) {
 
-    public static PostSaveResponse from(Post savedPost) {
-        return new PostSaveResponse(
+    public static PostSaveUpdateResponse from(Post savedPost) {
+        return new PostSaveUpdateResponse(
             savedPost.getId(),
             savedPost.getTitle(),
             savedPost.getContent(),

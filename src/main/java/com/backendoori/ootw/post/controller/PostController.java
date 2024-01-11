@@ -6,7 +6,7 @@ import com.backendoori.ootw.common.validation.Image;
 import com.backendoori.ootw.post.dto.request.PostSaveRequest;
 import com.backendoori.ootw.post.dto.request.PostUpdateRequest;
 import com.backendoori.ootw.post.dto.response.PostReadResponse;
-import com.backendoori.ootw.post.dto.response.PostSaveResponse;
+import com.backendoori.ootw.post.dto.response.PostSaveUpdateResponse;
 import com.backendoori.ootw.post.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
