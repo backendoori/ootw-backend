@@ -4,6 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.nio.charset.StandardCharsets;
+import com.backendoori.ootw.avatar.domain.Sex;
 import com.backendoori.ootw.avatar.dto.AvatarItemRequest;
 import com.backendoori.ootw.avatar.service.AvatarItemService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,7 +42,7 @@ class AvatarItemControllerTest {
         //given
         MockMultipartFile file = new MockMultipartFile("file", "filename.txt",
             "image/jpeg", "some xml".getBytes());
-        AvatarItemRequest requestDto = new AvatarItemRequest("HAIR", true);
+        AvatarItemRequest requestDto = new AvatarItemRequest("HAIR", Sex.MALE.name());
         MockMultipartFile request = new MockMultipartFile("request", "filename.txt",
             "application/json", objectMapper.writeValueAsBytes(requestDto));
 
@@ -62,7 +63,7 @@ class AvatarItemControllerTest {
         //given
         MockMultipartFile file = new MockMultipartFile("file", "filename.txt",
             contentType, "some xml".getBytes());
-        AvatarItemRequest dto = new AvatarItemRequest("HAIR", true);
+        AvatarItemRequest dto = new AvatarItemRequest("HAIR", Sex.MALE.name());
         MockMultipartFile requestDto = new MockMultipartFile("request", "filename.json",
             MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(dto));
 
@@ -81,7 +82,7 @@ class AvatarItemControllerTest {
     public void noImageUpLoad() throws Exception {
         //given
         MockMultipartFile file = new MockMultipartFile("file", "", "image/png", new byte[0]);
-        AvatarItemRequest dto = new AvatarItemRequest("HAIR", true);
+        AvatarItemRequest dto = new AvatarItemRequest("HAIR", Sex.MALE.name());
         MockMultipartFile requestDto = new MockMultipartFile("request", "filename.json",
             MediaType.APPLICATION_JSON_VALUE, objectMapper.writeValueAsBytes(dto));
 
@@ -104,7 +105,7 @@ class AvatarItemControllerTest {
         //given
         MockMultipartFile file = new MockMultipartFile("file", "filename.txt",
             "image/jpeg", "some xml".getBytes());
-        AvatarItemRequest requestDto = new AvatarItemRequest(type, true);
+        AvatarItemRequest requestDto = new AvatarItemRequest(type, Sex.MALE.name());
         MockMultipartFile request = new MockMultipartFile("request", "filename.txt",
             "application/json", objectMapper.writeValueAsBytes(requestDto));
 

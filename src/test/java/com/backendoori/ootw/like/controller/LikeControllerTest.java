@@ -114,7 +114,7 @@ class LikeControllerTest extends TokenMockMvcTest {
         LikeRequest request = new LikeRequest(post.getId());
 
         //when
-        mockMvc.perform(post("http://localhost:8080/api/v1/likes")
+        mockMvc.perform(post("http://localhost:8080/api/v1/posts/"+ post.getId()+ "/likes")
                 .content(objectMapper.writeValueAsBytes(request))
                 .header(TOKEN_HEADER, TOKEN_PREFIX + token)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -127,7 +127,7 @@ class LikeControllerTest extends TokenMockMvcTest {
 
         Assertions.assertThat(byUserAndPost.getPost()).isEqualTo(post);
         Assertions.assertThat(byUserAndPost.getUser()).isEqualTo(user);
-        Assertions.assertThat(byUserAndPost.getStatus()).isEqualTo(true);
+        Assertions.assertThat(byUserAndPost.getIsLike()).isEqualTo(true);
 
     }
 
@@ -136,13 +136,13 @@ class LikeControllerTest extends TokenMockMvcTest {
     @DisplayName("이미 좋아요를 누른 경우 좋아요가 취소된다.")
     public void likeCancel() throws Exception {
         //given
-        Like like = Like.builder().user(user).post(post).status(true).build();
+        Like like = Like.builder().user(user).post(post).isLike(true).build();
         likeRepository.save(like);
 
         LikeRequest request = new LikeRequest(post.getId());
 
         //when
-        mockMvc.perform(post("http://localhost:8080/api/v1/likes")
+        mockMvc.perform(post("http://localhost:8080/api/v1/posts/"+ post.getId()+ "/likes")
                 .content(objectMapper.writeValueAsBytes(request))
                 .header(TOKEN_HEADER, TOKEN_PREFIX + token)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -155,12 +155,11 @@ class LikeControllerTest extends TokenMockMvcTest {
 
         Assertions.assertThat(byUserAndPost.getPost()).isEqualTo(post);
         Assertions.assertThat(byUserAndPost.getUser()).isEqualTo(user);
-        Assertions.assertThat(byUserAndPost.getStatus()).isEqualTo(false);
+        Assertions.assertThat(byUserAndPost.getIsLike()).isEqualTo(false);
 
     }
 
     @ParameterizedTest
-    @NullSource
     @ValueSource(longs = {-1L, 0})
     @DisplayName("유효하지 않은 postId 로 좋아요를 요청하면 실패한다.")
     public void likeFailPostNotFound(Long postId) throws Exception {
@@ -168,12 +167,12 @@ class LikeControllerTest extends TokenMockMvcTest {
         LikeRequest request = new LikeRequest(postId);
 
         //when //then
-        mockMvc.perform(post("http://localhost:8080/api/v1/likes")
+        mockMvc.perform(post("http://localhost:8080/api/v1/posts/"+ postId + "/likes")
                 .content(objectMapper.writeValueAsBytes(request))
                 .header(TOKEN_HEADER, TOKEN_PREFIX + token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            ).andExpect(status().isBadRequest())
+            ).andExpect(status().isNotFound())
             .andDo(print());
 
     }
@@ -186,7 +185,7 @@ class LikeControllerTest extends TokenMockMvcTest {
         LikeRequest request = new LikeRequest(postId);
 
         //when //then
-        mockMvc.perform(post("http://localhost:8080/api/v1/likes")
+        mockMvc.perform(post("http://localhost:8080/api/v1/posts/"+ postId+ "/likes")
                 .content(objectMapper.writeValueAsBytes(request))
                 .header(TOKEN_HEADER, TOKEN_PREFIX + token)
                 .contentType(MediaType.APPLICATION_JSON)

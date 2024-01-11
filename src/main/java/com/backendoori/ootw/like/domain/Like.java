@@ -38,8 +38,8 @@ public class Like extends BaseEntity {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    @Column(name = "status", columnDefinition = "tinyint")
-    private Boolean status;
+    @Column(name = "is_like", columnDefinition = "tinyint")
+    private Boolean isLike;
 
     private Like(Long id, User user, Post post, Boolean status) {
         Assert.notNull(user);
@@ -48,11 +48,12 @@ public class Like extends BaseEntity {
         this.id = id;
         this.user = user;
         this.post = post;
-        this.status = status;
+        this.isLike = status;
     }
 
-    public void updateStatus() {
-        this.status = !status;
+    public boolean updateStatus() {
+        this.isLike = !isLike;
+        return this.isLike;
     }
 
 }

@@ -3,10 +3,18 @@ package com.backendoori.ootw.like.service;
 import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_COORDINATE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.like.domain.Like;
 import com.backendoori.ootw.like.dto.controller.LikeResponse;
@@ -127,7 +135,7 @@ public class LikeServiceTest extends TokenMockMvcTest {
     @DisplayName("이미 좋아요를 누른 게시물의 경우 좋아요가 취소된다.")
     public void likePostCancelSuccess() throws Exception {
         //given
-        Like like = Like.builder().user(user).post(post).status(true).build();
+        Like like = Like.builder().user(user).post(post).isLike(true).build();
         likeRepository.save(like);
         Long postId = post.getId();
         Long userId = user.getId();
@@ -169,6 +177,76 @@ public class LikeServiceTest extends TokenMockMvcTest {
         assertThatThrownBy(() -> likeService.requestLike(userId, postId))
             .isInstanceOf(UserNotFoundException.class)
             .hasMessage(UserNotFoundException.DEFAULT_MESSAGE);
+
     }
+
+    @Test
+    @DisplayName("정상적으로 좋아요 개수를 가져오는 경우")
+    public void countLikePost() {
+        //given
+        Long postId = post.getId();
+        Long userId = user.getId();
+        ;
+
+        //when
+        likeService.requestLike(userId, postId);
+        // then
+
+        Post findPost = postRepository.findById(postId).get();
+        assertThat(findPost.getLikeCnt()).isEqualTo(1);
+
+        likeService.requestLike(userId, postId);
+
+        Post reFindPost = postRepository.findById(postId).get();
+        assertThat(reFindPost.getLikeCnt()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("단일 사용자의 여러 번 좋아요 요청 처리 테스트")
+    void testLikeFunctionalityForSingleUserMultipleRequests() throws InterruptedException {
+        //when
+        int threadCount = 50; // 동시에 실행할 스레드 수
+        ExecutorService executorService = Executors.newFixedThreadPool(threadCount);
+
+        // 동일한 사용자로부터 여러 좋아요 요청을 보내는 스레드 실행
+        for (int i = 0; i < threadCount; i++) {
+            executorService.submit(() -> {
+                likeService.requestLike(user.getId(), post.getId());
+            });
+        }
+
+        executorService.shutdown();
+        assertTrue(executorService.awaitTermination(1, TimeUnit.MINUTES));
+
+        // 좋아요 개수 검증
+        Post updatedPost = postRepository.findById(post.getId()).get();
+        assertThat(updatedPost.getLikeCnt()).isEqualTo(0);
+    }
+
+    @Test
+    @DisplayName("여러 사용자의 단일 좋아요 요청 처리 테스트")
+    void testLikeFunctionalityForMultipleUsersSingleRequest() throws InterruptedException {
+
+        int userCount = 50; // 테스트에 사용할 사용자 수
+        ExecutorService executorService = Executors.newFixedThreadPool(userCount);
+
+        // 여러 사용자로부터 각각 한 번씩 좋아요 요청을 보내는 스레드 실행
+        for (int i = 0; i < userCount; i++) {
+            User multiUser = generateUser();
+            userRepository.save(multiUser);
+
+            executorService.submit(() -> {
+                likeService.requestLike(multiUser.getId(), post.getId());
+            });
+        }
+
+        executorService.shutdown();
+        assertTrue(executorService.awaitTermination(1, TimeUnit.MINUTES));
+
+        // 좋아요 개수 검증
+        Post updatedPost = postRepository.findById(post.getId()).get();
+        assertThat(userCount).isEqualTo(updatedPost.getLikeCnt());
+    }
+
 
 }
