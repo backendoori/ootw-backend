@@ -21,4 +21,12 @@ public class PostControllerAdvice {
             .body(errorResponse);
     }
 
+    @ExceptionHandler(ResourceNotExistException.class)
+    public ResponseEntity<ErrorResponse> handleNoUpdateResourceException(ResourceNotExistException e) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(errorResponse);
+    }
+
 }
