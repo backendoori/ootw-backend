@@ -5,7 +5,9 @@ import static com.backendoori.ootw.post.validation.Message.POST_NOT_FOUND;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import com.backendoori.ootw.common.image.ImageFile;
 import com.backendoori.ootw.common.image.ImageService;
+import com.backendoori.ootw.common.image.exception.SaveException;
 import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.like.domain.Like;
 import com.backendoori.ootw.like.repository.LikeRepository;
@@ -39,10 +41,18 @@ public class PostService {
     public PostSaveResponse save(PostSaveRequest request, MultipartFile postImg) {
         User user = userRepository.findById(getUserId())
             .orElseThrow(UserNotFoundException::new);
-        String imgUrl = imageService.uploadImage(postImg);
         TemperatureArrange temperatureArrange = weatherService.getCurrentTemperatureArrange(request.coordinate());
-
-        Post savedPost = postRepository.save(Post.from(user, request, imgUrl, temperatureArrange));
+        if (!postImg.isEmpty()) {
+            ImageFile imgFile = imageService.uploadImage(postImg);
+            try {
+                Post savedPost = postRepository.save(Post.from(user, request, imgFile.url(), temperatureArrange));
+                return PostSaveResponse.from(savedPost);
+            } catch (Exception e) {
+                imageService.deleteImage(imgFile.fileName());
+                throw new SaveException();
+            }
+        }
+        Post savedPost = postRepository.save(Post.from(user, request, null, temperatureArrange));
 
         return PostSaveResponse.from(savedPost);
     }
