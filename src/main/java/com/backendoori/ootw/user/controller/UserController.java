@@ -4,7 +4,6 @@ import com.backendoori.ootw.security.jwt.JwtAuthenticationFilter;
 import com.backendoori.ootw.user.dto.LoginDto;
 import com.backendoori.ootw.user.dto.SignupDto;
 import com.backendoori.ootw.user.dto.TokenDto;
-import com.backendoori.ootw.user.dto.UserDto;
 import com.backendoori.ootw.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,11 +23,11 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<UserDto> signup(@RequestBody @Valid SignupDto signupDto) {
-        UserDto userDto = userService.signup(signupDto);
+    public ResponseEntity<Void> signup(@RequestBody @Valid SignupDto signupDto) {
+        userService.signup(signupDto);
 
         return ResponseEntity.status(HttpStatus.CREATED)
-            .body(userDto);
+            .build();
     }
 
     @PostMapping("/login")

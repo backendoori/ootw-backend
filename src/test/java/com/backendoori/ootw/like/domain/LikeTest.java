@@ -1,5 +1,6 @@
 package com.backendoori.ootw.like.domain;
 
+import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_COORDINATE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -19,8 +20,6 @@ import org.junit.jupiter.params.provider.NullSource;
 
 class LikeTest {
 
-    static final int NX = 55;
-    static final int NY = 127;
     static final Faker FAKER = new Faker();
 
     private User generateUser() {
@@ -43,7 +42,7 @@ class LikeTest {
 
     private Post generatePost(User user) {
         PostSaveRequest postSaveRequest =
-            new PostSaveRequest("title", FAKER.gameOfThrones().quote(), NX, NY);
+            new PostSaveRequest("title", FAKER.gameOfThrones().quote(), VALID_COORDINATE);
         return Post.from(user, postSaveRequest, FAKER.internet().url(), generateTemperatureArrange());
     }
 

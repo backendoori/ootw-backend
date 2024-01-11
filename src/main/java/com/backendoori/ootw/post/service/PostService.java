@@ -1,5 +1,7 @@
 package com.backendoori.ootw.post.service;
 
+import static com.backendoori.ootw.post.validation.Message.POST_NOT_FOUND;
+
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -22,8 +24,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-@RequiredArgsConstructor
 @Service
+@RequiredArgsConstructor
 public class PostService {
 
     private static final String ANONYMOUS_USER_PRINCIPLE = "anonymousUser";
@@ -38,7 +40,7 @@ public class PostService {
         User user = userRepository.findById(getUserId())
             .orElseThrow(UserNotFoundException::new);
         String imgUrl = imageService.uploadImage(postImg);
-        TemperatureArrange temperatureArrange = weatherService.getCurrentTemperatureArrange(request.nx(), request.ny());
+        TemperatureArrange temperatureArrange = weatherService.getCurrentTemperatureArrange(request.coordinate());
 
         Post savedPost = postRepository.save(Post.from(user, request, imgUrl, temperatureArrange));
 
@@ -48,7 +50,7 @@ public class PostService {
     @Transactional(readOnly = true)
     public PostReadResponse getDetailByPostId(Long postId) {
         Post post = postRepository.findByIdWithUserEntityGraph(postId)
-            .orElseThrow(() -> new NoSuchElementException("해당하는 게시글이 없습니다."));
+            .orElseThrow(() -> new NoSuchElementException(POST_NOT_FOUND));
         PostReadResponse response = PostReadResponse.from(post);
 
         if (!isLogin()) {

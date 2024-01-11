@@ -10,15 +10,12 @@ import org.springframework.util.Assert;
 
 public record WeatherResponse(
     LocalDateTime currentDateTime,
-    int nx,
-    int ny,
     double currentTemperature,
     String sky,
     String pty
 ) {
 
-    public static WeatherResponse from(LocalDateTime dateTime, int nx, int ny,
-                                       Map<ForecastCategory, String> weatherInfoMap) {
+    public static WeatherResponse from(LocalDateTime dateTime, Map<ForecastCategory, String> weatherInfoMap) {
         checkIncludeCurrentWeather(weatherInfoMap);
 
         double currentTemperature = Double.parseDouble(weatherInfoMap.get(ForecastCategory.T1H));
@@ -29,7 +26,7 @@ public record WeatherResponse(
         int ptyCode = Integer.parseInt(weatherInfoMap.get(ForecastCategory.PTY));
         String ptyType = PtyType.getByCode(ptyCode).name();
 
-        return new WeatherResponse(dateTime, nx, ny, currentTemperature, skyType, ptyType);
+        return new WeatherResponse(dateTime, currentTemperature, skyType, ptyType);
     }
 
     private static void checkIncludeCurrentWeather(Map<ForecastCategory, String> currentWeatherMap) {

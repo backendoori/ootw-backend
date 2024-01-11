@@ -1,8 +1,8 @@
 package com.backendoori.ootw.user.controller;
 
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.startsWith;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -16,9 +16,9 @@ import com.backendoori.ootw.security.jwt.TokenProvider;
 import com.backendoori.ootw.user.dto.LoginDto;
 import com.backendoori.ootw.user.dto.SignupDto;
 import com.backendoori.ootw.user.dto.TokenDto;
-import com.backendoori.ootw.user.dto.UserDto;
 import com.backendoori.ootw.user.exception.AlreadyExistEmailException;
 import com.backendoori.ootw.user.exception.IncorrectPasswordException;
+import com.backendoori.ootw.user.exception.NonCertifiedUserException;
 import com.backendoori.ootw.user.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.datafaker.Faker;
@@ -64,9 +64,6 @@ class UserControllerTest {
         void created() throws Exception {
             // given
             SignupDto signupDto = generateSignupDto();
-            UserDto userDto = createUser(signupDto);
-
-            given(userService.signup(signupDto)).willReturn(userDto);
 
             // when
             ResultActions actions = mockMvc.perform(
@@ -76,13 +73,7 @@ class UserControllerTest {
                     .content(objectMapper.writeValueAsString(signupDto)));
 
             // then
-            actions.andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id", is(userDto.id()), Long.class))
-                .andExpect(jsonPath("$.email", is(userDto.email())))
-                .andExpect(jsonPath("$.nickname", is(userDto.nickname())))
-                .andExpect(jsonPath("$.image", is(userDto.image())))
-                .andExpect(jsonPath("$.createdAt", startsWith(removeMills(userDto.createdAt()))))
-                .andExpect(jsonPath("$.updatedAt", startsWith(removeMills(userDto.updatedAt()))));
+            actions.andExpect(status().isCreated());
         }
 
         @DisplayName("잘못된 형식의 email일 경우 400 status를 반환한다")
@@ -153,7 +144,9 @@ class UserControllerTest {
             // given
             SignupDto signupDto = generateSignupDto();
 
-            given(userService.signup(signupDto)).willThrow(new AlreadyExistEmailException());
+            doThrow(AlreadyExistEmailException.class)
+                .when(userService)
+                .signup(signupDto);
 
             // when
             ResultActions actions = mockMvc.perform(
@@ -211,6 +204,25 @@ class UserControllerTest {
 
             // then
             actions.andExpect(status().isBadRequest());
+        }
+
+        @DisplayName("이메일이 인증되지 않은 경우 403 status를 반환한다")
+        @Test
+        void nonCertifiedEmail() throws Exception {
+            // given
+            LoginDto loginDto = generateLoginDto();
+
+            given(userService.login(loginDto)).willThrow(new NonCertifiedUserException());
+
+            // when
+            ResultActions actions = mockMvc.perform(
+                post("/api/v1/auth/login")
+                    .with(csrf())
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(loginDto)));
+
+            // then
+            actions.andExpect(status().isForbidden());
         }
 
         @DisplayName("email이 일치하는 사용자가 없으면 404 status를 반환한다")
@@ -279,18 +291,6 @@ class UserControllerTest {
         String nickname = faker.internet().username();
 
         return new SignupDto(email, password, nickname);
-    }
-
-    private UserDto createUser(SignupDto signupDto) {
-        return UserDto.builder()
-            .id((long) faker.number().positive())
-            .email(signupDto.email())
-            .nickname(signupDto.nickname())
-            .image(signupDto.email())
-            .createdAt(LocalDateTime.now())
-            .updatedAt(LocalDateTime.now())
-            .build();
-
     }
 
     private LoginDto generateLoginDto() {

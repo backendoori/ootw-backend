@@ -1,6 +1,9 @@
 package com.backendoori.ootw.weather.util.client;
 
+import static com.backendoori.ootw.weather.validation.Message.INVALID_LOCATION_MESSAGE;
+
 import java.util.List;
+import com.backendoori.ootw.weather.domain.Coordinate;
 import com.backendoori.ootw.weather.dto.forecast.BaseDateTime;
 import com.backendoori.ootw.weather.exception.ForecastResultErrorManager;
 import com.backendoori.ootw.weather.util.ForecastProperties;
@@ -11,6 +14,7 @@ import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 @Component
 @RequiredArgsConstructor
@@ -25,8 +29,9 @@ public class ForecastApiClient {
     private final ForecastProperties forecastProperties;
 
     public List<ForecastResultItem> requestUltraShortForecastItems(BaseDateTime requestBaseDateTime,
-                                                                   int nx,
-                                                                   int ny) {
+                                                                   Coordinate location) {
+        validateLocation(location);
+
         String response = forecastApi.getUltraShortForecast(
             forecastProperties.serviceKey(),
             NUM_OF_ROWS,
@@ -34,15 +39,16 @@ public class ForecastApiClient {
             DATA_TYPE,
             requestBaseDateTime.baseDate(),
             requestBaseDateTime.baseTime(),
-            nx,
-            ny);
+            location.nx(),
+            location.ny());
 
         return parseForecastResult(response);
     }
 
     public List<ForecastResultItem> requestVillageForecastItems(BaseDateTime requestBaseDateTime,
-                                                                int nx,
-                                                                int ny) {
+                                                                Coordinate location) {
+        validateLocation(location);
+
         String response = forecastApi.getVillageForecast(
             forecastProperties.serviceKey(),
             NUM_OF_ROWS,
@@ -50,8 +56,8 @@ public class ForecastApiClient {
             DATA_TYPE,
             requestBaseDateTime.baseDate(),
             requestBaseDateTime.baseTime(),
-            nx,
-            ny);
+            location.nx(),
+            location.ny());
 
         return parseForecastResult(response);
     }
@@ -66,6 +72,12 @@ public class ForecastApiClient {
         } catch (JacksonException e) {
             throw ForecastResultErrorManager.getApiServerException();
         }
+    }
+
+    private void validateLocation(Coordinate location) {
+        Assert.isTrue(0 <= location.nx() && location.nx() <= 999 && 0 <= location.ny() && location.ny() <= 999, () -> {
+            throw new IllegalArgumentException(INVALID_LOCATION_MESSAGE);
+        });
     }
 
 }

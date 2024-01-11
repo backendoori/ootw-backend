@@ -5,11 +5,12 @@ import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.security.jwt.TokenProvider;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.dto.LoginDto;
+import com.backendoori.ootw.user.dto.SendCertificateDto;
 import com.backendoori.ootw.user.dto.SignupDto;
 import com.backendoori.ootw.user.dto.TokenDto;
-import com.backendoori.ootw.user.dto.UserDto;
 import com.backendoori.ootw.user.exception.AlreadyExistEmailException;
 import com.backendoori.ootw.user.exception.IncorrectPasswordException;
+import com.backendoori.ootw.user.exception.NonCertifiedUserException;
 import com.backendoori.ootw.user.repository.UserRepository;
 import com.backendoori.ootw.user.validation.Message;
 import com.backendoori.ootw.user.validation.Password;
@@ -23,35 +24,37 @@ import org.springframework.util.StringUtils;
 @RequiredArgsConstructor
 public class UserService {
 
+    private final CertificateService certificateService;
     private final UserRepository userRepository;
     private final TokenProvider tokenProvider;
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public UserDto signup(SignupDto signupDto) {
-        boolean isAlreadyExistEmail = userRepository.findByEmail(signupDto.email())
-            .isPresent();
-
-        AssertUtil.throwIf(isAlreadyExistEmail, AlreadyExistEmailException::new);
-        AssertUtil.isTrue(isValidPassword(signupDto.password()), Message.INVALID_PASSWORD);
+    public void signup(SignupDto signupDto) {
+        validateSignup(signupDto);
 
         User user = buildUser(signupDto);
 
         userRepository.save(user);
-
-        return UserDto.from(user);
+        certificateService.sendCertificate(new SendCertificateDto(user.getEmail()));
     }
 
     public TokenDto login(LoginDto loginDto) {
         User user = userRepository.findByEmail(loginDto.email())
             .orElseThrow(UserNotFoundException::new);
-        boolean isIncorrectPassword = !matchPassword(loginDto.password(), user.getPassword());
 
-        AssertUtil.throwIf(isIncorrectPassword, IncorrectPasswordException::new);
+        validateLogin(user, loginDto.password());
 
         String token = tokenProvider.createToken(user.getId());
 
         return new TokenDto(token);
+    }
+
+    private void validateSignup(SignupDto signupDto) {
+        boolean isAlreadyExistEmail = userRepository.existsByEmail(signupDto.email());
+
+        AssertUtil.throwIf(isAlreadyExistEmail, AlreadyExistEmailException::new);
+        AssertUtil.isTrue(isValidPassword(signupDto.password()), Message.INVALID_PASSWORD);
     }
 
     private User buildUser(SignupDto signupDto) {
@@ -59,15 +62,17 @@ public class UserService {
             .email(signupDto.email())
             .password(passwordEncoder.encode(signupDto.password()))
             .nickname(signupDto.nickname())
+            .certified(false)
             .build();
-    }
-
-    private boolean matchPassword(String decrypted, String encrypted) {
-        return passwordEncoder.matches(decrypted, encrypted);
     }
 
     private boolean isValidPassword(String password) {
         return StringUtils.hasLength(password) && password.matches(Password.REGEX);
+    }
+
+    private void validateLogin(User user, String decrypted) {
+        AssertUtil.throwIf(!user.getCertified(), NonCertifiedUserException::new);
+        AssertUtil.throwIf(!user.matchPassword(passwordEncoder, decrypted), IncorrectPasswordException::new);
     }
 
 }

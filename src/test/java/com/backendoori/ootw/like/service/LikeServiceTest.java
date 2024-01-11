@@ -1,5 +1,6 @@
 package com.backendoori.ootw.like.service;
 
+import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_COORDINATE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -95,6 +96,7 @@ public class LikeServiceTest extends TokenMockMvcTest {
             .password(FAKER.internet().password())
             .nickname(FAKER.internet().username())
             .image(FAKER.internet().url())
+            .certified(true)
             .build();
     }
 
@@ -108,7 +110,7 @@ public class LikeServiceTest extends TokenMockMvcTest {
 
     private Post generatePost(User user) {
         PostSaveRequest postSaveRequest =
-            new PostSaveRequest("title", FAKER.gameOfThrones().quote(), NX, NY);
+            new PostSaveRequest("title", FAKER.gameOfThrones().quote(), VALID_COORDINATE);
         return Post.from(user, postSaveRequest, FAKER.internet().url(), generateTemperatureArrange());
     }
 

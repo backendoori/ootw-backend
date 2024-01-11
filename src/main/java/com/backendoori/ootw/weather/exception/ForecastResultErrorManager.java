@@ -1,5 +1,7 @@
 package com.backendoori.ootw.weather.exception;
 
+import static com.backendoori.ootw.weather.validation.Message.CAN_NOT_USE_FORECAST_API;
+
 import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -14,7 +16,6 @@ public enum ForecastResultErrorManager {
     NODATA_ERROR("03", NoSuchElementException::new),
     INVALID_REQUEST_PARAMETER_ERROR("10", IllegalArgumentException::new);
 
-    private static final String API_SERVER_ERROR_MESSAGE = "기상청 API 서비스를 이용할 수 없습니다.";
     private static final String NORMAL_SERVICE_CODE = "00";
 
     private final String resultCode;
@@ -35,7 +36,7 @@ public enum ForecastResultErrorManager {
     }
 
     public static IllegalStateException getApiServerException() {
-        return new IllegalStateException(API_SERVER_ERROR_MESSAGE);
+        return new IllegalStateException(CAN_NOT_USE_FORECAST_API);
     }
 
     private void throwException() {
