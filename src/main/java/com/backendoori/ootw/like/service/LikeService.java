@@ -36,10 +36,10 @@ public class LikeService {
         likeRepository.findByUserAndPost(user, post).ifPresentOrElse(
             like -> {
                 boolean likeStatus = like.updateStatus();
-                if(likeStatus){
+                if (likeStatus) {
                     post.increaseLikeCnt();
                 }
-                if(!likeStatus){
+                if (!likeStatus) {
                     post.decreaseLikeCnt();
                 }
             },
