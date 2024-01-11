@@ -19,7 +19,7 @@ import org.springframework.security.core.GrantedAuthority;
 
 class TokenProviderTest {
 
-    static Faker faker = new Faker();
+    static final Faker FAKER = new Faker();
 
     String issuer;
     SecretKey key;
@@ -29,10 +29,10 @@ class TokenProviderTest {
 
     @BeforeEach
     void setup() {
-        issuer = faker.name().firstName();
+        issuer = FAKER.name().firstName();
         key = generateSecretKey();
         encodedKey = encodeBytes(key.getEncoded());
-        tokenValidityInSeconds = faker.number().numberBetween(10, Integer.MAX_VALUE);
+        tokenValidityInSeconds = FAKER.number().numberBetween(10, Integer.MAX_VALUE);
         tokenProvider = createTokenProvider(issuer, encodedKey, tokenValidityInSeconds);
     }
 
@@ -40,7 +40,7 @@ class TokenProviderTest {
     @Test
     void testCreateToken() {
         // given
-        long userId = faker.number().positive();
+        long userId = FAKER.number().positive();
 
         // when
         String token = tokenProvider.createToken(userId);
@@ -61,7 +61,7 @@ class TokenProviderTest {
     @Test
     void testGetAuthentication() {
         // given
-        long userId = faker.number().positive();
+        long userId = FAKER.number().positive();
 
         String token = tokenProvider.createToken(userId);
 
@@ -121,7 +121,7 @@ class TokenProviderTest {
         @Test
         void success() {
             // given
-            long userId = faker.number().positive();
+            long userId = FAKER.number().positive();
 
             String token = tokenProvider.createToken(userId);
 
@@ -135,7 +135,7 @@ class TokenProviderTest {
         @DisplayName("잘못된 형식의 토큰은 false를 반환한다")
         @Test
         void failMalformed() {
-            long userId = faker.number().positive();
+            long userId = FAKER.number().positive();
 
             String token = tokenProvider.createToken(userId);
             String malformed = token.replace(".", "..");
@@ -150,7 +150,7 @@ class TokenProviderTest {
         @DisplayName("위조된 토큰은 false를 반환한다")
         @Test
         void failForged() {
-            long userId = faker.number().positive();
+            long userId = FAKER.number().positive();
 
             String token = tokenProvider.createToken(userId);
             String forgedToken = forgeToken(token, userId);
@@ -166,9 +166,9 @@ class TokenProviderTest {
         @Test
         void failOtherIssuer() {
             // given
-            String otherIssuer = faker.name().firstName();
+            String otherIssuer = FAKER.name().firstName();
             TokenProvider otherTokenProvider = createTokenProvider(otherIssuer, encodedKey, tokenValidityInSeconds);
-            long userId = faker.number().positive();
+            long userId = FAKER.number().positive();
 
             String otherToken = otherTokenProvider.createToken(userId);
 
@@ -185,7 +185,7 @@ class TokenProviderTest {
             // given
             String otherKey = encodeBytes(generateSecretKey().getEncoded());
             TokenProvider otherTokenProvider = createTokenProvider(issuer, otherKey, tokenValidityInSeconds);
-            long userId = faker.number().positive();
+            long userId = FAKER.number().positive();
 
             String otherToken = otherTokenProvider.createToken(userId);
 
@@ -200,7 +200,7 @@ class TokenProviderTest {
         @Test
         void failUnsupported() {
             // given
-            long userId = faker.number().positive();
+            long userId = FAKER.number().positive();
 
             String token = tokenProvider.createToken(userId);
             String unSecuredToken = unSecureToken(token);
@@ -217,7 +217,7 @@ class TokenProviderTest {
         void failExpiredJwt() {
             // given
             tokenProvider = createTokenProvider(issuer, encodedKey, 0);
-            long userId = faker.number().positive();
+            long userId = FAKER.number().positive();
             String token = tokenProvider.createToken(userId);
 
             // when

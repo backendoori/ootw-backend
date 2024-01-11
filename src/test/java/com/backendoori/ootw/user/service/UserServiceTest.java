@@ -37,7 +37,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @TestInstance(Lifecycle.PER_CLASS)
 class UserServiceTest {
 
-    static Faker faker = new Faker();
+    static final Faker FAKER = new Faker();
 
     @Autowired
     PasswordEncoder passwordEncoder;
@@ -108,10 +108,10 @@ class UserServiceTest {
 
         private static Stream<String> generateInvalidPasswords() {
             return Stream.of(
-                faker.internet().password(1, 7, true, true, true),
-                faker.internet().password(31, 50, true, true, true),
-                faker.internet().password(8, 30, true, false, true),
-                faker.internet().password(8, 30, true, true, false)
+                FAKER.internet().password(1, 7, true, true, true),
+                FAKER.internet().password(31, 50, true, true, true),
+                FAKER.internet().password(8, 30, true, false, true),
+                FAKER.internet().password(8, 30, true, true, false)
             );
         }
 
@@ -125,7 +125,7 @@ class UserServiceTest {
         @Test
         void success() {
             // given
-            String password = faker.internet().password();
+            String password = FAKER.internet().password();
             User user = userRepository.save(generateUser(password, true));
             LoginDto loginDto = new LoginDto(user.getEmail(), password);
 
@@ -143,7 +143,7 @@ class UserServiceTest {
         @Test
         void failUserNotFound() {
             // given
-            String password = faker.internet().password();
+            String password = FAKER.internet().password();
             User user = generateUser(password);
             LoginDto loginDto = new LoginDto(user.getEmail(), password + password);
 
@@ -160,7 +160,7 @@ class UserServiceTest {
         @Test
         void failIncorrectPassword() {
             // given
-            String password = faker.internet().password();
+            String password = FAKER.internet().password();
             User user = userRepository.save(generateUser(password, true));
             LoginDto loginDto = new LoginDto(user.getEmail(), password + password);
 
@@ -177,7 +177,7 @@ class UserServiceTest {
         @Test
         void failNonCertified() {
             // given
-            String password = faker.internet().password();
+            String password = FAKER.internet().password();
             User user = userRepository.save(generateUser(password, false));
             LoginDto loginDto = new LoginDto(user.getEmail(), password + password);
 
@@ -193,12 +193,12 @@ class UserServiceTest {
     }
 
     private SignupDto generateSignupDto() {
-        return generateSignupDto(faker.internet().password(8, 30, true, true, true));
+        return generateSignupDto(FAKER.internet().password(8, 30, true, true, true));
     }
 
     private SignupDto generateSignupDto(String password) {
-        String email = faker.internet().emailAddress();
-        String nickname = faker.internet().username();
+        String email = FAKER.internet().emailAddress();
+        String nickname = FAKER.internet().username();
 
         return new SignupDto(email, password, nickname);
     }
@@ -209,10 +209,10 @@ class UserServiceTest {
 
     private User generateUser(String password, boolean certified) {
         return User.builder()
-            .email(faker.internet().emailAddress())
+            .email(FAKER.internet().emailAddress())
             .password(passwordEncoder.encode(password))
-            .nickname(faker.internet().username())
-            .profileImageUrl(faker.internet().url())
+            .nickname(FAKER.internet().username())
+            .profileImageUrl(FAKER.internet().url())
             .certified(certified)
             .build();
     }

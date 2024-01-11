@@ -43,7 +43,7 @@ import org.springframework.test.web.servlet.ResultActions;
 @WebMvcTest(UserController.class)
 class UserControllerTest {
 
-    static Faker faker = new Faker();
+    static final Faker FAKER = new Faker();
 
     @Autowired
     MockMvc mockMvc;
@@ -82,8 +82,8 @@ class UserControllerTest {
         @ParameterizedTest
         void badRequestInvalidEmail(String email) throws Exception {
             // given
-            String password = faker.internet().password(8, 30, true, true, true);
-            String nickname = faker.internet().username();
+            String password = FAKER.internet().password(8, 30, true, true, true);
+            String nickname = FAKER.internet().username();
             SignupDto signupDto = new SignupDto(email, password, nickname);
 
             // when
@@ -103,8 +103,8 @@ class UserControllerTest {
         @ParameterizedTest
         void badRequestInvalidPassword(String password) throws Exception {
             // given
-            String email = faker.internet().emailAddress();
-            String nickname = faker.internet().username();
+            String email = FAKER.internet().emailAddress();
+            String nickname = FAKER.internet().username();
             SignupDto signupDto = new SignupDto(email, password, nickname);
 
             // when
@@ -123,8 +123,8 @@ class UserControllerTest {
         @ParameterizedTest
         void badRequestBlankNickname(String nickname) throws Exception {
             // given
-            String email = faker.internet().emailAddress();
-            String password = faker.internet().password(8, 30, true, true, true);
+            String email = FAKER.internet().emailAddress();
+            String password = FAKER.internet().password(8, 30, true, true, true);
             SignupDto signupDto = new SignupDto(email, password, nickname);
 
             // when
@@ -170,7 +170,7 @@ class UserControllerTest {
         void created() throws Exception {
             // given
             LoginDto loginDto = generateLoginDto();
-            TokenDto tokenDto = new TokenDto(faker.hashing().sha512());
+            TokenDto tokenDto = new TokenDto(FAKER.hashing().sha512());
 
             given(userService.login(loginDto)).willReturn(tokenDto);
 
@@ -192,7 +192,7 @@ class UserControllerTest {
         @ParameterizedTest
         void badRequestInvalidEmail(String email) throws Exception {
             // given
-            String password = faker.internet().password(8, 30, true, true, true);
+            String password = FAKER.internet().password(8, 30, true, true, true);
             LoginDto loginDto = new LoginDto(email, password);
 
             // when
@@ -250,7 +250,7 @@ class UserControllerTest {
         @ParameterizedTest
         void badRequestInvalidPassword(String password) throws Exception {
             // given
-            String email = faker.internet().emailAddress();
+            String email = FAKER.internet().emailAddress();
             LoginDto loginDto = new LoginDto(email, password);
 
             // when
@@ -286,16 +286,16 @@ class UserControllerTest {
     }
 
     private SignupDto generateSignupDto() {
-        String email = faker.internet().emailAddress();
-        String password = faker.internet().password(8, 30, true, true, true);
-        String nickname = faker.internet().username();
+        String email = FAKER.internet().emailAddress();
+        String password = FAKER.internet().password(8, 30, true, true, true);
+        String nickname = FAKER.internet().username();
 
         return new SignupDto(email, password, nickname);
     }
 
     private LoginDto generateLoginDto() {
-        String email = faker.internet().emailAddress();
-        String password = faker.internet().password(8, 30, true, true, true);
+        String email = FAKER.internet().emailAddress();
+        String password = FAKER.internet().password(8, 30, true, true, true);
 
         return new LoginDto(email, password);
     }
@@ -309,12 +309,12 @@ class UserControllerTest {
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
             return Stream.of(
-                Arguments.of(faker.app().name()),
-                Arguments.of(faker.name().fullName()),
-                Arguments.of(faker.internet().url()),
-                Arguments.of(faker.internet().domainName()),
-                Arguments.of(faker.internet().webdomain()),
-                Arguments.of(faker.internet().botUserAgentAny())
+                Arguments.of(FAKER.app().name()),
+                Arguments.of(FAKER.name().fullName()),
+                Arguments.of(FAKER.internet().url()),
+                Arguments.of(FAKER.internet().domainName()),
+                Arguments.of(FAKER.internet().webdomain()),
+                Arguments.of(FAKER.internet().botUserAgentAny())
             );
         }
 
@@ -325,10 +325,10 @@ class UserControllerTest {
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
             return Stream.of(
-                Arguments.of(faker.internet().password(1, 7, true, true, true)),
-                Arguments.of(faker.internet().password(31, 50, true, true, true)),
-                Arguments.of(faker.internet().password(8, 30, true, false, true)),
-                Arguments.of(faker.internet().password(8, 30, true, true, false))
+                Arguments.of(FAKER.internet().password(1, 7, true, true, true)),
+                Arguments.of(FAKER.internet().password(31, 50, true, true, true)),
+                Arguments.of(FAKER.internet().password(8, 30, true, false, true)),
+                Arguments.of(FAKER.internet().password(8, 30, true, true, false))
             );
         }
 
