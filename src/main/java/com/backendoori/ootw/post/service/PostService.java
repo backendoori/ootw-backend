@@ -4,6 +4,7 @@ import static com.backendoori.ootw.post.validation.Message.POST_NOT_FOUND;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import com.backendoori.ootw.common.image.ImageService;
 import com.backendoori.ootw.exception.UserNotFoundException;
@@ -13,8 +14,9 @@ import com.backendoori.ootw.post.domain.Post;
 import com.backendoori.ootw.post.dto.request.PostSaveRequest;
 import com.backendoori.ootw.post.dto.request.PostUpdateRequest;
 import com.backendoori.ootw.post.dto.response.PostReadResponse;
-import com.backendoori.ootw.post.dto.response.PostSaveResponse;
+import com.backendoori.ootw.post.dto.response.PostSaveUpdateResponse;
 import com.backendoori.ootw.post.exception.NoPostPermissionException;
+import com.backendoori.ootw.post.exception.ResourceNotExistException;
 import com.backendoori.ootw.post.repository.PostRepository;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.repository.UserRepository;
@@ -39,16 +41,19 @@ public class PostService {
     private final LikeRepository likeRepository;
 
     @Transactional
-    public PostSaveResponse save(PostSaveRequest request, MultipartFile postImg) {
+    public PostSaveUpdateResponse save(PostSaveRequest request, MultipartFile postImg) {
         User user = userRepository.findById(getUserId())
             .orElseThrow(UserNotFoundException::new);
+
+        // TODO: 이미지가 null인 경우 설정하기
         String imgUrl = imageService.uploadImage(postImg);
         TemperatureArrange temperatureArrange = weatherService.getCurrentTemperatureArrange(request.coordinate());
 
         Post savedPost = postRepository.save(Post.from(user, request, imgUrl, temperatureArrange));
 
-        return PostSaveResponse.from(savedPost);
+        return PostSaveUpdateResponse.from(savedPost);
     }
+
 
     @Transactional(readOnly = true)
     public PostReadResponse getDetailByPostId(Long postId) {
@@ -105,6 +110,29 @@ public class PostService {
         postRepository.delete(post);
     }
 
+    @Transactional
+    public PostSaveUpdateResponse update(Long postId, MultipartFile postImg, PostUpdateRequest request) {
+        Post post = postRepository.findById(postId)
+            .orElseThrow(() -> new NoSuchElementException(POST_NOT_FOUND));
+
+        checkUserHasPostPermission(post);
+
+        Assert.isTrue(Objects.nonNull(request) || Objects.nonNull(postImg), () -> {
+            throw new ResourceNotExistException();
+        });
+
+        if (Objects.nonNull(request)) {
+            post.setTitle(request.title());
+            post.setContent(request.content());
+        }
+
+        if (Objects.nonNull(postImg)) {
+            // TODO: 기존 저장된 이미지 삭제(원래 null인 경우도 있으니 주의)
+            post.setImage(imageService.uploadImage(postImg));
+        }
+
+        return PostSaveUpdateResponse.from(post);
+    }
 
     private List<Long> getLikedPostId(long userId) {
         return likeRepository.findByUserAndIsLike(userId, true)
@@ -120,6 +148,8 @@ public class PostService {
     }
 
     //TODO: 이 부분을 .equals 써야하는지 궁금하다.
+    // 세희) 위에서처럼 정의하면 constant pool에 저장이되고 중복되는 값이 있으면 비슷한 걸로 인식한다고는 들었습니다!
+    // 다만 실수를 줄이고 더 안전하게 하고 싶다면 equals를 사용하는 것이 나을 수도 있겟네여!
     private boolean isLogin() {
         return SecurityContextHolder
             .getContext()

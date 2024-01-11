@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,19 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class PostController {
 
     private final PostService postService;
-
-    @PostMapping
-    public ResponseEntity<PostSaveResponse> save(
-        @RequestPart MultipartFile postImg,
-        @RequestPart @Valid PostSaveRequest request) {
-        PostSaveResponse response = postService.save(request, postImg);
-
-        URI postUri = URI.create("/api/v1/posts/" + response.postId());
-
-        return ResponseEntity.status(HttpStatus.CREATED)
-            .location(postUri)
-            .body(response);
-    }
 
     @GetMapping("/{postId}")
     public ResponseEntity<PostReadResponse> readDetailByPostId(@PathVariable Long postId) {
@@ -59,6 +47,33 @@ public class PostController {
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
             .build();
+    }
+
+    @PostMapping
+    public ResponseEntity<PostSaveUpdateResponse> save(
+        @RequestPart(required = false) @Image(ignoreCase = true) MultipartFile postImg,
+        @RequestPart @Valid PostSaveRequest request) {
+        PostSaveUpdateResponse response = postService.save(request, postImg);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .location(getPostUri(response.postId()))
+            .body(response);
+    }
+
+    @PutMapping("/{postId}")
+    public ResponseEntity<PostSaveUpdateResponse> update(
+        @PathVariable Long postId,
+        @RequestPart(required = false) @Image(ignoreCase = true) MultipartFile postImg,
+        @RequestPart(required = false) @Valid PostUpdateRequest request) {
+        PostSaveUpdateResponse response = postService.update(postId, postImg, request);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .location(getPostUri(response.postId()))
+            .body(response);
+    }
+
+    private URI getPostUri(Long postId) {
+        return URI.create("/api/v1/posts/" + postId);
     }
 
 }
