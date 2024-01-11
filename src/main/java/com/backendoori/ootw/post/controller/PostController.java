@@ -2,9 +2,11 @@ package com.backendoori.ootw.post.controller;
 
 import java.net.URI;
 import java.util.List;
-import com.backendoori.ootw.post.dto.PostReadResponse;
-import com.backendoori.ootw.post.dto.PostSaveRequest;
-import com.backendoori.ootw.post.dto.PostSaveResponse;
+import com.backendoori.ootw.common.validation.Image;
+import com.backendoori.ootw.post.dto.request.PostSaveRequest;
+import com.backendoori.ootw.post.dto.request.PostUpdateRequest;
+import com.backendoori.ootw.post.dto.response.PostReadResponse;
+import com.backendoori.ootw.post.dto.response.PostSaveResponse;
 import com.backendoori.ootw.post.service.PostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

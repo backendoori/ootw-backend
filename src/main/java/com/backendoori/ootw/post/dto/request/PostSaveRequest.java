@@ -1,4 +1,4 @@
-package com.backendoori.ootw.post.dto;
+package com.backendoori.ootw.post.dto.request;
 
 import static com.backendoori.ootw.post.validation.Message.BLANK_POST_CONTENT;
 import static com.backendoori.ootw.post.validation.Message.BLANK_POST_TITLE;

@@ -1,4 +1,4 @@
-package com.backendoori.ootw.post.dto;
+package com.backendoori.ootw.post.dto.response;
 
 import java.time.LocalDateTime;
 import com.backendoori.ootw.post.domain.Post;

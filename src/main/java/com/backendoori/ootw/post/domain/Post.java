@@ -5,7 +5,7 @@ import static com.backendoori.ootw.post.validation.PostValidator.validateTempera
 import static com.backendoori.ootw.post.validation.PostValidator.validateUser;
 
 import com.backendoori.ootw.common.BaseEntity;
-import com.backendoori.ootw.post.dto.PostSaveRequest;
+import com.backendoori.ootw.post.dto.request.PostSaveRequest;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.weather.domain.TemperatureArrange;
 import jakarta.persistence.Column;
@@ -21,6 +21,7 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Table(name = "posts")
 @Entity
@@ -37,9 +38,11 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Setter
     @Column(name = "title", nullable = false)
     private String title;
 
+    @Setter
     @Column(name = "content", nullable = false)
     private String content;
 

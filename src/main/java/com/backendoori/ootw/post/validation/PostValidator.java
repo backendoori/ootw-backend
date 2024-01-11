@@ -8,7 +8,7 @@ import static com.backendoori.ootw.post.validation.Message.NULL_POST;
 import static com.backendoori.ootw.post.validation.Message.NULL_TEMPERATURE_ARRANGE;
 import static com.backendoori.ootw.post.validation.Message.NULL_WRITER;
 
-import com.backendoori.ootw.post.dto.PostSaveRequest;
+import com.backendoori.ootw.post.dto.request.PostSaveRequest;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.weather.domain.TemperatureArrange;
 import org.springframework.util.Assert;
