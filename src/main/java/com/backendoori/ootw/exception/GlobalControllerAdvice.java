@@ -90,13 +90,11 @@ public class GlobalControllerAdvice {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleException(Exception e) {
-        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
-
+    public ResponseEntity<Void> handleException(Exception e) {
         log.error(e.getMessage(), e);
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(errorResponse);
+            .build();
     }
 
 }
