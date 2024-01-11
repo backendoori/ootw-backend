@@ -141,7 +141,7 @@ class UserTest {
             .email(email)
             .password(password)
             .nickname(nickname)
-            .image(image)
+            .profileImageUrl(image)
             .certified(false)
             .build();
     }

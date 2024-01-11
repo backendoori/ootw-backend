@@ -212,7 +212,7 @@ class UserServiceTest {
             .email(faker.internet().emailAddress())
             .password(passwordEncoder.encode(password))
             .nickname(faker.internet().username())
-            .image(faker.internet().url())
+            .profileImageUrl(faker.internet().url())
             .certified(certified)
             .build();
     }

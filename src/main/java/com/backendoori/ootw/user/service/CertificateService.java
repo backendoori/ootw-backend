@@ -34,7 +34,7 @@ public class CertificateService {
         User user = userRepository.findByEmail(email)
             .orElseThrow(UserNotFoundException::new);
 
-        AssertUtil.throwIf(user.getCertified(), AlreadyCertifiedUserException::new);
+        AssertUtil.throwIf(user.isCertified(), AlreadyCertifiedUserException::new);
 
         Certificate certificate = generateCertificate(email);
         String title = generateTitle(certificate);
@@ -48,7 +48,7 @@ public class CertificateService {
         User user = userRepository.findByEmail(certifyDto.email())
             .orElseThrow(UserNotFoundException::new);
 
-        AssertUtil.throwIf(user.getCertified(), AlreadyCertifiedUserException::new);
+        AssertUtil.throwIf(user.isCertified(), AlreadyCertifiedUserException::new);
 
         Certificate certificate = certificateRedisRepository.findById(certifyDto.email())
             .orElseThrow(UserNotFoundException::new);

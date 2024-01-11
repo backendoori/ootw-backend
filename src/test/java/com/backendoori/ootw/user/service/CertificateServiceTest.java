@@ -46,7 +46,7 @@ class CertificateServiceTest extends MailTest {
             .email(SMTP_ADDRESS)
             .password(FAKER.internet().password())
             .nickname(FAKER.internet().username())
-            .image(FAKER.internet().url())
+            .profileImageUrl(FAKER.internet().url())
             .certified(false)
             .build();
 
@@ -132,7 +132,7 @@ class CertificateServiceTest extends MailTest {
             User actualUser = userRepository.findById(user.getId())
                 .orElseThrow();
 
-            assertThat(actualUser.getCertified()).isTrue();
+            assertThat(actualUser.isCertified()).isTrue();
         }
 
         @DisplayName("존재하지 않는 사용자에 대한 인증 요청은 예외가 발생한다")

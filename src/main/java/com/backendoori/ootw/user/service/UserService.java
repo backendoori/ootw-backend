@@ -71,7 +71,7 @@ public class UserService {
     }
 
     private void validateLogin(User user, String decrypted) {
-        AssertUtil.throwIf(!user.getCertified(), NonCertifiedUserException::new);
+        AssertUtil.throwIf(!user.isCertified(), NonCertifiedUserException::new);
         AssertUtil.throwIf(!user.matchPassword(passwordEncoder, decrypted), IncorrectPasswordException::new);
     }
 
