@@ -11,9 +11,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ImageControllerAdvice {
 
+    private static final String IMAGE_RELATED_EXCEPTION = "업로드 요청 중 문제가 발생했습니다.";
+
     @ExceptionHandler(ImageException.class)
     public ResponseEntity<ErrorResponse> handleImageUploadException(ImageException e) {
-        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+        log.error("error message : {}", e.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(IMAGE_RELATED_EXCEPTION);
 
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
             .body(errorResponse);
@@ -21,7 +24,8 @@ public class ImageControllerAdvice {
 
     @ExceptionHandler(SaveException.class)
     public ResponseEntity<ErrorResponse> handleSaveException(SaveException e) {
-        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+        log.error("error message : {}", e.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(IMAGE_RELATED_EXCEPTION);
 
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
             .body(errorResponse);
