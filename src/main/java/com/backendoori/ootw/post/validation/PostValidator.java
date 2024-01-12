@@ -9,6 +9,7 @@ import static com.backendoori.ootw.post.validation.Message.NULL_TEMPERATURE_ARRA
 import static com.backendoori.ootw.post.validation.Message.NULL_WRITER;
 
 import com.backendoori.ootw.post.dto.request.PostSaveRequest;
+import com.backendoori.ootw.post.dto.request.PostUpdateRequest;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.weather.domain.TemperatureArrange;
 import org.springframework.util.Assert;
@@ -23,6 +24,12 @@ public class PostValidator {
     }
 
     public static void validatePostSaveRequest(PostSaveRequest request) {
+        Assert.notNull(request, NULL_POST);
+        validateTitle(request.title());
+        validateContent(request.content());
+    }
+
+    public static void validatePostUpdateRequest(PostUpdateRequest request) {
         Assert.notNull(request, NULL_POST);
         validateTitle(request.title());
         validateContent(request.content());
