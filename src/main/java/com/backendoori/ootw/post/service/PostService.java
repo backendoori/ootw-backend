@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
+import com.backendoori.ootw.common.image.ImageFile;
 import com.backendoori.ootw.common.image.ImageService;
+import com.backendoori.ootw.common.image.exception.SaveException;
 import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.like.domain.Like;
 import com.backendoori.ootw.like.repository.LikeRepository;
@@ -40,21 +42,27 @@ public class PostService {
     private final WeatherService weatherService;
     private final LikeRepository likeRepository;
 
+
     @Transactional
     public PostSaveUpdateResponse save(PostSaveRequest request, MultipartFile postImg) {
         User user = userRepository.findById(getUserId())
             .orElseThrow(UserNotFoundException::new);
-
-        String imgUrl = null;
-        if (!Objects.isNull(postImg)) {
-            imgUrl = imageService.uploadImage(postImg);
-        }
-
         TemperatureArrange temperatureArrange = weatherService.getCurrentTemperatureArrange(request.coordinate());
 
-        Post savedPost = postRepository.save(Post.from(user, request, imgUrl, temperatureArrange));
+        if (postImg.isEmpty()) {
+            Post savedPost = postRepository.save(Post.from(user, request, null, temperatureArrange));
+            return PostSaveUpdateResponse.from(savedPost);
+        }
 
-        return PostSaveUpdateResponse.from(savedPost);
+        ImageFile imgFile = imageService.upload(postImg);
+        try {
+            Post savedPost = postRepository.save(Post.from(user, request, imgFile.url(), temperatureArrange));
+
+            return PostSaveUpdateResponse.from(savedPost);
+        } catch (Exception e) {
+            imageService.delete(imgFile.fileName());
+            throw new SaveException();
+        }
     }
 
 
@@ -126,15 +134,23 @@ public class PostService {
         });
 
         if (Objects.nonNull(request)) {
-            post.setTitleAndContent(request);
+            post.updateTitle(request.title());
+            post.updateContent(request.content());
         }
 
-        if (Objects.nonNull(postImg)) {
-            // TODO: 기존 저장된 이미지 삭제(원래 null인 경우도 있으니 주의)
-            //  imageService.uploadImage(postImg)가 잘못 저장되어 null 인 경우도 있을까..?
-            post.setImage(imageService.uploadImage(postImg));
-        }
+        if (Objects.nonNull(postImg) && !postImg.isEmpty()) {
+            ImageFile imgFile = imageService.upload(postImg);
+            try {
+                // TODO: 기존 저장된 이미지 삭제(원래 null인 경우도 있으니 주의)
+                //  imageService.uploadImage(postImg)가 잘못 저장되어 null 인 경우도 있을까..?
+                post.setImage(imgFile.url());
 
+                return PostSaveUpdateResponse.from(post);
+            } catch (Exception e) {
+                imageService.delete(imgFile.fileName());
+                throw new SaveException();
+            }
+        }
         return PostSaveUpdateResponse.from(post);
     }
 

@@ -91,14 +91,6 @@ public class GlobalControllerAdvice {
             .body(errorResponse);
     }
 
-    @ExceptionHandler(ImageUploadException.class)
-    public ResponseEntity<ErrorResponse> handleImageUploadException(ImageUploadException e) {
-        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
-
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
-            .body(errorResponse);
-    }
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Void> handleException(Exception e) {
         log.error(e.getMessage(), e);

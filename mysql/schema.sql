@@ -12,20 +12,19 @@ CREATE TABLE users
     certified         TINYINT(1)   NOT NULL,
     created_at        DATETIME(6)  NULL,
     updated_at        DATETIME(6)  NULL,
-    CONSTRAINT users_pk
-        PRIMARY KEY (id),
-    CONSTRAINT users_email_index
-        UNIQUE (email)
+
+    CONSTRAINT users_pk PRIMARY KEY (id),
+    CONSTRAINT users_email_index UNIQUE (email)
 );
 
 CREATE TABLE avatar_items
 (
-    id    BIGINT AUTO_INCREMENT,
-    image VARCHAR(500) NOT NULL,
-    type  VARCHAR(30)  NOT NULL,
-    sex   VARCHAR(10)  NOT NULL,
-    CONSTRAINT avatar_items_pk
-        PRIMARY KEY (id)
+    id        BIGINT AUTO_INCREMENT,
+    image_url VARCHAR(500) NOT NULL,
+    type      VARCHAR(30)  NOT NULL,
+    sex       VARCHAR(10)  NOT NULL,
+
+    CONSTRAINT avatar_items_pk PRIMARY KEY (id)
 );
 
 CREATE TABLE posts
@@ -34,16 +33,15 @@ CREATE TABLE posts
     user_id         BIGINT       NOT NULL,
     title           VARCHAR(30)  NOT NULL,
     content         VARCHAR(255) NOT NULL,
-    image           VARCHAR(500) NULL,
+    image_url       VARCHAR(500) NULL,
     created_at      DATETIME(6)  NULL,
     updated_at      DATETIME(6)  NULL,
     like_cnt        INTEGER      NULL,
     min_temperature DOUBLE       NOT NULL,
     max_temperature DOUBLE       NOT NULL,
-    CONSTRAINT posts_pk
-        PRIMARY KEY (id),
-    FOREIGN KEY (user_id)
-        REFERENCES users (id)
+
+    CONSTRAINT posts_pk PRIMARY KEY (id),
+    FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
 CREATE TABLE likes
@@ -54,10 +52,8 @@ CREATE TABLE likes
     is_like    TINYINT     NOT NULL,
     created_at DATETIME(6) NULL,
     updated_at DATETIME(6) NULL,
-    CONSTRAINT posts_pk
-        PRIMARY KEY (id),
-    FOREIGN KEY (user_id)
-        REFERENCES users (id),
-    FOREIGN KEY (post_id)
-        REFERENCES posts (id)
+
+    CONSTRAINT posts_pk PRIMARY KEY (id),
+    FOREIGN KEY (user_id) REFERENCES users (id),
+    FOREIGN KEY (post_id) REFERENCES posts (id)
 );

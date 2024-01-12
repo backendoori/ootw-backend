@@ -19,7 +19,7 @@ public record PostSaveUpdateResponse(
             savedPost.getId(),
             savedPost.getTitle(),
             savedPost.getContent(),
-            savedPost.getImage(),
+            savedPost.getImageUrl(),
             savedPost.getCreatedAt(),
             savedPost.getUpdatedAt(),
             TemperatureArrangeDto.from(savedPost.getTemperatureArrange())

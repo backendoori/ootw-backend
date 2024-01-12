@@ -1,36 +1,23 @@
 package com.backendoori.ootw.common.validation;
 
-import jakarta.validation.ConstraintValidator;
-import jakarta.validation.ConstraintValidatorContext;
+import io.jsonwebtoken.lang.Assert;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
-public class ImageValidator implements ConstraintValidator<Image, MultipartFile> {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class ImageValidator {
 
-    private Image annotation;
+    private static final String IMAGE_PREFIX = "image";
+    private static final String EMPTY_FILE = "비어있는 파일은 업로드 할 수 없습니다.";
+    private static final String FILE_OVER_SIZE = "파일이 허용된 최대 크기를 초과했습니다.";
+    private static final String INVALID_FILE_TYPE = "지원하지 않는 형식의 파일입니다.";
 
-    @Override
-    public void initialize(Image constraintAnnotation) {
-        this.annotation = constraintAnnotation;
-    }
-
-    @Override
-    public boolean isValid(MultipartFile img, ConstraintValidatorContext context) {
-        if (this.annotation.ignoreCase()) {
-            return true;
-        }
-
-        if (img == null || img.isEmpty()) {
-            return false;
-        }
-        if (img.getSize() > 10_000_000) {
-            return false;
-        }
-        String contentType = img.getContentType();
-        if (!contentType.startsWith("image")) {
-            return false;
-        }
-
-        return true;
+    public static void validateImage(MultipartFile img) {
+        Assert.notNull(img, EMPTY_FILE);
+        Assert.isTrue(!img.isEmpty(), EMPTY_FILE);
+        Assert.isTrue(img.getSize() < 10_000_000, FILE_OVER_SIZE);
+        Assert.isTrue(img.getContentType().startsWith(IMAGE_PREFIX), INVALID_FILE_TYPE);
     }
 
 }

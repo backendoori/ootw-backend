@@ -1,13 +1,13 @@
 package com.backendoori.ootw.post.domain;
 
+import static com.backendoori.ootw.post.validation.PostValidator.validateContent;
 import static com.backendoori.ootw.post.validation.PostValidator.validatePostSaveRequest;
-import static com.backendoori.ootw.post.validation.PostValidator.validatePostUpdateRequest;
 import static com.backendoori.ootw.post.validation.PostValidator.validateTemperatureArrange;
+import static com.backendoori.ootw.post.validation.PostValidator.validateTitle;
 import static com.backendoori.ootw.post.validation.PostValidator.validateUser;
 
 import com.backendoori.ootw.common.BaseEntity;
 import com.backendoori.ootw.post.dto.request.PostSaveRequest;
-import com.backendoori.ootw.post.dto.request.PostUpdateRequest;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.weather.domain.TemperatureArrange;
 import jakarta.persistence.Column;
@@ -23,7 +23,6 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Table(name = "posts")
 @Entity
@@ -46,9 +45,8 @@ public class Post extends BaseEntity {
     @Column(name = "content", nullable = false)
     private String content;
 
-    @Setter
-    @Column(name = "image")
-    private String image;
+    @Column(name = "image_url")
+    private String imageUrl;
 
     @Embedded
     private TemperatureArrange temperatureArrange;
@@ -64,18 +62,12 @@ public class Post extends BaseEntity {
         this.user = user;
         this.title = request.title();
         this.content = request.content();
-        this.image = imgUrl;
+        this.imageUrl = imgUrl;
         this.temperatureArrange = temperatureArrange;
     }
 
     public static Post from(User user, PostSaveRequest request, String imgUrl, TemperatureArrange temperatureArrange) {
         return new Post(user, request, imgUrl, temperatureArrange);
-    }
-
-    public void setTitleAndContent(PostUpdateRequest request) {
-        validatePostUpdateRequest(request);
-        this.title = request.title();
-        this.content = request.content();
     }
 
     public void increaseLikeCnt() {
@@ -84,6 +76,21 @@ public class Post extends BaseEntity {
 
     public void decreaseLikeCnt() {
         this.likeCnt--;
+    }
+
+    public void updateTitle(String title) {
+        validateTitle(title);
+        this.title = title;
+    }
+
+    public void updateContent(String content) {
+        validateContent(content);
+        this.content = content;
+    }
+
+    public void updateImageUrl(String imageUrl) {
+        validateContent(content);
+        this.imageUrl = imageUrl;
     }
 
 }

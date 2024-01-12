@@ -13,13 +13,16 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
+import com.backendoori.ootw.common.image.ImageFile;
 import com.backendoori.ootw.common.image.ImageService;
+import com.backendoori.ootw.common.image.exception.SaveException;
 import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.like.repository.LikeRepository;
 import com.backendoori.ootw.like.service.LikeService;
@@ -66,6 +69,8 @@ import org.springframework.security.test.context.TestSecurityContextHolder;
 class PostServiceTest {
 
     static final Faker FAKER = new Faker();
+    public static final String IMG_URL = "imageUrl";
+    public static final String FILE_NAME = "filename.jpeg";
 
     User user;
 
@@ -188,11 +193,10 @@ class PostServiceTest {
             void updateAllSuccess() {
                 // given
                 PostUpdateRequest request = new PostUpdateRequest("Test Title", "Test Content");
-                MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
+                MockMultipartFile postImg = new MockMultipartFile("file", FILE_NAME,
                     "text/plain", "some xml".getBytes());
 
-                String imgUrl = "imgUrl";
-                given(imageService.uploadImage(postImg)).willReturn(imgUrl);
+                given(imageService.upload(postImg)).willReturn(new ImageFile(IMG_URL, FILE_NAME));
 
                 // when
                 PostSaveUpdateResponse response = postService.update(userPost.getId(), postImg, request);
@@ -201,7 +205,7 @@ class PostServiceTest {
                 assertAll(
                     () -> assertThat(response).hasFieldOrPropertyWithValue("title", request.title()),
                     () -> assertThat(response).hasFieldOrPropertyWithValue("content", request.content()),
-                    () -> assertThat(response).hasFieldOrPropertyWithValue("image", imgUrl)
+                    () -> assertThat(response).hasFieldOrPropertyWithValue("image", IMG_URL)
                 );
             }
 
@@ -225,17 +229,17 @@ class PostServiceTest {
             @DisplayName("게시글 이미지만 수정에 성공한다.")
             void updatePostImageSuccess() {
                 // given
-                MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
+                MockMultipartFile postImg = new MockMultipartFile("file", FILE_NAME,
                     "text/plain", "some xml".getBytes());
-                String imgUrl = "imgUrl";
+                String IMG_URL = "IMG_URL";
 
-                given(imageService.uploadImage(postImg)).willReturn(imgUrl);
+                given(imageService.upload(postImg)).willReturn(new ImageFile(IMG_URL, FILE_NAME));
 
                 // when
                 PostSaveUpdateResponse response = postService.update(userPost.getId(), postImg, null);
 
                 //then
-                assertThat(response).hasFieldOrPropertyWithValue("image", imgUrl);
+                assertThat(response).hasFieldOrPropertyWithValue("image", IMG_URL);
             }
 
         }
@@ -264,7 +268,7 @@ class PostServiceTest {
             void updateFailWithPermission() {
                 // given
                 PostUpdateRequest request = new PostUpdateRequest("Test Title", "Test Content");
-                MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
+                MockMultipartFile postImg = new MockMultipartFile("file", FILE_NAME,
                     "text/plain", "some xml".getBytes());
 
                 // when
@@ -281,7 +285,7 @@ class PostServiceTest {
             void updateFailWithNonExistPost() {
                 // given
                 PostUpdateRequest request = new PostUpdateRequest("Test Title", "Test Content");
-                MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
+                MockMultipartFile postImg = new MockMultipartFile("file", FILE_NAME,
                     "text/plain", "some xml".getBytes());
 
                 // when
@@ -328,13 +332,14 @@ class PostServiceTest {
 
         @Test
         @DisplayName("게시글 저장에 성공한다.")
-        void saveSuccess() {
+        void saveSuccess() throws IOException {
             // given
             PostSaveRequest request = new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE);
-            MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
-                "text/plain", "some xml".getBytes());
+            MockMultipartFile postImg = new MockMultipartFile("file", FILE_NAME,
+                "image/jpeg", "some xml".getBytes());
 
-            given(imageService.uploadImage(postImg)).willReturn("imgUrl");
+            given(imageService.upload(postImg)).willReturn(
+                new ImageFile("http://mock.server.com/filename.jpeg", FILE_NAME));
             given(weatherService.getCurrentTemperatureArrange(VALID_COORDINATE)).willReturn(
                 generateTemperatureArrange());
 
@@ -342,14 +347,12 @@ class PostServiceTest {
             PostSaveUpdateResponse postSaveResponse = postService.save(request, postImg);
 
             //then
-            assertAll(
-                () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("title", request.title()),
-                () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("content", request.content()),
-                () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("image",
-                    imageService.uploadImage(postImg)),
-                () -> assertThat(postSaveResponse).hasFieldOrPropertyWithValue("temperatureArrange",
-                    TemperatureArrangeDto.from(generateTemperatureArrange()))
-            );
+            assertThat(postSaveResponse).hasFieldOrPropertyWithValue("title", request.title());
+            assertThat(postSaveResponse).hasFieldOrPropertyWithValue("content", request.content());
+            assertThat(postSaveResponse).hasFieldOrPropertyWithValue("image",
+                imageService.upload(postImg).url());
+            assertThat(postSaveResponse).hasFieldOrPropertyWithValue("temperatureArrange",
+                TemperatureArrangeDto.from(generateTemperatureArrange()));
         }
 
         @Test
@@ -359,7 +362,7 @@ class PostServiceTest {
             setAuthentication(user.getId() + 1);
 
             PostSaveRequest postSaveRequest = new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE);
-            MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
+            MockMultipartFile postImg = new MockMultipartFile("file", FILE_NAME,
                 "text/plain", "some xml".getBytes());
 
             // when
@@ -395,11 +398,13 @@ class PostServiceTest {
                 generateTemperatureArrange());
 
             PostSaveRequest postSaveRequest = new PostSaveRequest(title, content, VALID_COORDINATE);
-            MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
-                "text/plain", "some xml".getBytes());
+            MockMultipartFile postImg = new MockMultipartFile("file", FILE_NAME,
+                "image/jpeg", "some xml".getBytes());
+            given(imageService.upload(postImg)).willReturn(
+                new ImageFile("http://mock.server.com/filename.jpeg", FILE_NAME));
 
             // when, then
-            assertThrows(IllegalArgumentException.class,
+            assertThrows(SaveException.class,
                 () -> postService.save(postSaveRequest, postImg));
         }
 
@@ -414,7 +419,7 @@ class PostServiceTest {
         @BeforeEach
         void setUp() {
             Post savedPost = postRepository.save(
-                Post.from(user, new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE), "imgUrl",
+                Post.from(user, new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE), "IMG_URL",
                     generateTemperatureArrange()));
             postSaveResponse = PostSaveUpdateResponse.from(savedPost);
         }
@@ -516,7 +521,7 @@ class PostServiceTest {
         void setUp() {
             for (int i = 0; i < SAVE_COUNT; i++) {
                 postRepository.save(
-                    Post.from(user, new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE), "imgUrl",
+                    Post.from(user, new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE), "IMG_URL",
                         generateTemperatureArrange()));
             }
         }
@@ -554,7 +559,7 @@ class PostServiceTest {
         }
 
         @Test
-        @DisplayName("로그인 후 좋아요 여부가 포함된 게시글 목록 최신순(default) 조회에 성공한다.")
+        @DisplayName("로그인 후 좋아요 여부가 포함된 게시글 목록 최신순 조회에 성공한다.")
         void getAllSuccessWithLogin() {
             // given
             List<Post> postList = postRepository.findAll();
@@ -575,7 +580,7 @@ class PostServiceTest {
         }
 
         @Test
-        @DisplayName("로그인은 했지만 좋아요를 누르지 않은 경우에도 게시글 목록 최신순(default) 조회에 성공한다.")
+        @DisplayName("로그인은 했지만 좋아요를 누르지 않은 경우에도 게시글 목록 최신순 조회에 성공한다.")
         void getAllSuccessWithLoginNoLike() {
             // given, when
             List<PostReadResponse> posts = postService.getAll();
@@ -588,7 +593,7 @@ class PostServiceTest {
         }
 
         @Test
-        @DisplayName("다른 사람이 좋아요를 눌렀어도 로그인을 안한 경우에도 게시글 목록 최신순(default) 조회에 성공한다.")
+        @DisplayName("다른 사람이 좋아요를 눌렀어도 로그인을 안한 경우에도 게시글 목록 최신순 조회에 성공한다.")
         void getAllSuccessWithLikedPost() {
             // given
             List<Post> postList = postRepository.findAll();

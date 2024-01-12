@@ -27,7 +27,7 @@ public final class PostReadResponse {
             WriterDto.from(post.getUser()),
             post.getTitle(),
             post.getContent(),
-            post.getImage(),
+            post.getImageUrl(),
             post.getCreatedAt(),
             post.getUpdatedAt(),
             TemperatureArrangeDto.from(post.getTemperatureArrange()),
