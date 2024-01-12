@@ -1,9 +1,9 @@
 package com.backendoori.ootw.weather.controller;
 
-import com.backendoori.ootw.weather.validation.Grid;
 import com.backendoori.ootw.weather.domain.Coordinate;
 import com.backendoori.ootw.weather.dto.WeatherResponse;
 import com.backendoori.ootw.weather.service.WeatherService;
+import com.backendoori.ootw.weather.validation.Grid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

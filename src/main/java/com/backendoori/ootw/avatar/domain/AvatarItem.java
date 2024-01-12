@@ -1,5 +1,9 @@
 package com.backendoori.ootw.avatar.domain;
 
+import static com.backendoori.ootw.avatar.validation.AvatarImageValidator.validateImage;
+import static com.backendoori.ootw.avatar.validation.AvatarImageValidator.validateItemType;
+import static com.backendoori.ootw.avatar.validation.AvatarImageValidator.validateSex;
+
 import com.backendoori.ootw.avatar.dto.AvatarItemRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,9 +36,14 @@ public class AvatarItem {
     private ItemType itemType;
 
     @Column(name = "sex", nullable = false, columnDefinition = "varchar(10)")
+    @Enumerated(EnumType.STRING)
     private Sex sex;
 
     private AvatarItem(String image, String type, String sex) {
+        validateImage(image);
+        validateItemType(type);
+        validateSex(sex);
+
         this.image = image;
         this.itemType = ItemType.valueOf(type);
         this.sex = Sex.valueOf(sex);

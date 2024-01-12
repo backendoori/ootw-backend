@@ -2,6 +2,7 @@ package com.backendoori.ootw.post.controller;
 
 import java.net.URI;
 import java.util.List;
+import com.backendoori.ootw.common.validation.Image;
 import com.backendoori.ootw.post.dto.PostReadResponse;
 import com.backendoori.ootw.post.dto.PostSaveRequest;
 import com.backendoori.ootw.post.dto.PostSaveResponse;
@@ -27,7 +28,7 @@ public class PostController {
 
     @PostMapping
     public ResponseEntity<PostSaveResponse> save(
-        @RequestPart MultipartFile postImg,
+        @RequestPart(required = false) @Image(ignoreCase = true) MultipartFile postImg,
         @RequestPart @Valid PostSaveRequest request) {
         PostSaveResponse response = postService.save(request, postImg);
 

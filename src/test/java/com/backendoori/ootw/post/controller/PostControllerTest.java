@@ -16,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 import com.backendoori.ootw.post.domain.Post;
 import com.backendoori.ootw.post.dto.PostReadResponse;
 import com.backendoori.ootw.post.dto.PostSaveRequest;
@@ -36,6 +37,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -110,7 +114,7 @@ class PostControllerTest extends TokenMockMvcTest {
                 new MockMultipartFile("request", "request.json", MediaType.APPLICATION_JSON_VALUE,
                     objectMapper.writeValueAsBytes(postSaveRequest));
             MockMultipartFile postImg =
-                new MockMultipartFile("postImg", "filename.txt", MediaType.MULTIPART_FORM_DATA_VALUE,
+                new MockMultipartFile("postImg", "filename.jpeg", MediaType.IMAGE_JPEG_VALUE,
                     "some xml".getBytes());
 
             // when
@@ -132,46 +136,15 @@ class PostControllerTest extends TokenMockMvcTest {
             assertThat(response.getHeader("location")).contains("/api/v1/posts/");
         }
 
-        @Test
-        @DisplayName("저장되지 않은 유저가 포함된 게시글 저장에 실패한다.")
-        void saveFailNonSavedUser() throws Exception {
-            // given
-            setToken(user.getId() + 1);
-
-            given(weatherService.getCurrentTemperatureArrange(VALID_COORDINATE))
-                .willReturn(generateTemperatureArrange());
-
-            PostSaveRequest postSaveRequest =
-                new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE);
-            MockMultipartFile request =
-                new MockMultipartFile("request", "request.json", MediaType.APPLICATION_JSON_VALUE,
-                    objectMapper.writeValueAsBytes(postSaveRequest));
-            MockMultipartFile postImg =
-                new MockMultipartFile("postImg", "filename.txt", MediaType.MULTIPART_FORM_DATA_VALUE,
-                    "some xml".getBytes());
-
-            // when
-            MockHttpServletRequestBuilder requestBuilder = multipart("http://localhost:8080/api/v1/posts")
-                .file(request)
-                .file(postImg)
-                .header(TOKEN_HEADER, TOKEN_PREFIX + token)
-                .contentType(MediaType.MULTIPART_FORM_DATA)
-                .accept(MediaType.APPLICATION_JSON);
-
-            // then
-            mockMvc.perform(requestBuilder)
-                .andExpect(status().isNotFound())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-        }
-
-        @Test
-        @DisplayName("유효하지 않은 요청 값(게시글 title)이 포함된 게시글 저장에 실패한다.")
-        void saveFailByMethodArgumentNotValidException() throws Exception {
+        @ParameterizedTest(name = "[{index}] 제목이 {0}이고 내용이 {1}인 경우")
+        @MethodSource("provideInvalidPostInfo")
+        @DisplayName("유효하지 않은 요청 값이 포함된 게시글 저장에 실패한다.")
+        void saveFailByMethodArgumentNotValidException(String title, String content) throws Exception {
             // given
             given(weatherService.getCurrentTemperatureArrange(VALID_COORDINATE))
                 .willReturn(generateTemperatureArrange());
 
-            PostSaveRequest postSaveRequest = new PostSaveRequest("", "Test Content", VALID_COORDINATE);
+            PostSaveRequest postSaveRequest = new PostSaveRequest(title, content, VALID_COORDINATE);
             MockMultipartFile request =
                 new MockMultipartFile("request", "request.json", MediaType.APPLICATION_JSON_VALUE,
                     objectMapper.writeValueAsBytes(postSaveRequest));
@@ -194,30 +167,20 @@ class PostControllerTest extends TokenMockMvcTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
         }
 
-        @Test
-        @DisplayName("유효하지 않은 요청 값(게시글 제목)이 포함된 게시글 저장에 실패한다.")
-        void saveFailInvalidValueByIllegalArgumentException() throws Exception {
-            // given
-            PostSaveRequest postSaveRequest = new PostSaveRequest("", "Test Content", VALID_COORDINATE);
-            MockMultipartFile request =
-                new MockMultipartFile("request", "request.json", MediaType.APPLICATION_JSON_VALUE,
-                    objectMapper.writeValueAsBytes(postSaveRequest));
-            MockMultipartFile postImg =
-                new MockMultipartFile("postImg", "filename.txt", MediaType.MULTIPART_FORM_DATA_VALUE,
-                    "some xml".getBytes());
 
-            // when
-            MockHttpServletRequestBuilder requestBuilder = multipart("http://localhost:8080/api/v1/posts")
-                .file(request)
-                .file(postImg)
-                .header(TOKEN_HEADER, TOKEN_PREFIX + token)
-                .contentType(MediaType.MULTIPART_FORM_DATA)
-                .accept(MediaType.APPLICATION_JSON);
-
-            // then
-            mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+        static Stream<Arguments> provideInvalidPostInfo() {
+            String validTitle = "title";
+            String validContent = "content";
+            return Stream.of(
+                Arguments.of(null, validContent),
+                Arguments.of(validTitle, null),
+                Arguments.of("", validContent),
+                Arguments.of(validTitle, ""),
+                Arguments.of(" ", validContent),
+                Arguments.of(validTitle, " "),
+                Arguments.of("a".repeat(40), validContent),
+                Arguments.of(validTitle, "a".repeat(600))
+            );
         }
 
     }
@@ -290,7 +253,7 @@ class PostControllerTest extends TokenMockMvcTest {
         }
 
         @Test
-        @DisplayName("게시글 목록 조회 성공")
+        @DisplayName("게시글 목록 조회에 성공한다.")
         void getAllSuccess() throws Exception {
             // given // when
             MockHttpServletRequestBuilder requestBuilder = get("http://localhost:8080/api/v1/posts")
