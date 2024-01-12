@@ -25,7 +25,7 @@ class OotwApplicationTests {
         assertThatNoException().isThrownBy(main);
     }
 
-    @DisplayName("애플리케이션 서버 시간이 설정된다")
+    @DisplayName("애플리케이션을 지정된 Tiemzone으로 설정한다")
     @Test
     void testServerTimezone() {
         // given // when
