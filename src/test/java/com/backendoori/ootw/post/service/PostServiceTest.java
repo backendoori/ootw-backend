@@ -4,6 +4,7 @@ import static com.backendoori.ootw.post.validation.Message.BLANK_POST_CONTENT;
 import static com.backendoori.ootw.post.validation.Message.BLANK_POST_TITLE;
 import static com.backendoori.ootw.post.validation.Message.INVALID_POST_CONTENT;
 import static com.backendoori.ootw.post.validation.Message.INVALID_POST_TITLE;
+import static com.backendoori.ootw.post.validation.Message.NULL_POST;
 import static com.backendoori.ootw.post.validation.Message.POST_NOT_FOUND;
 import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_COORDINATE;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +33,6 @@ import com.backendoori.ootw.post.dto.request.PostUpdateRequest;
 import com.backendoori.ootw.post.dto.response.PostReadResponse;
 import com.backendoori.ootw.post.dto.response.PostSaveUpdateResponse;
 import com.backendoori.ootw.post.dto.response.WriterDto;
-import com.backendoori.ootw.post.exception.ResourceRequiredException;
 import com.backendoori.ootw.post.repository.PostRepository;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.repository.UserRepository;
@@ -43,6 +42,8 @@ import com.backendoori.ootw.weather.dto.TemperatureArrangeDto;
 import com.backendoori.ootw.weather.service.WeatherService;
 import net.datafaker.Faker;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -54,9 +55,11 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.NullSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.TestingAuthenticationToken;
@@ -69,8 +72,11 @@ import org.springframework.security.test.context.TestSecurityContextHolder;
 class PostServiceTest {
 
     static final Faker FAKER = new Faker();
-    public static final String IMG_URL = "imageUrl";
-    public static final String FILE_NAME = "filename.jpeg";
+    public static final String IMG_URL = "http://mock.server.com/filename.jpeg";
+    public static final String ORIGINAL_FILE_NAME = "filename.jpeg";
+    public static final String FILE_NAME = "filename";
+    public static final String TITLE = "TITLE";
+    public static final String CONTENT = "CONTENT";
 
     User user;
 
@@ -165,6 +171,11 @@ class PostServiceTest {
 
     }
 
+    @NotNull
+    private static MockMultipartFile getPostImg(String originalFileName, String mediaType) {
+        return new MockMultipartFile(FILE_NAME, originalFileName, mediaType, "some xml".getBytes());
+    }
+
     @Nested
     @DisplayName("게시글 수정하기")
     class UpdateTest {
@@ -188,15 +199,23 @@ class PostServiceTest {
         @DisplayName("게시글 수정에 성공한다")
         class UpdateSuccess {
 
-            @Test
-            @DisplayName(" 게시글 정보와 이미지 수정에 성공한다.")
-            void updateAllSuccess() {
-                // given
-                PostUpdateRequest request = new PostUpdateRequest("Test Title", "Test Content");
-                MockMultipartFile postImg = new MockMultipartFile("file", FILE_NAME,
-                    "text/plain", "some xml".getBytes());
+            static Stream<Arguments> provideImageTypes() {
+                return Stream.of(
+                    Arguments.of("image.jpeg", MediaType.IMAGE_JPEG_VALUE),
+                    Arguments.of("image.gif", MediaType.IMAGE_GIF_VALUE),
+                    Arguments.of("image.png", MediaType.IMAGE_PNG_VALUE)
+                );
+            }
 
-                given(imageService.upload(postImg)).willReturn(new ImageFile(IMG_URL, FILE_NAME));
+            @ParameterizedTest(name = "[{index}]: 아이템 타입이 {0}인 경우에 저장에 성공한다.")
+            @MethodSource("provideImageTypes")
+            @DisplayName(" 게시글 정보와 이미지 수정에 성공한다.")
+            void updateAllSuccess(String originalFileName, String mediaType) {
+                // given
+                PostUpdateRequest request = new PostUpdateRequest(TITLE, CONTENT);
+                MockMultipartFile postImg = getPostImg(originalFileName, mediaType);
+
+                given(imageService.upload(postImg)).willReturn(new ImageFile(IMG_URL, ORIGINAL_FILE_NAME));
 
                 // when
                 PostSaveUpdateResponse response = postService.update(userPost.getId(), postImg, request);
@@ -213,7 +232,7 @@ class PostServiceTest {
             @DisplayName("게시글 정보만 수정에 성공한다.")
             void updatePostUpdateRequestSuccess() {
                 // given
-                PostUpdateRequest request = new PostUpdateRequest("Test Title", "Test Content");
+                PostUpdateRequest request = new PostUpdateRequest(TITLE, CONTENT);
 
                 // when
                 PostSaveUpdateResponse response = postService.update(userPost.getId(), null, request);
@@ -230,6 +249,15 @@ class PostServiceTest {
         @Nested
         @DisplayName("게시글 수정에 실패한다")
         class UpdateFail {
+
+            static Stream<Arguments> provideInvalidFile() {
+                return Stream.of(
+                    Arguments.of("file.md", MediaType.TEXT_MARKDOWN_VALUE),
+                    Arguments.of("file.html", MediaType.TEXT_HTML_VALUE),
+                    Arguments.of("file.pdf", MediaType.APPLICATION_PDF_VALUE),
+                    Arguments.of("file.txt", MediaType.TEXT_PLAIN_VALUE)
+                );
+            }
 
             static Stream<Arguments> provideInvalidPostUpdateRequest() {
                 return Stream.of(
@@ -250,9 +278,8 @@ class PostServiceTest {
             @DisplayName("게시글 주인이 아닌 사용자가 게시글 수정에 실패한다.")
             void updateFailWithPermission() {
                 // given
-                PostUpdateRequest request = new PostUpdateRequest("Test Title", "Test Content");
-                MockMultipartFile postImg = new MockMultipartFile("file", FILE_NAME,
-                    "text/plain", "some xml".getBytes());
+                PostUpdateRequest request = new PostUpdateRequest(TITLE, CONTENT);
+                MockMultipartFile postImg = getPostImg(ORIGINAL_FILE_NAME, MediaType.IMAGE_JPEG_VALUE);
 
                 // when
                 ThrowingCallable updatePost = () -> postService.update(otherPost.getId(), postImg, request);
@@ -267,9 +294,8 @@ class PostServiceTest {
             @DisplayName("존재하지 않는 게시글 수정에 실패한다.")
             void updateFailWithNonExistPost() {
                 // given
-                PostUpdateRequest request = new PostUpdateRequest("Test Title", "Test Content");
-                MockMultipartFile postImg = new MockMultipartFile("file", FILE_NAME,
-                    "text/plain", "some xml".getBytes());
+                PostUpdateRequest request = new PostUpdateRequest(TITLE, CONTENT);
+                MockMultipartFile postImg = getPostImg(ORIGINAL_FILE_NAME, MediaType.IMAGE_JPEG_VALUE);
 
                 // when
                 ThrowingCallable updatePost = () -> postService.update(otherPost.getId() + 1, postImg, request);
@@ -287,15 +313,15 @@ class PostServiceTest {
                 ThrowingCallable updatePost = () -> postService.update(userPost.getId(), null, null);
 
                 //then
-                assertThatExceptionOfType(ResourceRequiredException.class)
+                assertThatExceptionOfType(IllegalArgumentException.class)
                     .isThrownBy(updatePost)
-                    .withMessage(ResourceRequiredException.DEFAULT_MESSAGE);
+                    .withMessage(NULL_POST);
             }
 
             @ParameterizedTest(name = "[{index}] {0}")
             @MethodSource("provideInvalidPostUpdateRequest")
-            @DisplayName("수정할 게시글 정보를 보냈는데 제목이나 내용이 null이거나 공백이면 수정에 실패한다.")
-            void updateFailWithNullPostUpdateRequest(String testCase, PostUpdateRequest request, String message) {
+            @DisplayName("수정할 게시글 정보를 보냈는데 제목이나 내용이 유효하지 않으면 수정에 실패한다.")
+            void updateFailWithInvalidPostUpdateRequest(String testCase, PostUpdateRequest request, String message) {
                 // given // when
                 ThrowingCallable updatePost = () -> postService.update(userPost.getId(), null, request);
 
@@ -303,6 +329,21 @@ class PostServiceTest {
                 assertThatExceptionOfType(IllegalArgumentException.class)
                     .isThrownBy(updatePost)
                     .withMessage(message);
+            }
+
+            @ParameterizedTest(name = "[{index}] 파일 타입이 {1}인 경우")
+            @MethodSource("provideInvalidFile")
+            @DisplayName("수정할 이미지를 보냈는데 이미지 파일이 유효하지 않으면 수정에 실패한다.")
+            void updateFailWithInvalidFileType(String originalFileName, String mediaType) {
+                // given // when
+                PostUpdateRequest request = new PostUpdateRequest(TITLE, CONTENT);
+                MockMultipartFile postImg = getPostImg(originalFileName, mediaType);
+
+                ThrowingCallable updatePost = () -> postService.update(userPost.getId(), postImg, request);
+
+                //then
+                assertThatExceptionOfType(IllegalArgumentException.class)
+                    .isThrownBy(updatePost);
             }
 
         }
@@ -313,16 +354,45 @@ class PostServiceTest {
     @DisplayName("게시글 저장하기")
     class SaveTest {
 
-        @Test
-        @DisplayName("게시글 저장에 성공한다.")
-        void saveSuccess() throws IOException {
-            // given
-            PostSaveRequest request = new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE);
-            MockMultipartFile postImg = new MockMultipartFile("file", FILE_NAME,
-                "image/jpeg", "some xml".getBytes());
+        static Stream<Arguments> provideImageTypes() {
+            return Stream.of(
+                Arguments.of("image.jpeg", MediaType.IMAGE_JPEG_VALUE),
+                Arguments.of("image.gif", MediaType.IMAGE_GIF_VALUE),
+                Arguments.of("image.png", MediaType.IMAGE_PNG_VALUE)
+            );
+        }
 
-            given(imageService.upload(postImg)).willReturn(
-                new ImageFile("http://mock.server.com/filename.jpeg", FILE_NAME));
+        static Stream<Arguments> provideInvalidFile() {
+            return Stream.of(
+                Arguments.of("file.md", MediaType.TEXT_MARKDOWN_VALUE),
+                Arguments.of("file.html", MediaType.TEXT_HTML_VALUE),
+                Arguments.of("file.pdf", MediaType.APPLICATION_PDF_VALUE),
+                Arguments.of("file.txt", MediaType.TEXT_PLAIN_VALUE)
+            );
+        }
+
+        static Stream<Arguments> provideInvalidPostInfo() {
+            return Stream.of(
+                Arguments.of(new PostSaveRequest(null, CONTENT, VALID_COORDINATE)),
+                Arguments.of(new PostSaveRequest(TITLE, null, VALID_COORDINATE)),
+                Arguments.of(new PostSaveRequest("", CONTENT, VALID_COORDINATE)),
+                Arguments.of(new PostSaveRequest(TITLE, "", VALID_COORDINATE)),
+                Arguments.of(new PostSaveRequest(" ", CONTENT, VALID_COORDINATE)),
+                Arguments.of(new PostSaveRequest(TITLE, " ", VALID_COORDINATE)),
+                Arguments.of(new PostSaveRequest("a".repeat(40), CONTENT, VALID_COORDINATE)),
+                Arguments.of(new PostSaveRequest(TITLE, "a".repeat(600), VALID_COORDINATE))
+            );
+        }
+
+        @ParameterizedTest(name = "[{index}]: 아이템 타입이 {0}인 경우에 저장에 성공한다.")
+        @MethodSource("provideImageTypes")
+        @DisplayName("게시글 저장에 성공한다.")
+        void saveSuccess(String originalFileName, String mediaType) {
+            // given
+            PostSaveRequest request = new PostSaveRequest(TITLE, CONTENT, VALID_COORDINATE);
+            MockMultipartFile postImg = getPostImg(originalFileName, mediaType);
+
+            given(imageService.upload(postImg)).willReturn(new ImageFile(IMG_URL, ORIGINAL_FILE_NAME));
             given(weatherService.getCurrentTemperatureArrange(VALID_COORDINATE)).willReturn(
                 generateTemperatureArrange());
 
@@ -339,14 +409,32 @@ class PostServiceTest {
         }
 
         @Test
+        @DisplayName("게시글 정보만 저장에 성공한다.")
+        void updatePostUpdateRequestSuccess() {
+            // given
+            PostSaveRequest request = new PostSaveRequest(TITLE, CONTENT, VALID_COORDINATE);
+
+            given(weatherService.getCurrentTemperatureArrange(VALID_COORDINATE)).willReturn(
+                generateTemperatureArrange());
+
+            // when
+            PostSaveUpdateResponse response = postService.save(request, null);
+
+            //then
+            assertAll(
+                () -> assertThat(response).hasFieldOrPropertyWithValue("title", request.title()),
+                () -> assertThat(response).hasFieldOrPropertyWithValue("content", request.content())
+            );
+        }
+
+        @Test
         @DisplayName("저장된 유저가 아닌 경우 게시글 저장에 실패한다.")
         void saveFailUserNotFound() {
             // given
             setAuthentication(user.getId() + 1);
 
-            PostSaveRequest postSaveRequest = new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE);
-            MockMultipartFile postImg = new MockMultipartFile("file", FILE_NAME,
-                "text/plain", "some xml".getBytes());
+            PostSaveRequest postSaveRequest = new PostSaveRequest(TITLE, CONTENT, VALID_COORDINATE);
+            MockMultipartFile postImg = getPostImg(ORIGINAL_FILE_NAME, MediaType.IMAGE_JPEG_VALUE);
 
             // when
             ThrowingCallable savePost = () -> postService.save(postSaveRequest, postImg);
@@ -357,37 +445,52 @@ class PostServiceTest {
                 .withMessage(UserNotFoundException.DEFAULT_MESSAGE);
         }
 
-        static Stream<Arguments> provideInvalidPostInfo() {
-            String validTitle = "title";
-            String validContent = "content";
-            return Stream.of(
-                Arguments.of(null, validContent),
-                Arguments.of(validTitle, null),
-                Arguments.of("", validContent),
-                Arguments.of(validTitle, ""),
-                Arguments.of(" ", validContent),
-                Arguments.of(validTitle, " "),
-                Arguments.of("a".repeat(40), validContent),
-                Arguments.of(validTitle, "a".repeat(600))
-            );
-        }
-
         @ParameterizedTest(name = "[{index}] 제목이 {0}이고 내용이 {1}인 경우")
         @MethodSource("provideInvalidPostInfo")
         @DisplayName("유효하지 않은 값(게시글 정보)가 들어갈 경우 게시글 저장에 실패한다.")
-        void saveFailWithInvalidValue(String title, String content) {
+        void saveFailWithInvalidValue(@Nullable PostSaveRequest request) {
+            // given
+            MockMultipartFile postImg = getPostImg(ORIGINAL_FILE_NAME, MediaType.IMAGE_JPEG_VALUE);
+
+            given(imageService.upload(postImg)).willReturn(new ImageFile(IMG_URL, ORIGINAL_FILE_NAME));
+            given(weatherService.getCurrentTemperatureArrange(VALID_COORDINATE)).willReturn(
+                generateTemperatureArrange());
+
+            // when, then
+            assertThrows(SaveException.class,
+                () -> postService.save(request, postImg));
+        }
+
+        @ParameterizedTest
+        @NullSource
+        @DisplayName("게시글 정보가 null로 들어갈 경우 게시글 저장에 실패한다.")
+        void saveFailWithNullPostSaveRequest(PostSaveRequest request) {
+            // given
+            MockMultipartFile postImg = getPostImg(ORIGINAL_FILE_NAME, MediaType.IMAGE_JPEG_VALUE);
+
+            given(imageService.upload(postImg)).willReturn(new ImageFile(IMG_URL, ORIGINAL_FILE_NAME));
+            given(weatherService.getCurrentTemperatureArrange(VALID_COORDINATE)).willReturn(
+                generateTemperatureArrange());
+
+            // when, then
+            assertThrows(IllegalArgumentException.class,
+                () -> postService.save(request, postImg));
+        }
+
+        @ParameterizedTest(name = "[{index}] 파일 타입이 {1}인 경우")
+        @MethodSource("provideInvalidFile")
+        @DisplayName("수정할 이미지를 보냈는데 이미지 파일이 유효하지 않으면 수정에 실패한다.")
+        void updateFailWithInvalidFileType(String originalFileName, String mediaType) {
             // given
             given(weatherService.getCurrentTemperatureArrange(VALID_COORDINATE)).willReturn(
                 generateTemperatureArrange());
 
-            PostSaveRequest postSaveRequest = new PostSaveRequest(title, content, VALID_COORDINATE);
-            MockMultipartFile postImg = new MockMultipartFile("file", FILE_NAME,
-                "image/jpeg", "some xml".getBytes());
-            given(imageService.upload(postImg)).willReturn(
-                new ImageFile("http://mock.server.com/filename.jpeg", FILE_NAME));
+            PostSaveRequest postSaveRequest = new PostSaveRequest(TITLE, CONTENT, VALID_COORDINATE);
+            MockMultipartFile postImg = getPostImg(originalFileName, mediaType);
+            given(imageService.upload(postImg)).willReturn(new ImageFile(IMG_URL, ORIGINAL_FILE_NAME));
 
             // when, then
-            assertThrows(SaveException.class,
+            assertThrows(IllegalArgumentException.class,
                 () -> postService.save(postSaveRequest, postImg));
         }
 
@@ -402,7 +505,7 @@ class PostServiceTest {
         @BeforeEach
         void setUp() {
             Post savedPost = postRepository.save(
-                Post.from(user, new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE), "IMG_URL",
+                Post.from(user, new PostSaveRequest(TITLE, CONTENT, VALID_COORDINATE), IMG_URL,
                     generateTemperatureArrange()));
             postSaveResponse = PostSaveUpdateResponse.from(savedPost);
         }
@@ -504,7 +607,7 @@ class PostServiceTest {
         void setUp() {
             for (int i = 0; i < SAVE_COUNT; i++) {
                 postRepository.save(
-                    Post.from(user, new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE), "IMG_URL",
+                    Post.from(user, new PostSaveRequest(TITLE, CONTENT, VALID_COORDINATE), IMG_URL,
                         generateTemperatureArrange()));
             }
         }
