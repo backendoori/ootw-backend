@@ -13,36 +13,20 @@ public class AvatarImageValidator {
     private static final String INVALID_WORD_MESSAGE = "해당 단어가 프로젝트 내 성별 분류 체계에 존재하지 않습니다.";
 
     public static void validateSex(String sex) {
-        if(sex == null){
-            throw new IllegalArgumentException(SEX_ESSENTIAL);
-        }
-        if (sex.isBlank()) {
-            throw new IllegalArgumentException(SEX_ESSENTIAL);
-        }
-        if (!Sex.checkValue(sex)) {
-            throw new IllegalArgumentException(INVALID_WORD_MESSAGE);
-        }
+        Assert.notNull(sex, SEX_ESSENTIAL);
+        Assert.isTrue(!sex.isBlank(), SEX_ESSENTIAL);
+        Assert.isTrue(Sex.checkValue(sex), INVALID_WORD_MESSAGE);
     }
 
     public static void validateItemType(String type) {
-        if(type == null){
-            throw new IllegalArgumentException(SEX_ESSENTIAL);
-        }
-        if (type.isBlank()) {
-            throw new IllegalArgumentException(ITEM_TYPE_ESSENTIAL);
-        }
-        if (!ItemType.checkValue(type)) {
-            throw new IllegalArgumentException(INVALID_ITEM_TYPE_MESSAGE);
-        }
+        Assert.notNull(type, ITEM_TYPE_ESSENTIAL);
+        Assert.isTrue(!type.isBlank(), ITEM_TYPE_ESSENTIAL);
+        Assert.isTrue(ItemType.checkValue(type), INVALID_ITEM_TYPE_MESSAGE);
     }
 
     public static void validateImage(String image) {
-        if(image == null){
-            throw new IllegalArgumentException(SEX_ESSENTIAL);
-        }
-        if (image.isBlank()) {
-            throw new IllegalArgumentException(NO_IMAGE_URL_MESSAGE);
-        }
+        Assert.notNull(image, NO_IMAGE_URL_MESSAGE);
+        Assert.isTrue(!image.isBlank(), NO_IMAGE_URL_MESSAGE);
     }
 
 }
