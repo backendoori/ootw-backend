@@ -78,7 +78,7 @@ class AvatarItemControllerTest {
 
         doThrow(new ImageException("Mock Exception"))
             .when(avatarItemService)
-            .uploadItem(any(MultipartFile.class), any(AvatarItemRequest.class));
+            .upload(any(MultipartFile.class), any(AvatarItemRequest.class));
 
         //when, then
         mockMvc.perform(multipart("/api/v1/avatar-items")
@@ -101,7 +101,7 @@ class AvatarItemControllerTest {
 
         doThrow(new SaveException())
             .when(avatarItemService)
-            .uploadItem(any(MultipartFile.class), any(AvatarItemRequest.class));
+            .upload(any(MultipartFile.class), any(AvatarItemRequest.class));
 
         //when, then
         mockMvc.perform(multipart("/api/v1/avatar-items")
