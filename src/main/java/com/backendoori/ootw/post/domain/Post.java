@@ -1,11 +1,13 @@
 package com.backendoori.ootw.post.domain;
 
 import static com.backendoori.ootw.post.validation.PostValidator.validatePostSaveRequest;
+import static com.backendoori.ootw.post.validation.PostValidator.validatePostUpdateRequest;
 import static com.backendoori.ootw.post.validation.PostValidator.validateTemperatureArrange;
 import static com.backendoori.ootw.post.validation.PostValidator.validateUser;
 
 import com.backendoori.ootw.common.BaseEntity;
 import com.backendoori.ootw.post.dto.request.PostSaveRequest;
+import com.backendoori.ootw.post.dto.request.PostUpdateRequest;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.weather.domain.TemperatureArrange;
 import jakarta.persistence.Column;
@@ -38,11 +40,9 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Setter
     @Column(name = "title", nullable = false)
     private String title;
 
-    @Setter
     @Column(name = "content", nullable = false)
     private String content;
 
@@ -70,6 +70,12 @@ public class Post extends BaseEntity {
 
     public static Post from(User user, PostSaveRequest request, String imgUrl, TemperatureArrange temperatureArrange) {
         return new Post(user, request, imgUrl, temperatureArrange);
+    }
+
+    public void setTitleAndContent(PostUpdateRequest request) {
+        validatePostUpdateRequest(request);
+        this.title = request.title();
+        this.content = request.content();
     }
 
     public void increaseLikeCnt() {
