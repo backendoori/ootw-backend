@@ -15,11 +15,11 @@ public class ImageAnnotationValidator implements ConstraintValidator<Image, Mult
 
     @Override
     public boolean isValid(MultipartFile img, ConstraintValidatorContext context) {
-        if (this.annotation.ignoreCase()){
-           return true;
+        if (this.annotation.ignoreCase()) {
+            return true;
         }
 
-        if(img.isEmpty()) {
+        if (img.isEmpty()) {
             return false;
         }
 
