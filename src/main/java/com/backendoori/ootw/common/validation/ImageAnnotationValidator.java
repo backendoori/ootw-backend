@@ -6,7 +6,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class ImageAnnotationValidator implements ConstraintValidator<Image, MultipartFile> {
 
+    private static final String IMAGE_PREFIX = "image";
     private Image annotation;
+
 
     @Override
     public void initialize(Image constraintAnnotation) {
@@ -28,7 +30,7 @@ public class ImageAnnotationValidator implements ConstraintValidator<Image, Mult
         }
 
         String contentType = img.getContentType();
-        if (!contentType.startsWith("image")) {
+        if (!contentType.startsWith(IMAGE_PREFIX)) {
             return false;
         }
 
