@@ -114,7 +114,7 @@ class PostServiceTest {
             MockMultipartFile postImg = new MockMultipartFile("file", "filename.jpeg",
                 "image/jpeg", "some xml".getBytes());
 
-            given(imageService.uploadImage(postImg)).willReturn(
+            given(imageService.upload(postImg)).willReturn(
                 new ImageFile("http://mock.server.com/filename.jpeg", "filename.jpeg"));
             given(weatherService.getCurrentTemperatureArrange(VALID_COORDINATE)).willReturn(
                 generateTemperatureArrange());
@@ -126,7 +126,7 @@ class PostServiceTest {
             assertThat(postSaveResponse).hasFieldOrPropertyWithValue("title", request.title());
             assertThat(postSaveResponse).hasFieldOrPropertyWithValue("content", request.content());
             assertThat(postSaveResponse).hasFieldOrPropertyWithValue("image",
-                imageService.uploadImage(postImg).url());
+                imageService.upload(postImg).url());
             assertThat(postSaveResponse).hasFieldOrPropertyWithValue("temperatureArrange",
                 TemperatureArrangeDto.from(generateTemperatureArrange()));
         }
@@ -176,7 +176,7 @@ class PostServiceTest {
             PostSaveRequest postSaveRequest = new PostSaveRequest(title, content, VALID_COORDINATE);
             MockMultipartFile postImg = new MockMultipartFile("file", "filename.jpeg",
                 "image/jpeg", "some xml".getBytes());
-            given(imageService.uploadImage(postImg)).willReturn(
+            given(imageService.upload(postImg)).willReturn(
                 new ImageFile("http://mock.server.com/filename.jpeg", "filename.jpeg"));
 
             // when, then

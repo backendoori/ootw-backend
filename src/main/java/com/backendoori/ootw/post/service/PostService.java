@@ -48,13 +48,13 @@ public class PostService {
             return PostSaveResponse.from(savedPost);
         }
 
-        ImageFile imgFile = imageService.uploadImage(postImg);
+        ImageFile imgFile = imageService.upload(postImg);
         try {
             Post savedPost = postRepository.save(Post.from(user, request, imgFile.url(), temperatureArrange));
 
             return PostSaveResponse.from(savedPost);
         } catch (Exception e) {
-            imageService.deleteImage(imgFile.fileName());
+            imageService.delete(imgFile.fileName());
             throw new SaveException();
         }
     }

@@ -67,7 +67,7 @@ class MiniOImageServiceImplTest {
         MockMultipartFile file = new MockMultipartFile("file", "filename.jpeg",
             "image/jpeg", "some xml".getBytes());
         //when, then
-        assertThatCode(() -> imageService.uploadImage(file))
+        assertThatCode(() -> imageService.upload(file))
             .doesNotThrowAnyException();
     }
 
@@ -76,7 +76,7 @@ class MiniOImageServiceImplTest {
     @DisplayName("아바타 이미지 업로드 서비스 로직 테스트")
     public void imageUploadFailWithNullImage(MockMultipartFile file) {
         //given, when, then
-        assertThatCode(() -> imageService.uploadImage(file))
+        assertThatCode(() -> imageService.upload(file))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -88,7 +88,7 @@ class MiniOImageServiceImplTest {
         MockMultipartFile file = new MockMultipartFile("file", "filename.jpeg",
             contentType, content);
         //when, then
-        assertThatCode(() -> imageService.uploadImage(file))
+        assertThatCode(() -> imageService.upload(file))
             .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -103,7 +103,7 @@ class MiniOImageServiceImplTest {
         // When, Then
         when(miniOConfig.getBucket()).thenReturn("test-bucket");
 
-        assertThatThrownBy(() -> mockingImageService.uploadImage(file))
+        assertThatThrownBy(() -> mockingImageService.upload(file))
             .isInstanceOf(ImageException.class);
     }
 
@@ -112,7 +112,7 @@ class MiniOImageServiceImplTest {
         String fileName = "testfile.jpeg";
         doThrow(new RuntimeException("Mock Exception")).when(minioClient).removeObject(any(RemoveObjectArgs.class));
 
-        assertThatThrownBy(() -> mockingImageService.deleteImage(fileName))
+        assertThatThrownBy(() -> mockingImageService.delete(fileName))
             .isInstanceOf(ImageException.class);
     }
 
@@ -123,7 +123,7 @@ class MiniOImageServiceImplTest {
         when(minioClient.getPresignedObjectUrl(any(GetPresignedObjectUrlArgs.class))).thenThrow(
             new RuntimeException("Mock Exception"));
 
-        assertThatThrownBy(() -> mockingImageService.uploadImage(file))
+        assertThatThrownBy(() -> mockingImageService.upload(file))
             .isInstanceOf(ImageException.class);
 
     }

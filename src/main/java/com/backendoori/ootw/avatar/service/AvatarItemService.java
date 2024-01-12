@@ -22,14 +22,14 @@ public class AvatarItemService {
 
     @Transactional
     public AvatarItemResponse upload(MultipartFile file, AvatarItemRequest requestDto) {
-        ImageFile imageFile = imageService.uploadImage(file);
+        ImageFile imageFile = imageService.upload(file);
         try {
             String url = imageFile.url();
             AvatarItem savedItem = avatarItemRepository.save(AvatarItem.create(requestDto, url));
 
             return AvatarItemResponse.from(savedItem);
         } catch (Exception e) {
-            imageService.deleteImage(imageFile.fileName());
+            imageService.delete(imageFile.fileName());
             throw new SaveException();
         }
     }

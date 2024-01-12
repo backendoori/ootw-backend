@@ -32,7 +32,7 @@ public class MiniOImageServiceImpl implements ImageService {
     private Path path;
 
     @Override
-    public ImageFile uploadImage(MultipartFile file) {
+    public ImageFile upload(MultipartFile file) {
         validateImage(file);
         try {
             path = Path.of(file.getOriginalFilename());
@@ -52,7 +52,7 @@ public class MiniOImageServiceImpl implements ImageService {
     }
 
     @Override
-    public void deleteImage(String fileName) {
+    public void delete(String fileName) {
         try {
             minioClient.removeObject(RemoveObjectArgs.builder()
                 .bucket(miniOConfig.getBucket())
