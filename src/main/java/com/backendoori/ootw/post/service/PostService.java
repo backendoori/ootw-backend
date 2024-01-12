@@ -110,6 +110,7 @@ public class PostService {
         postRepository.delete(post);
     }
 
+
     @Transactional
     public PostSaveUpdateResponse update(Long postId, MultipartFile postImg, PostUpdateRequest request) {
         Post post = postRepository.findById(postId)
@@ -122,12 +123,12 @@ public class PostService {
         });
 
         if (Objects.nonNull(request)) {
-            post.setTitle(request.title());
-            post.setContent(request.content());
+            post.setTitleAndContent(request);
         }
 
         if (Objects.nonNull(postImg)) {
             // TODO: 기존 저장된 이미지 삭제(원래 null인 경우도 있으니 주의)
+            //  imageService.uploadImage(postImg)가 잘못 저장되어 null 인 경우도 있을까..?
             post.setImage(imageService.uploadImage(postImg));
         }
 
