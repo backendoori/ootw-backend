@@ -3,15 +3,11 @@ package com.backendoori.ootw.like.service;
 import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_COORDINATE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -95,7 +91,7 @@ public class LikeServiceTest extends TokenMockMvcTest {
             .email(FAKER.internet().emailAddress())
             .password(FAKER.internet().password())
             .nickname(FAKER.internet().username())
-            .image(FAKER.internet().url())
+            .profileImageUrl(FAKER.internet().url())
             .certified(true)
             .build();
     }

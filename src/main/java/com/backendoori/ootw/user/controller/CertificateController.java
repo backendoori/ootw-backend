@@ -1,7 +1,7 @@
 package com.backendoori.ootw.user.controller;
 
 import com.backendoori.ootw.user.dto.CertifyDto;
-import com.backendoori.ootw.user.dto.SendCertificateDto;
+import com.backendoori.ootw.user.dto.SendCodeDto;
 import com.backendoori.ootw.user.service.CertificateService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +19,8 @@ public class CertificateController {
     private final CertificateService certificateService;
 
     @PatchMapping("/certificate")
-    public ResponseEntity<Void> sendCertificate(@Valid SendCertificateDto sendCertificateDto) {
-        certificateService.sendCertificate(sendCertificateDto);
+    public ResponseEntity<Void> sendCode(@Valid SendCodeDto sendCodeDto) {
+        certificateService.sendCode(sendCodeDto);
 
         return ResponseEntity.status(HttpStatus.OK)
             .build();

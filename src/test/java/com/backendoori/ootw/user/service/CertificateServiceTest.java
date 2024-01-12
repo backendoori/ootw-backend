@@ -8,7 +8,7 @@ import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.user.domain.Certificate;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.dto.CertifyDto;
-import com.backendoori.ootw.user.dto.SendCertificateDto;
+import com.backendoori.ootw.user.dto.SendCodeDto;
 import com.backendoori.ootw.user.exception.AlreadyCertifiedUserException;
 import com.backendoori.ootw.user.exception.IncorrectCertificateException;
 import com.backendoori.ootw.user.repository.CertificateRedisRepository;
@@ -46,7 +46,7 @@ class CertificateServiceTest extends MailTest {
             .email(SMTP_ADDRESS)
             .password(FAKER.internet().password())
             .nickname(FAKER.internet().username())
-            .image(FAKER.internet().url())
+            .profileImageUrl(FAKER.internet().url())
             .certified(false)
             .build();
 
@@ -61,20 +61,20 @@ class CertificateServiceTest extends MailTest {
 
     @DisplayName("인증 코드 발송 테스트")
     @Nested
-    class SendCertificateTest {
+    class SendCodeTest {
 
-        SendCertificateDto sendCertificateDto;
+        SendCodeDto sendCodeDto;
 
         @BeforeEach
-        void setSendCertificateDto() {
-            sendCertificateDto = new SendCertificateDto(user.getEmail());
+        void setSendCodeDto() {
+            sendCodeDto = new SendCodeDto(user.getEmail());
         }
 
         @DisplayName("사용자 이메일로 인증 코드를 보내는데 성공한다")
         @Test
         void success() {
             // given // when
-            certificateService.sendCertificate(sendCertificateDto);
+            certificateService.sendCode(sendCodeDto);
 
             // then
             smtp.waitForIncomingEmail(30 * 1000L, 1);
@@ -94,7 +94,7 @@ class CertificateServiceTest extends MailTest {
             userRepository.save(user);
 
             // when
-            ThrowingCallable sendCertificate = () -> certificateService.sendCertificate(sendCertificateDto);
+            ThrowingCallable sendCertificate = () -> certificateService.sendCode(sendCodeDto);
 
             // then
             assertThatExceptionOfType(AlreadyCertifiedUserException.class)
@@ -132,7 +132,7 @@ class CertificateServiceTest extends MailTest {
             User actualUser = userRepository.findById(user.getId())
                 .orElseThrow();
 
-            assertThat(actualUser.getCertified()).isTrue();
+            assertThat(actualUser.isCertified()).isTrue();
         }
 
         @DisplayName("존재하지 않는 사용자에 대한 인증 요청은 예외가 발생한다")

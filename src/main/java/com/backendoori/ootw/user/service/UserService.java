@@ -5,7 +5,7 @@ import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.security.jwt.TokenProvider;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.dto.LoginDto;
-import com.backendoori.ootw.user.dto.SendCertificateDto;
+import com.backendoori.ootw.user.dto.SendCodeDto;
 import com.backendoori.ootw.user.dto.SignupDto;
 import com.backendoori.ootw.user.dto.TokenDto;
 import com.backendoori.ootw.user.exception.AlreadyExistEmailException;
@@ -36,7 +36,7 @@ public class UserService {
         User user = buildUser(signupDto);
 
         userRepository.save(user);
-        certificateService.sendCertificate(new SendCertificateDto(user.getEmail()));
+        certificateService.sendCode(new SendCodeDto(user.getEmail()));
     }
 
     public TokenDto login(LoginDto loginDto) {
@@ -71,7 +71,7 @@ public class UserService {
     }
 
     private void validateLogin(User user, String decrypted) {
-        AssertUtil.throwIf(!user.getCertified(), NonCertifiedUserException::new);
+        AssertUtil.throwIf(!user.isCertified(), NonCertifiedUserException::new);
         AssertUtil.throwIf(!user.matchPassword(passwordEncoder, decrypted), IncorrectPasswordException::new);
     }
 
