@@ -42,19 +42,21 @@ public class PostService {
         User user = userRepository.findById(getUserId())
             .orElseThrow(UserNotFoundException::new);
         TemperatureArrange temperatureArrange = weatherService.getCurrentTemperatureArrange(request.coordinate());
-        if (!postImg.isEmpty()) {
-            ImageFile imgFile = imageService.uploadImage(postImg);
-            try {
-                Post savedPost = postRepository.save(Post.from(user, request, imgFile.url(), temperatureArrange));
-                return PostSaveResponse.from(savedPost);
-            } catch (Exception e) {
-                imageService.deleteImage(imgFile.fileName());
-                throw new SaveException();
-            }
-        }
-        Post savedPost = postRepository.save(Post.from(user, request, null, temperatureArrange));
 
-        return PostSaveResponse.from(savedPost);
+        if (postImg.isEmpty()) {
+            Post savedPost = postRepository.save(Post.from(user, request, null, temperatureArrange));
+            return PostSaveResponse.from(savedPost);
+        }
+
+        ImageFile imgFile = imageService.uploadImage(postImg);
+        try {
+            Post savedPost = postRepository.save(Post.from(user, request, imgFile.url(), temperatureArrange));
+
+            return PostSaveResponse.from(savedPost);
+        } catch (Exception e) {
+            imageService.deleteImage(imgFile.fileName());
+            throw new SaveException();
+        }
     }
 
     @Transactional(readOnly = true)
