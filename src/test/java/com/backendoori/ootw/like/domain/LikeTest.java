@@ -28,7 +28,7 @@ class LikeTest {
             .email(FAKER.internet().emailAddress())
             .password(FAKER.internet().password())
             .nickname(FAKER.internet().username())
-            .image(FAKER.internet().url())
+            .profileImageUrl(FAKER.internet().url())
             .build();
     }
 

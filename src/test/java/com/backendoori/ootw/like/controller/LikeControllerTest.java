@@ -85,7 +85,7 @@ class LikeControllerTest extends TokenMockMvcTest {
             .email(FAKER.internet().emailAddress())
             .password(FAKER.internet().password())
             .nickname(FAKER.internet().username())
-            .image(FAKER.internet().url())
+            .profileImageUrl(FAKER.internet().url())
             .certified(true)
             .build();
     }
@@ -113,7 +113,7 @@ class LikeControllerTest extends TokenMockMvcTest {
         LikeRequest request = new LikeRequest(post.getId());
 
         //when
-        mockMvc.perform(post("http://localhost:8080/api/v1/posts/"+ post.getId()+ "/likes")
+        mockMvc.perform(post("http://localhost:8080/api/v1/posts/" + post.getId() + "/likes")
                 .content(objectMapper.writeValueAsBytes(request))
                 .header(TOKEN_HEADER, TOKEN_PREFIX + token)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -141,7 +141,7 @@ class LikeControllerTest extends TokenMockMvcTest {
         LikeRequest request = new LikeRequest(post.getId());
 
         //when
-        mockMvc.perform(post("http://localhost:8080/api/v1/posts/"+ post.getId()+ "/likes")
+        mockMvc.perform(post("http://localhost:8080/api/v1/posts/" + post.getId() + "/likes")
                 .content(objectMapper.writeValueAsBytes(request))
                 .header(TOKEN_HEADER, TOKEN_PREFIX + token)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -166,7 +166,7 @@ class LikeControllerTest extends TokenMockMvcTest {
         LikeRequest request = new LikeRequest(postId);
 
         //when //then
-        mockMvc.perform(post("http://localhost:8080/api/v1/posts/"+ postId + "/likes")
+        mockMvc.perform(post("http://localhost:8080/api/v1/posts/" + postId + "/likes")
                 .content(objectMapper.writeValueAsBytes(request))
                 .header(TOKEN_HEADER, TOKEN_PREFIX + token)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -184,7 +184,7 @@ class LikeControllerTest extends TokenMockMvcTest {
         LikeRequest request = new LikeRequest(postId);
 
         //when //then
-        mockMvc.perform(post("http://localhost:8080/api/v1/posts/"+ postId+ "/likes")
+        mockMvc.perform(post("http://localhost:8080/api/v1/posts/" + postId + "/likes")
                 .content(objectMapper.writeValueAsBytes(request))
                 .header(TOKEN_HEADER, TOKEN_PREFIX + token)
                 .contentType(MediaType.APPLICATION_JSON)

@@ -78,13 +78,13 @@ public class TokenProvider {
 
     private void loggingException(RuntimeException e) {
         if (e instanceof SecurityException || e instanceof MalformedJwtException) {
-            log.debug("Invalid JWT signature.", e);
+            log.debug(Message.INVALID_SIGNATURE, e);
         } else if (e instanceof ExpiredJwtException) {
-            log.debug("Expired JWT token.", e);
+            log.debug(Message.EXPIRED_TOKEN, e);
         } else if (e instanceof UnsupportedJwtException) {
-            log.debug("Unsupported JWT token.", e);
+            log.debug(Message.UNSUPPORTED_TOKEN, e);
         } else {
-            log.debug("JWT token compact of handler are invalid.", e);
+            log.debug(Message.UNEXPECTED_TOKEN, e);
         }
     }
 

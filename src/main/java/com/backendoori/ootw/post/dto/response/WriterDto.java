@@ -9,7 +9,7 @@ public record WriterDto(
 ) {
 
     public static WriterDto from(User user) {
-        return new WriterDto(user.getId(), user.getNickname(), user.getImage());
+        return new WriterDto(user.getId(), user.getNickname(), user.getProfileImageUrl());
     }
 
 }

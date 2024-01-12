@@ -47,6 +47,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 
 @TestInstance(Lifecycle.PER_CLASS)
 class PostControllerTest extends TokenMockMvcTest {
+
     static final Faker FAKER = new Faker();
 
     User user;
@@ -87,7 +88,7 @@ class PostControllerTest extends TokenMockMvcTest {
             .email(FAKER.internet().emailAddress())
             .password(FAKER.internet().password())
             .nickname(FAKER.internet().username())
-            .image(FAKER.internet().url())
+            .profileImageUrl(FAKER.internet().url())
             .certified(true)
             .build();
     }
