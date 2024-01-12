@@ -64,7 +64,7 @@ public class PostController {
     public ResponseEntity<PostSaveUpdateResponse> update(
         @PathVariable Long postId,
         @RequestPart(required = false) @Image(ignoreCase = true) MultipartFile postImg,
-        @RequestPart(required = false) @Valid PostUpdateRequest request) {
+        @RequestPart @Valid PostUpdateRequest request) {
         PostSaveUpdateResponse response = postService.update(postId, postImg, request);
 
         return ResponseEntity.status(HttpStatus.CREATED)
