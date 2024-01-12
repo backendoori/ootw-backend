@@ -45,8 +45,11 @@ public class PostService {
         User user = userRepository.findById(getUserId())
             .orElseThrow(UserNotFoundException::new);
 
-        // TODO: 이미지가 null인 경우 설정하기
-        String imgUrl = imageService.uploadImage(postImg);
+        String imgUrl = null;
+        if (!Objects.isNull(postImg)) {
+            imgUrl = imageService.uploadImage(postImg);
+        }
+
         TemperatureArrange temperatureArrange = weatherService.getCurrentTemperatureArrange(request.coordinate());
 
         Post savedPost = postRepository.save(Post.from(user, request, imgUrl, temperatureArrange));
