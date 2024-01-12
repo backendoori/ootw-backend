@@ -89,8 +89,6 @@ public class Post extends BaseEntity {
     }
 
     public void updateImageUrl(String imageUrl) {
-        validateContent(content);
         this.imageUrl = imageUrl;
     }
-
 }
