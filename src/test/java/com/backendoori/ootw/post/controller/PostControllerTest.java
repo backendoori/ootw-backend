@@ -24,7 +24,6 @@ import com.backendoori.ootw.post.domain.Post;
 import com.backendoori.ootw.post.dto.request.PostSaveRequest;
 import com.backendoori.ootw.post.dto.response.PostReadResponse;
 import com.backendoori.ootw.post.dto.response.PostSaveUpdateResponse;
-import com.backendoori.ootw.post.exception.ResourceRequiredException;
 import com.backendoori.ootw.post.repository.PostRepository;
 import com.backendoori.ootw.post.service.PostService;
 import com.backendoori.ootw.security.TokenMockMvcTest;
@@ -60,7 +59,17 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 class PostControllerTest extends TokenMockMvcTest {
 
     static final Faker FAKER = new Faker();
+    public static final String IMG_URL = "imageUrl";
     public static final String BASE_URL = "http://localhost:8080/api/v1/posts";
+    public static final String ORIGINAL_FILE_NAME = "filename.jpeg";
+    public static final String FILE_NAME = "postImg";
+    public static final String CONTENT = "CONTENT";
+    public static final String TITLE = "TITLE";
+
+    @NotNull
+    private static MockMultipartFile getPostImg(String originalFileName, String mediaType) {
+        return new MockMultipartFile(FILE_NAME, originalFileName, mediaType, "some xml".getBytes());
+    }
 
     User user;
 
@@ -106,9 +115,12 @@ class PostControllerTest extends TokenMockMvcTest {
     }
 
     @NotNull
-    private static MockMultipartFile getPostImg() {
-        return new MockMultipartFile("postImg", "filename.jpeg", MediaType.IMAGE_JPEG_VALUE,
-            "some xml".getBytes());
+    private MockMultipartFile getRequestJson(String title, String content) throws JsonProcessingException {
+        PostSaveRequest postSaveRequest =
+            new PostSaveRequest(title, content, VALID_COORDINATE);
+
+        return new MockMultipartFile("request", "request.json", MediaType.APPLICATION_JSON_VALUE,
+            objectMapper.writeValueAsBytes(postSaveRequest));
     }
 
     @NotNull
@@ -117,15 +129,6 @@ class PostControllerTest extends TokenMockMvcTest {
             req.setMethod("PUT");
             return req;
         };
-    }
-
-    @NotNull
-    private MockMultipartFile getRequestJson(String testTitle) throws JsonProcessingException {
-        PostSaveRequest postSaveRequest =
-            new PostSaveRequest(testTitle, "Test Content", VALID_COORDINATE);
-
-        return new MockMultipartFile("request", "request.json", MediaType.APPLICATION_JSON_VALUE,
-            objectMapper.writeValueAsBytes(postSaveRequest));
     }
 
     @Nested
@@ -138,12 +141,12 @@ class PostControllerTest extends TokenMockMvcTest {
         @BeforeEach
         void setup() {
             userPost = postRepository.save(
-                Post.from(user, new PostSaveRequest("title", "content", VALID_COORDINATE), null,
+                Post.from(user, new PostSaveRequest(TITLE, CONTENT, VALID_COORDINATE), null,
                     generateTemperatureArrange()));
 
             User other = userRepository.save(generateUser());
             otherPost = postRepository.save(
-                Post.from(other, new PostSaveRequest("title", "content", VALID_COORDINATE), null,
+                Post.from(other, new PostSaveRequest(TITLE, CONTENT, VALID_COORDINATE), null,
                     generateTemperatureArrange()));
         }
 
@@ -216,12 +219,12 @@ class PostControllerTest extends TokenMockMvcTest {
         @BeforeEach
         void setup() {
             userPost = postRepository.save(
-                Post.from(user, new PostSaveRequest("title", "content", VALID_COORDINATE), null,
+                Post.from(user, new PostSaveRequest(TITLE, CONTENT, VALID_COORDINATE), null,
                     generateTemperatureArrange()));
 
             User other = userRepository.save(generateUser());
             otherPost = postRepository.save(
-                Post.from(other, new PostSaveRequest("title", "content", VALID_COORDINATE), null,
+                Post.from(other, new PostSaveRequest(TITLE, CONTENT, VALID_COORDINATE), null,
                     generateTemperatureArrange()));
         }
 
@@ -229,12 +232,21 @@ class PostControllerTest extends TokenMockMvcTest {
         @DisplayName("게시글 수정에 성공한다")
         class UpdateSuccess {
 
-            @Test
+            static Stream<Arguments> provideImageTypes() {
+                return Stream.of(
+                    Arguments.of("image.jpeg", MediaType.IMAGE_JPEG_VALUE),
+                    Arguments.of("image.gif", MediaType.IMAGE_GIF_VALUE),
+                    Arguments.of("image.png", MediaType.IMAGE_PNG_VALUE)
+                );
+            }
+
+            @ParameterizedTest(name = "[{index}]: 아이템 타입이 {0}인 경우에 저장에 성공한다.")
+            @MethodSource("provideImageTypes")
             @DisplayName(" 게시글 정보와 이미지 수정에 성공한다.")
-            void updateAllSuccess() throws Exception {
+            void updateAllSuccess(String originalFileName, String mediaType) throws Exception {
                 // given
-                MockMultipartFile request = getRequestJson("Test Title");
-                MockMultipartFile postImg = getPostImg();
+                MockMultipartFile request = getRequestJson(TITLE, CONTENT);
+                MockMultipartFile postImg = getPostImg(originalFileName, mediaType);
 
                 // when
                 MockHttpServletRequestBuilder requestBuilder = multipart(BASE_URL + "/" + userPost.getId())
@@ -260,7 +272,7 @@ class PostControllerTest extends TokenMockMvcTest {
             @DisplayName("게시글 정보 수정에 성공한다.")
             void updatePostUpdateRequestSuccess() throws Exception {
                 // given
-                MockMultipartFile request = getRequestJson("Test Title");
+                MockMultipartFile request = getRequestJson(TITLE, CONTENT);
 
                 // when
                 MockHttpServletRequestBuilder requestBuilder = multipart(BASE_URL + "/" + userPost.getId())
@@ -286,12 +298,34 @@ class PostControllerTest extends TokenMockMvcTest {
         @DisplayName("게시글 수정에 실패한다")
         class UpdateFail {
 
+            static Stream<Arguments> provideInvalidPostInfo() {
+                return Stream.of(
+                    Arguments.of(null, CONTENT),
+                    Arguments.of(TITLE, null),
+                    Arguments.of("", CONTENT),
+                    Arguments.of(TITLE, ""),
+                    Arguments.of(" ", CONTENT),
+                    Arguments.of(TITLE, " "),
+                    Arguments.of("a".repeat(40), CONTENT),
+                    Arguments.of(TITLE, "a".repeat(600))
+                );
+            }
+
+            static Stream<Arguments> provideInvalidFile() {
+                return Stream.of(
+                    Arguments.of("file.md", MediaType.TEXT_MARKDOWN_VALUE),
+                    Arguments.of("file.html", MediaType.TEXT_HTML_VALUE),
+                    Arguments.of("file.pdf", MediaType.APPLICATION_PDF_VALUE),
+                    Arguments.of("file.txt", MediaType.TEXT_PLAIN_VALUE)
+                );
+            }
+
             @Test
             @DisplayName("로그인을 안한 사용자는 게시글 수정에 접근이 불가하다.")
             void updateFailWithUnauthorizedUser() throws Exception {
                 // given
-                MockMultipartFile request = getRequestJson("Test Title");
-                MockMultipartFile postImg = getPostImg();
+                MockMultipartFile request = getRequestJson(TITLE, CONTENT);
+                MockMultipartFile postImg = getPostImg(ORIGINAL_FILE_NAME, MediaType.IMAGE_JPEG_VALUE);
 
                 // when
                 MockHttpServletRequestBuilder requestBuilder = multipart(BASE_URL + "/" + userPost.getId())
@@ -311,8 +345,8 @@ class PostControllerTest extends TokenMockMvcTest {
             @DisplayName("게시글 주인이 아닌 사용자가 게시글 수정에 실패한다.")
             void updateFailWithPermission() throws Exception {
                 // given
-                MockMultipartFile request = getRequestJson("Test Title");
-                MockMultipartFile postImg = getPostImg();
+                MockMultipartFile request = getRequestJson(TITLE, CONTENT);
+                MockMultipartFile postImg = getPostImg(ORIGINAL_FILE_NAME, MediaType.IMAGE_JPEG_VALUE);
 
                 // when
                 MockHttpServletRequestBuilder requestBuilder = multipart(BASE_URL + "/" + otherPost.getId())
@@ -334,8 +368,8 @@ class PostControllerTest extends TokenMockMvcTest {
             @DisplayName("존재하지 않는 게시글 수정에 실패한다.")
             void updateFailWithNonExistPost() throws Exception {
                 // given
-                MockMultipartFile request = getRequestJson("Test Title");
-                MockMultipartFile postImg = getPostImg();
+                MockMultipartFile request = getRequestJson(TITLE, CONTENT);
+                MockMultipartFile postImg = getPostImg(ORIGINAL_FILE_NAME, MediaType.IMAGE_JPEG_VALUE);
 
                 // when
                 MockHttpServletRequestBuilder requestBuilder = multipart(BASE_URL + "/" + otherPost.getId() + 1)
@@ -366,20 +400,17 @@ class PostControllerTest extends TokenMockMvcTest {
                 // then
                 mockMvc.perform(requestBuilder)
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.message", is(ResourceRequiredException.DEFAULT_MESSAGE)))
                     .andReturn();
             }
 
             @Test
-            @DisplayName("수정할 이미지만 보냈는데 null이면 수정에 실패한다.")
+            @DisplayName("수정할 이미지만 보내면 수정에 실패한다.")
             void updateFailWithNullImage() throws Exception {
                 // given
-                MockMultipartFile request = getRequestJson("Test Title");
-                MockMultipartFile postImg = getPostImg();
+                MockMultipartFile postImg = getPostImg(ORIGINAL_FILE_NAME, MediaType.IMAGE_JPEG_VALUE);
 
                 // when
                 MockHttpServletRequestBuilder requestBuilder = multipart(BASE_URL + "/" + userPost.getId())
-                    .file(request)
                     .file(postImg)
                     .header(TOKEN_HEADER, TOKEN_PREFIX + token)
                     .contentType(MediaType.MULTIPART_FORM_DATA)
@@ -388,16 +419,17 @@ class PostControllerTest extends TokenMockMvcTest {
 
                 // then
                 mockMvc.perform(requestBuilder)
-                    .andExpect(status().isCreated())
+                    .andExpect(status().isBadRequest())
                     .andReturn();
             }
 
-            @Test
-            @DisplayName("수정할 게시글 정보를 보냈는데 null이면 수정에 실패한다.")
-            void updateFailWithNullPostUpdateRequest() throws Exception {
+            @ParameterizedTest(name = "[{index}] 제목이 {0}이고 내용이 {1}인 경우")
+            @MethodSource("provideInvalidPostInfo")
+            @DisplayName("수정할 게시글 정보를 보냈는데 유효하지 않으면 수정에 실패한다.")
+            void updateFailWithInvalidPostUpdateRequest(String title, String content) throws Exception {
                 // given
-                MockMultipartFile request = getRequestJson("Test Title");
-                MockMultipartFile postImg = getPostImg();
+                MockMultipartFile request = getRequestJson(title, content);
+                MockMultipartFile postImg = getPostImg(ORIGINAL_FILE_NAME, MediaType.IMAGE_JPEG_VALUE);
 
                 // when
                 MockHttpServletRequestBuilder requestBuilder = multipart(BASE_URL + "/" + userPost.getId())
@@ -410,7 +442,30 @@ class PostControllerTest extends TokenMockMvcTest {
 
                 // then
                 mockMvc.perform(requestBuilder)
-                    .andExpect(status().isCreated())
+                    .andExpect(status().isBadRequest())
+                    .andReturn();
+            }
+
+            @ParameterizedTest(name = "[{index}] 파일 타입이 {1}인 경우")
+            @MethodSource("provideInvalidFile")
+            @DisplayName("수정할 게시글 정보와 파일을 보냈는데 파일이 유효하지 않으면 수정에 실패한다.")
+            void updateFailWithInvalidFileType(String originalFileName, String mediaType) throws Exception {
+                // given
+                MockMultipartFile request = getRequestJson(TITLE, CONTENT);
+                MockMultipartFile postImg = getPostImg(originalFileName, mediaType);
+
+                // when
+                MockHttpServletRequestBuilder requestBuilder = multipart(BASE_URL + "/" + userPost.getId())
+                    .file(request)
+                    .file(postImg)
+                    .header(TOKEN_HEADER, TOKEN_PREFIX + token)
+                    .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .characterEncoding(StandardCharsets.UTF_8)
+                    .with(makeRequestMethodToPut());
+
+                // then
+                mockMvc.perform(requestBuilder)
+                    .andExpect(status().isBadRequest())
                     .andReturn();
             }
 
@@ -422,18 +477,49 @@ class PostControllerTest extends TokenMockMvcTest {
     @DisplayName("게시글 저장하기")
     class SaveTest {
 
-        @Test
+        static Stream<Arguments> provideInvalidPostInfo() {
+            return Stream.of(
+                Arguments.of(null, CONTENT),
+                Arguments.of(PostControllerTest.TITLE, null),
+                Arguments.of("", CONTENT),
+                Arguments.of(PostControllerTest.TITLE, ""),
+                Arguments.of(" ", CONTENT),
+                Arguments.of(PostControllerTest.TITLE, " "),
+                Arguments.of("a".repeat(40), CONTENT),
+                Arguments.of(PostControllerTest.TITLE, "a".repeat(600))
+            );
+        }
+
+        static Stream<Arguments> provideImageTypes() {
+            return Stream.of(
+                Arguments.of("image.jpeg", MediaType.IMAGE_JPEG_VALUE),
+                Arguments.of("image.gif", MediaType.IMAGE_GIF_VALUE),
+                Arguments.of("image.png", MediaType.IMAGE_PNG_VALUE)
+            );
+        }
+
+        static Stream<Arguments> provideInvalidFile() {
+            return Stream.of(
+                Arguments.of("file.md", MediaType.TEXT_MARKDOWN_VALUE),
+                Arguments.of("file.html", MediaType.TEXT_HTML_VALUE),
+                Arguments.of("file.pdf", MediaType.APPLICATION_PDF_VALUE),
+                Arguments.of("file.txt", MediaType.TEXT_PLAIN_VALUE)
+            );
+        }
+
+        @ParameterizedTest(name = "[{index}]: 아이템 타입이 {0}인 경우에 저장에 성공한다.")
+        @MethodSource("provideImageTypes")
         @DisplayName("게시글 저장에 성공한다.")
-        void saveSuccess() throws Exception {
+        void saveSuccess(String originalFileName, String mediaType) throws Exception {
             // given
             given(weatherService.getCurrentTemperatureArrange(VALID_COORDINATE))
                 .willReturn(generateTemperatureArrange());
 
-            MockMultipartFile request = getRequestJson("Test Title");
-            MockMultipartFile postImg = getPostImg();
+            MockMultipartFile request = getRequestJson(TITLE, CONTENT);
+            MockMultipartFile postImg = getPostImg(originalFileName, mediaType);
 
             // when
-            MockHttpServletRequestBuilder requestBuilder = multipart("http://localhost:8080/api/v1/posts")
+            MockHttpServletRequestBuilder requestBuilder = multipart(BASE_URL)
                 .file(request)
                 .file(postImg)
                 .header(TOKEN_HEADER, TOKEN_PREFIX + token)
@@ -460,11 +546,11 @@ class PostControllerTest extends TokenMockMvcTest {
             given(weatherService.getCurrentTemperatureArrange(VALID_COORDINATE))
                 .willReturn(generateTemperatureArrange());
 
-            MockMultipartFile request = getRequestJson("Test Title");
-            MockMultipartFile postImg = getPostImg();
+            MockMultipartFile request = getRequestJson(TITLE, CONTENT);
+            MockMultipartFile postImg = getPostImg(ORIGINAL_FILE_NAME, MediaType.IMAGE_JPEG_VALUE);
 
             // when
-            MockHttpServletRequestBuilder requestBuilder = multipart("http://localhost:8080/api/v1/posts")
+            MockHttpServletRequestBuilder requestBuilder = multipart(BASE_URL)
                 .file(request)
                 .file(postImg)
                 .header(TOKEN_HEADER, TOKEN_PREFIX + token)
@@ -480,13 +566,13 @@ class PostControllerTest extends TokenMockMvcTest {
         @ParameterizedTest(name = "[{index}] 제목이 {0}이고 내용이 {1}인 경우")
         @MethodSource("provideInvalidPostInfo")
         @DisplayName("유효하지 않은 요청 값이 포함된 게시글 저장에 실패한다.")
-        void saveFailByMethodArgumentNotValidException(String title, String content) throws Exception {
+        void saveFailByInvalidPostSaveRequest(String title, String content) throws Exception {
             // given
-            MockMultipartFile request = getRequestJson("");
-            MockMultipartFile postImg = getPostImg();
+            MockMultipartFile request = getRequestJson(title, content);
+            MockMultipartFile postImg = getPostImg(ORIGINAL_FILE_NAME, MediaType.IMAGE_JPEG_VALUE);
 
             // when
-            MockHttpServletRequestBuilder requestBuilder = multipart("http://localhost:8080/api/v1/posts")
+            MockHttpServletRequestBuilder requestBuilder = multipart(BASE_URL)
                 .file(request)
                 .file(postImg)
                 .header(TOKEN_HEADER, TOKEN_PREFIX + token)
@@ -499,19 +585,26 @@ class PostControllerTest extends TokenMockMvcTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
         }
 
-        static Stream<Arguments> provideInvalidPostInfo() {
-            String validTitle = "title";
-            String validContent = "content";
-            return Stream.of(
-                Arguments.of(null, validContent),
-                Arguments.of(validTitle, null),
-                Arguments.of("", validContent),
-                Arguments.of(validTitle, ""),
-                Arguments.of(" ", validContent),
-                Arguments.of(validTitle, " "),
-                Arguments.of("a".repeat(40), validContent),
-                Arguments.of(validTitle, "a".repeat(600))
-            );
+        @ParameterizedTest(name = "[{index}] 파일 타입이 {1}인 경우")
+        @MethodSource("provideInvalidFile")
+        @DisplayName("게시글 정보와 파일을 보냈는데 파일이 유효하지 않으면 저장에 실패한다.")
+        void saveFailByInvalidFileType(String originalFileName, String mediaType) throws Exception {
+            // given
+            MockMultipartFile request = getRequestJson(TITLE, CONTENT);
+            MockMultipartFile postImg = getPostImg(originalFileName, mediaType);
+
+            // when
+            MockHttpServletRequestBuilder requestBuilder = multipart(BASE_URL)
+                .file(request)
+                .file(postImg)
+                .header(TOKEN_HEADER, TOKEN_PREFIX + token)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .accept(MediaType.APPLICATION_JSON);
+
+            // then
+            mockMvc.perform(requestBuilder)
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
         }
     }
 
@@ -528,7 +621,7 @@ class PostControllerTest extends TokenMockMvcTest {
             TestSecurityContextHolder.setAuthentication(new TestingAuthenticationToken(user.getId(), null));
 
             Post savedPost = postRepository.save(
-                Post.from(user, new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE), "imgUrl",
+                Post.from(user, new PostSaveRequest(TITLE, CONTENT, VALID_COORDINATE), IMG_URL,
                     generateTemperatureArrange()));
             postSaveResponse = PostSaveUpdateResponse.from(savedPost);
         }
@@ -576,8 +669,7 @@ class PostControllerTest extends TokenMockMvcTest {
             TestSecurityContextHolder.setAuthentication(new TestingAuthenticationToken(user.getId(), null));
 
             for (int i = 0; i < SAVE_COUNT; i++) {
-                Post savedPost = postRepository.save(
-                    Post.from(user, new PostSaveRequest("Test Title", "Test Content", VALID_COORDINATE), "imgUrl",
+                postRepository.save(Post.from(user, new PostSaveRequest(TITLE, CONTENT, VALID_COORDINATE), IMG_URL,
                         generateTemperatureArrange()));
             }
         }
@@ -586,7 +678,7 @@ class PostControllerTest extends TokenMockMvcTest {
         @DisplayName("게시글 목록 조회에 성공한다.")
         void getAllSuccess() throws Exception {
             // given // when
-            MockHttpServletRequestBuilder requestBuilder = get("http://localhost:8080/api/v1/posts")
+            MockHttpServletRequestBuilder requestBuilder = get(BASE_URL)
                 .header(TOKEN_HEADER, TOKEN_PREFIX + token)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON);
@@ -605,6 +697,7 @@ class PostControllerTest extends TokenMockMvcTest {
         }
 
     }
+
 
     private TemperatureArrange generateTemperatureArrange() {
         Map<ForecastCategory, String> weatherInfoMap = new HashMap<>();
