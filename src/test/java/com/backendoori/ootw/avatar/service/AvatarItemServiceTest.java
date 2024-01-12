@@ -51,7 +51,7 @@ class AvatarItemServiceTest {
     class AvatarUpload {
 
         @ParameterizedTest(name = "[{index}]: 아이템 타입이 {0}인 경우에 저장에 성공한다.")
-        @ValueSource(strings = {"image/jpeg", "image/gif", "image/png"})
+        @ValueSource(strings = {"image/jpeg", "image/gif", "image/png", "image/jpg"})
         @DisplayName("여러 이미지 타입에 대해 업로드에 성공한다")
         public void avatarImageTest(String contentType) {
             //given
