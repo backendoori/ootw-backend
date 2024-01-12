@@ -21,7 +21,7 @@ public class AvatarItemService {
     private final AvatarItemRepository avatarItemRepository;
 
     @Transactional
-    public AvatarItemResponse uploadItem(MultipartFile file, AvatarItemRequest requestDto) {
+    public AvatarItemResponse upload(MultipartFile file, AvatarItemRequest requestDto) {
         ImageFile imageFile = imageService.uploadImage(file);
         try {
             String url = imageFile.url();

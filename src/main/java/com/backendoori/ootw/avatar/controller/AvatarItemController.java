@@ -24,15 +24,15 @@ public class AvatarItemController {
     private final AvatarItemService appearanceService;
 
     @PostMapping
-    public ResponseEntity<AvatarItemResponse> uploadItem(@RequestPart @Image MultipartFile file,
-                                                          @RequestPart @Valid AvatarItemRequest request) {
-        AvatarItemResponse avatarItem = appearanceService.uploadItem(file, request);
+    public ResponseEntity<AvatarItemResponse> upload(@RequestPart @Image MultipartFile file,
+                                                     @RequestPart @Valid AvatarItemRequest request) {
+        AvatarItemResponse avatarItem = appearanceService.upload(file, request);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(avatarItem);
     }
 
     @GetMapping
-    public ResponseEntity<List<AvatarItemResponse>> getAllItems() {
+    public ResponseEntity<List<AvatarItemResponse>> getAll() {
         return ResponseEntity.status(HttpStatus.OK).body(appearanceService.getList());
     }
 
