@@ -13,16 +13,8 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice(basePackageClasses = PostController.class)
 public class PostControllerAdvice {
 
-    @ExceptionHandler(NoPostPermissionException.class)
-    public ResponseEntity<ErrorResponse> handleNoPostPermissionException(NoPostPermissionException e) {
-        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
-
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-            .body(errorResponse);
-    }
-
-    @ExceptionHandler(ResourceNotExistException.class)
-    public ResponseEntity<ErrorResponse> handleNoUpdateResourceException(ResourceNotExistException e) {
+    @ExceptionHandler(ResourceRequiredException.class)
+    public ResponseEntity<ErrorResponse> handleNoUpdateResourceException(ResourceRequiredException e) {
         ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)

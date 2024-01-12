@@ -31,6 +31,14 @@ public class GlobalControllerAdvice {
             .body(errorResponse);
     }
 
+    @ExceptionHandler(PermissionException.class)
+    public ResponseEntity<ErrorResponse> handlePermissionException(PermissionException e) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+            .body(errorResponse);
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e) {
         ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
