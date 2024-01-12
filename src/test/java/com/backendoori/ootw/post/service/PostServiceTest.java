@@ -336,7 +336,7 @@ class PostServiceTest {
         }
 
         @Test
-        @DisplayName("로그인 후 좋아요 여부가 포함된 게시글 목록 최신순(default) 조회에 성공한다.")
+        @DisplayName("로그인 후 좋아요 여부가 포함된 게시글 목록 최신순 조회에 성공한다.")
         void getAllSuccessWithLogin() {
             // given
             List<Post> postList = postRepository.findAll();
@@ -357,7 +357,7 @@ class PostServiceTest {
         }
 
         @Test
-        @DisplayName("로그인은 했지만 좋아요를 누르지 않은 경우에도 게시글 목록 최신순(default) 조회에 성공한다.")
+        @DisplayName("로그인은 했지만 좋아요를 누르지 않은 경우에도 게시글 목록 최신순 조회에 성공한다.")
         void getAllSuccessWithLoginNoLike() {
             // given, when
             List<PostReadResponse> posts = postService.getAll();
@@ -370,7 +370,7 @@ class PostServiceTest {
         }
 
         @Test
-        @DisplayName("다른 사람이 좋아요를 눌렀어도 로그인을 안한 경우에도 게시글 목록 최신순(default) 조회에 성공한다.")
+        @DisplayName("다른 사람이 좋아요를 눌렀어도 로그인을 안한 경우에도 게시글 목록 최신순 조회에 성공한다.")
         void getAllSuccessWithLikedPost() {
             // given
             List<Post> postList = postRepository.findAll();
