@@ -12,8 +12,11 @@ import com.backendoori.ootw.common.AssertUtil;
 import com.backendoori.ootw.post.dto.request.PostSaveRequest;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.weather.domain.TemperatureArrange;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-public class PostValidator {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class PostValidator {
 
     private static final Integer MAX_TITLE_LENGTH = 30;
     private static final Integer MAX_CONTENT_LENGTH = 500;
