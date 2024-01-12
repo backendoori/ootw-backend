@@ -100,14 +100,14 @@ class AvatarItemServiceTest {
             String validType = "HAIR";
             String validSex = "MALE";
             return java.util.stream.Stream.of(
-                org.junit.jupiter.params.provider.Arguments.of(null, validSex),
-                org.junit.jupiter.params.provider.Arguments.of(validType, null),
-                org.junit.jupiter.params.provider.Arguments.of("", validSex),
-                org.junit.jupiter.params.provider.Arguments.of(validType, ""),
-                org.junit.jupiter.params.provider.Arguments.of(" ", validSex),
-                org.junit.jupiter.params.provider.Arguments.of(validType, " "),
-                org.junit.jupiter.params.provider.Arguments.of("hair", validSex),
-                org.junit.jupiter.params.provider.Arguments.of(validType, "female")
+                Arguments.of(null, validSex),
+                Arguments.of(validType, null),
+                Arguments.of("", validSex),
+                Arguments.of(validType, ""),
+                Arguments.of(" ", validSex),
+                Arguments.of(validType, " "),
+                Arguments.of("hair", validSex),
+                Arguments.of(validType, "female")
             );
         }
 
