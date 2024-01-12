@@ -9,6 +9,7 @@ import com.backendoori.ootw.post.dto.response.PostReadResponse;
 import com.backendoori.ootw.post.dto.response.PostSaveUpdateResponse;
 import com.backendoori.ootw.post.service.PostService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping("/{postId}")
-    public ResponseEntity<PostReadResponse> readDetailByPostId(@PathVariable Long postId) {
+    public ResponseEntity<PostReadResponse> readDetailByPostId(@PathVariable @Positive Long postId) {
         return ResponseEntity.status(HttpStatus.OK)
             .body(postService.getDetailByPostId(postId));
     }
@@ -42,7 +43,7 @@ public class PostController {
     }
 
     @DeleteMapping("/{postId}")
-    public ResponseEntity<Void> delete(@PathVariable Long postId) {
+    public ResponseEntity<Void> delete(@PathVariable @Positive Long postId) {
         postService.delete(postId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
@@ -62,7 +63,7 @@ public class PostController {
 
     @PutMapping("/{postId}")
     public ResponseEntity<PostSaveUpdateResponse> update(
-        @PathVariable Long postId,
+        @PathVariable @Positive Long postId,
         @RequestPart(required = false) @Image(ignoreCase = true) MultipartFile postImg,
         @RequestPart @Valid PostUpdateRequest request) {
         PostSaveUpdateResponse response = postService.update(postId, postImg, request);
