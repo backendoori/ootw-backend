@@ -1,10 +1,15 @@
 package com.backendoori.ootw.post.service;
 
+import static com.backendoori.ootw.post.validation.Message.BLANK_POST_CONTENT;
+import static com.backendoori.ootw.post.validation.Message.BLANK_POST_TITLE;
+import static com.backendoori.ootw.post.validation.Message.INVALID_POST_CONTENT;
+import static com.backendoori.ootw.post.validation.Message.INVALID_POST_TITLE;
 import static com.backendoori.ootw.post.validation.Message.POST_NOT_FOUND;
 import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_COORDINATE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 
@@ -19,10 +24,13 @@ import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.like.repository.LikeRepository;
 import com.backendoori.ootw.like.service.LikeService;
 import com.backendoori.ootw.post.domain.Post;
-import com.backendoori.ootw.post.dto.response.PostReadResponse;
 import com.backendoori.ootw.post.dto.request.PostSaveRequest;
+import com.backendoori.ootw.post.dto.request.PostUpdateRequest;
+import com.backendoori.ootw.post.dto.response.PostReadResponse;
 import com.backendoori.ootw.post.dto.response.PostSaveUpdateResponse;
 import com.backendoori.ootw.post.dto.response.WriterDto;
+import com.backendoori.ootw.post.exception.NoPostPermissionException;
+import com.backendoori.ootw.post.exception.ResourceNotExistException;
 import com.backendoori.ootw.post.repository.PostRepository;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.repository.UserRepository;
@@ -99,8 +107,223 @@ class PostServiceTest {
         userRepository.deleteAll();
     }
 
+
     @Nested
-    @DisplayName("게시글 저장 테스트")
+    @DisplayName("게시글 삭제하기")
+    class DeleteTest {
+
+        Post userPost;
+        Post otherPost;
+
+        @BeforeEach
+        void setup() {
+            userPost = postRepository.save(
+                Post.from(user, new PostSaveRequest("title", "content", VALID_COORDINATE), null,
+                    generateTemperatureArrange()));
+
+            User other = userRepository.save(generateUser());
+            otherPost = postRepository.save(
+                Post.from(other, new PostSaveRequest("title", "content", VALID_COORDINATE), null,
+                    generateTemperatureArrange()));
+        }
+
+        @Test
+        @DisplayName("게시글 삭제에 성공한다.")
+        void deleteSuccess() {
+            // given // when // then
+            assertDoesNotThrow(() -> postService.delete(userPost.getId()));
+        }
+
+        @Test
+        @DisplayName("게시글 주인이 아닌 사용자가 게시글 삭제에 실패한다.")
+        void deleteFailWithNoPermission() {
+            // given // when
+            ThrowingCallable deletePost = () -> postService.delete(otherPost.getId());
+
+            // then
+            assertThatExceptionOfType(NoPostPermissionException.class)
+                .isThrownBy(deletePost)
+                .withMessage(NoPostPermissionException.DEFAULT_MESSAGE);
+        }
+
+        @Test
+        @DisplayName("존재하지 않는 게시글 삭제에 실패한다.")
+        void deleteFailWithNonExistPost() {
+            // given // when
+            ThrowingCallable deletePost = () -> postService.delete(otherPost.getId() + 1);
+
+            // then
+            assertThatExceptionOfType(NoSuchElementException.class)
+                .isThrownBy(deletePost)
+                .withMessage(POST_NOT_FOUND);
+        }
+
+    }
+
+    @Nested
+    @DisplayName("게시글 수정하기")
+    class UpdateTest {
+
+        Post userPost;
+        Post otherPost;
+
+        @BeforeEach
+        void setup() {
+            userPost = postRepository.save(
+                Post.from(user, new PostSaveRequest("title", "content", VALID_COORDINATE), null,
+                    generateTemperatureArrange()));
+
+            User other = userRepository.save(generateUser());
+            otherPost = postRepository.save(
+                Post.from(other, new PostSaveRequest("title", "content", VALID_COORDINATE), null,
+                    generateTemperatureArrange()));
+        }
+
+        @Nested
+        @DisplayName("게시글 수정에 성공한다")
+        class UpdateSuccess {
+
+            @Test
+            @DisplayName(" 게시글 정보와 이미지 수정에 성공한다.")
+            void updateAllSuccess() {
+                // given
+                PostUpdateRequest request = new PostUpdateRequest("Test Title", "Test Content");
+                MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
+                    "text/plain", "some xml".getBytes());
+
+                String imgUrl = "imgUrl";
+                given(imageService.uploadImage(postImg)).willReturn(imgUrl);
+
+                // when
+                PostSaveUpdateResponse response = postService.update(userPost.getId(), postImg, request);
+
+                //then
+                assertAll(
+                    () -> assertThat(response).hasFieldOrPropertyWithValue("title", request.title()),
+                    () -> assertThat(response).hasFieldOrPropertyWithValue("content", request.content()),
+                    () -> assertThat(response).hasFieldOrPropertyWithValue("image", imgUrl)
+                );
+            }
+
+            @Test
+            @DisplayName("게시글 정보만 수정에 성공한다.")
+            void updatePostUpdateRequestSuccess() {
+                // given
+                PostUpdateRequest request = new PostUpdateRequest("Test Title", "Test Content");
+
+                // when
+                PostSaveUpdateResponse response = postService.update(userPost.getId(), null, request);
+
+                //then
+                assertAll(
+                    () -> assertThat(response).hasFieldOrPropertyWithValue("title", request.title()),
+                    () -> assertThat(response).hasFieldOrPropertyWithValue("content", request.content())
+                );
+            }
+
+            @Test
+            @DisplayName("게시글 이미지만 수정에 성공한다.")
+            void updatePostImageSuccess() {
+                // given
+                MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
+                    "text/plain", "some xml".getBytes());
+                String imgUrl = "imgUrl";
+
+                given(imageService.uploadImage(postImg)).willReturn(imgUrl);
+
+                // when
+                PostSaveUpdateResponse response = postService.update(userPost.getId(), postImg, null);
+
+                //then
+                assertThat(response).hasFieldOrPropertyWithValue("image", imgUrl);
+            }
+
+        }
+
+        @Nested
+        @DisplayName("게시글 수정에 실패한다")
+        class UpdateFail {
+
+            static Stream<Arguments> provideInvalidPostUpdateRequest() {
+                return Stream.of(
+                    Arguments.of("제목이 null인 경우", new PostUpdateRequest(null, "content"), BLANK_POST_TITLE),
+                    Arguments.of("제목이 공백인 경우", new PostUpdateRequest(" ", "content"), BLANK_POST_TITLE),
+                    Arguments.of("제목이 30자가 넘는 경우", new PostUpdateRequest("t".repeat(31), "content"),
+                        INVALID_POST_TITLE),
+                    Arguments.of("내용이 null인 경우", new PostUpdateRequest("title", null), BLANK_POST_CONTENT),
+                    Arguments.of("내용이 공백인 경우", new PostUpdateRequest("title", " "), BLANK_POST_CONTENT),
+                    Arguments.of("내용이 500자가 넘는 경우", new PostUpdateRequest("title", "t".repeat(501)),
+                        INVALID_POST_CONTENT),
+                    Arguments.of("제목과 내용이 모두 null인 경우", new PostUpdateRequest(null, null), BLANK_POST_TITLE),
+                    Arguments.of("제목과 내용이 모두 공백인 경우", new PostUpdateRequest(" ", " "), BLANK_POST_TITLE)
+                );
+            }
+
+            @Test
+            @DisplayName("게시글 주인이 아닌 사용자가 게시글 수정에 실패한다.")
+            void updateFailWithPermission() {
+                // given
+                PostUpdateRequest request = new PostUpdateRequest("Test Title", "Test Content");
+                MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
+                    "text/plain", "some xml".getBytes());
+
+                // when
+                ThrowingCallable updatePost = () -> postService.update(otherPost.getId(), postImg, request);
+
+                //then
+                assertThatExceptionOfType(NoPostPermissionException.class)
+                    .isThrownBy(updatePost)
+                    .withMessage(NoPostPermissionException.DEFAULT_MESSAGE);
+            }
+
+            @Test
+            @DisplayName("존재하지 않는 게시글 수정에 실패한다.")
+            void updateFailWithNonExistPost() {
+                // given
+                PostUpdateRequest request = new PostUpdateRequest("Test Title", "Test Content");
+                MockMultipartFile postImg = new MockMultipartFile("file", "filename.txt",
+                    "text/plain", "some xml".getBytes());
+
+                // when
+                ThrowingCallable updatePost = () -> postService.update(otherPost.getId() + 1, postImg, request);
+
+                //then
+                assertThatExceptionOfType(NoSuchElementException.class)
+                    .isThrownBy(updatePost)
+                    .withMessage(POST_NOT_FOUND);
+            }
+
+            @Test
+            @DisplayName("수정할 리소스를 전혀 보내지 않으면 실패한다.")
+            void updateFailWithNoResource() {
+                // given // when
+                ThrowingCallable updatePost = () -> postService.update(userPost.getId(), null, null);
+
+                //then
+                assertThatExceptionOfType(ResourceNotExistException.class)
+                    .isThrownBy(updatePost)
+                    .withMessage(ResourceNotExistException.DEFAULT_MESSAGE);
+            }
+
+            @ParameterizedTest(name = "[{index}] {0}")
+            @MethodSource("provideInvalidPostUpdateRequest")
+            @DisplayName("수정할 게시글 정보를 보냈는데 제목이나 내용이 null이거나 공백이면 수정에 실패한다.")
+            void updateFailWithNullPostUpdateRequest(String testCase, PostUpdateRequest request, String message) {
+                // given // when
+                ThrowingCallable updatePost = () -> postService.update(userPost.getId(), null, request);
+
+                //then
+                assertThatExceptionOfType(IllegalArgumentException.class)
+                    .isThrownBy(updatePost)
+                    .withMessage(message);
+            }
+
+        }
+
+    }
+
+    @Nested
+    @DisplayName("게시글 저장하기")
     class SaveTest {
 
         @Test
@@ -184,7 +407,7 @@ class PostServiceTest {
 
     @Nested
     @DisplayName("게시글 단건 조회하기")
-    class GetDetailByPostId {
+    class GetDetailByPostIdTest {
 
         PostSaveUpdateResponse postSaveResponse;
 
@@ -281,12 +504,11 @@ class PostServiceTest {
 
         }
 
-
     }
 
     @Nested
     @DisplayName("게시글 목록 조회하기")
-    class GetAll {
+    class GetAllTest {
 
         static final Integer SAVE_COUNT = 10;
 
