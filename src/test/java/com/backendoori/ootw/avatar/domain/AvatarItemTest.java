@@ -23,7 +23,6 @@ class AvatarItemTest {
         //when
         AvatarItem avatarItem = AvatarItem.create(request, url);
 
-
         //then
         assertThat(request.type()).isEqualTo(avatarItem.getItemType().name());
         assertThat(request.sex()).isEqualTo(avatarItem.getSex().name());
