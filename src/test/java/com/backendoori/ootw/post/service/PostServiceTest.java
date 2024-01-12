@@ -23,6 +23,7 @@ import java.util.stream.Stream;
 import com.backendoori.ootw.common.image.ImageFile;
 import com.backendoori.ootw.common.image.ImageService;
 import com.backendoori.ootw.common.image.exception.SaveException;
+import com.backendoori.ootw.exception.PermissionException;
 import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.like.repository.LikeRepository;
 import com.backendoori.ootw.like.service.LikeService;
@@ -32,8 +33,7 @@ import com.backendoori.ootw.post.dto.request.PostUpdateRequest;
 import com.backendoori.ootw.post.dto.response.PostReadResponse;
 import com.backendoori.ootw.post.dto.response.PostSaveUpdateResponse;
 import com.backendoori.ootw.post.dto.response.WriterDto;
-import com.backendoori.ootw.post.exception.NoPostPermissionException;
-import com.backendoori.ootw.post.exception.ResourceNotExistException;
+import com.backendoori.ootw.post.exception.ResourceRequiredException;
 import com.backendoori.ootw.post.repository.PostRepository;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.repository.UserRepository;
@@ -146,9 +146,9 @@ class PostServiceTest {
             ThrowingCallable deletePost = () -> postService.delete(otherPost.getId());
 
             // then
-            assertThatExceptionOfType(NoPostPermissionException.class)
+            assertThatExceptionOfType(PermissionException.class)
                 .isThrownBy(deletePost)
-                .withMessage(NoPostPermissionException.DEFAULT_MESSAGE);
+                .withMessage(PermissionException.DEFAULT_MESSAGE);
         }
 
         @Test
@@ -258,9 +258,9 @@ class PostServiceTest {
                 ThrowingCallable updatePost = () -> postService.update(otherPost.getId(), postImg, request);
 
                 //then
-                assertThatExceptionOfType(NoPostPermissionException.class)
+                assertThatExceptionOfType(PermissionException.class)
                     .isThrownBy(updatePost)
-                    .withMessage(NoPostPermissionException.DEFAULT_MESSAGE);
+                    .withMessage(PermissionException.DEFAULT_MESSAGE);
             }
 
             @Test
@@ -287,9 +287,9 @@ class PostServiceTest {
                 ThrowingCallable updatePost = () -> postService.update(userPost.getId(), null, null);
 
                 //then
-                assertThatExceptionOfType(ResourceNotExistException.class)
+                assertThatExceptionOfType(ResourceRequiredException.class)
                     .isThrownBy(updatePost)
-                    .withMessage(ResourceNotExistException.DEFAULT_MESSAGE);
+                    .withMessage(ResourceRequiredException.DEFAULT_MESSAGE);
             }
 
             @ParameterizedTest(name = "[{index}] {0}")

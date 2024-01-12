@@ -9,6 +9,7 @@ import java.util.Optional;
 import com.backendoori.ootw.common.image.ImageFile;
 import com.backendoori.ootw.common.image.ImageService;
 import com.backendoori.ootw.common.image.exception.SaveException;
+import com.backendoori.ootw.exception.PermissionException;
 import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.like.domain.Like;
 import com.backendoori.ootw.like.repository.LikeRepository;
@@ -17,8 +18,7 @@ import com.backendoori.ootw.post.dto.request.PostSaveRequest;
 import com.backendoori.ootw.post.dto.request.PostUpdateRequest;
 import com.backendoori.ootw.post.dto.response.PostReadResponse;
 import com.backendoori.ootw.post.dto.response.PostSaveUpdateResponse;
-import com.backendoori.ootw.post.exception.NoPostPermissionException;
-import com.backendoori.ootw.post.exception.ResourceNotExistException;
+import com.backendoori.ootw.post.exception.ResourceRequiredException;
 import com.backendoori.ootw.post.repository.PostRepository;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.repository.UserRepository;
@@ -130,7 +130,7 @@ public class PostService {
         checkUserHasPostPermission(post);
 
         Assert.isTrue(Objects.nonNull(request), () -> {
-            throw new ResourceNotExistException();
+            throw new ResourceRequiredException();
         });
 
         post.updateTitle(request.title());
@@ -179,7 +179,7 @@ public class PostService {
 
     private void checkUserHasPostPermission(Post post) {
         Assert.isTrue(getUserId() == post.getUser().getId(), () -> {
-            throw new NoPostPermissionException();
+            throw new PermissionException();
         });
     }
 

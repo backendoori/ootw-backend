@@ -19,12 +19,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
+import com.backendoori.ootw.exception.PermissionException;
 import com.backendoori.ootw.post.domain.Post;
 import com.backendoori.ootw.post.dto.request.PostSaveRequest;
 import com.backendoori.ootw.post.dto.response.PostReadResponse;
 import com.backendoori.ootw.post.dto.response.PostSaveUpdateResponse;
-import com.backendoori.ootw.post.exception.NoPostPermissionException;
-import com.backendoori.ootw.post.exception.ResourceNotExistException;
+import com.backendoori.ootw.post.exception.ResourceRequiredException;
 import com.backendoori.ootw.post.repository.PostRepository;
 import com.backendoori.ootw.post.service.PostService;
 import com.backendoori.ootw.security.TokenMockMvcTest;
@@ -185,7 +185,7 @@ class PostControllerTest extends TokenMockMvcTest {
             // then
             mockMvc.perform(requestBuilder)
                 .andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.message", is(NoPostPermissionException.DEFAULT_MESSAGE)))
+                .andExpect(jsonPath("$.message", is(PermissionException.DEFAULT_MESSAGE)))
                 .andReturn();
         }
 
@@ -326,7 +326,7 @@ class PostControllerTest extends TokenMockMvcTest {
                 // then
                 mockMvc.perform(requestBuilder)
                     .andExpect(status().isForbidden())
-                    .andExpect(jsonPath("$.message", is(NoPostPermissionException.DEFAULT_MESSAGE)))
+                    .andExpect(jsonPath("$.message", is(PermissionException.DEFAULT_MESSAGE)))
                     .andReturn();
             }
 
@@ -366,7 +366,7 @@ class PostControllerTest extends TokenMockMvcTest {
                 // then
                 mockMvc.perform(requestBuilder)
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.message", is(ResourceNotExistException.DEFAULT_MESSAGE)))
+                    .andExpect(jsonPath("$.message", is(ResourceRequiredException.DEFAULT_MESSAGE)))
                     .andReturn();
             }
 
