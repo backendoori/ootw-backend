@@ -67,7 +67,7 @@ class AvatarItemServiceTest {
             assertThat(avatarItemResponse.sex()).isEqualTo(request.sex());
         }
 
-        @ParameterizedTest
+        @ParameterizedTest(name = "[{index}] 아이템 타입이 {0}, 성별이 {1}인 경우 예외가 발생한다.")
         @MethodSource("provideInvalidAvatarImageInfo")
         @DisplayName("잘못된 이이템 타입이나 성별을 기입할 시 예외가 발생한다.")
         public void uploadFailWithWrongRequest(String type, String sex) {
@@ -82,7 +82,7 @@ class AvatarItemServiceTest {
 
         }
 
-        @ParameterizedTest(name = "[{index}] content-type 이 {0}인 경우")
+        @ParameterizedTest(name = "[{index}] content-type 이 {0}인 경우 예외가 발생한다.")
         @ValueSource(strings = {"text/plain", "application/json", "xml"})
         @DisplayName("파일의 유형이 이미지가 아닌 경우 예외가 발생한다.")
         public void imageUpLoadWithInvalidContentType(String contentType) throws Exception {
