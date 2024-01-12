@@ -1,5 +1,6 @@
 package com.backendoori.ootw.post.service;
 
+import static com.backendoori.ootw.post.validation.Message.NULL_POST;
 import static com.backendoori.ootw.post.validation.Message.POST_NOT_FOUND;
 
 import java.util.List;
@@ -18,7 +19,6 @@ import com.backendoori.ootw.post.dto.request.PostUpdateRequest;
 import com.backendoori.ootw.post.dto.response.PostReadResponse;
 import com.backendoori.ootw.post.dto.response.PostSaveUpdateResponse;
 import com.backendoori.ootw.post.exception.NoPostPermissionException;
-import com.backendoori.ootw.post.exception.ResourceNotExistException;
 import com.backendoori.ootw.post.repository.PostRepository;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.repository.UserRepository;
@@ -129,29 +129,29 @@ public class PostService {
 
         checkUserHasPostPermission(post);
 
-        Assert.isTrue(Objects.nonNull(request) || Objects.nonNull(postImg), () -> {
-            throw new ResourceNotExistException();
+        Assert.isTrue(Objects.nonNull(request), () -> {
+            throw new IllegalArgumentException(NULL_POST);
         });
 
-        if (Objects.nonNull(request)) {
-            post.updateTitle(request.title());
-            post.updateContent(request.content());
+        post.updateTitle(request.title());
+        post.updateContent(request.content());
+
+        if (Objects.isNull(postImg) || postImg.isEmpty()) {
+            post.updateImageUrl(null);
+            return PostSaveUpdateResponse.from(post);
         }
 
-        if (Objects.nonNull(postImg) && !postImg.isEmpty()) {
-            ImageFile imgFile = imageService.upload(postImg);
-            try {
-                // TODO: 기존 저장된 이미지 삭제(원래 null인 경우도 있으니 주의)
-                //  imageService.uploadImage(postImg)가 잘못 저장되어 null 인 경우도 있을까..?
-                post.setImage(imgFile.url());
+        ImageFile imgFile = imageService.upload(postImg);
+        try {
+            // TODO: 기존 저장된 이미지 삭제(원래 null인 경우도 있으니 주의)
+            //  imageService.uploadImage(postImg)가 잘못 저장되어 null 인 경우도 있을까..?
+            post.updateImageUrl(imgFile.url());
 
-                return PostSaveUpdateResponse.from(post);
-            } catch (Exception e) {
-                imageService.delete(imgFile.fileName());
-                throw new SaveException();
-            }
+            return PostSaveUpdateResponse.from(post);
+        } catch (Exception e) {
+            imageService.delete(imgFile.fileName());
+            throw new SaveException();
         }
-        return PostSaveUpdateResponse.from(post);
     }
 
     private List<Long> getLikedPostId(long userId) {
