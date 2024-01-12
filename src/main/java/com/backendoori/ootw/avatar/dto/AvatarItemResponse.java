@@ -14,7 +14,7 @@ public record AvatarItemResponse(
             avatarItem.getId(),
             avatarItem.getItemType().name(),
             avatarItem.getSex().name(),
-            avatarItem.getImage());
+            avatarItem.getImageUrl());
     }
 
 }

@@ -28,8 +28,8 @@ public class AvatarItem {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "image", nullable = false)
-    private String image;
+    @Column(name = "image_url", nullable = false)
+    private String imageUrl;
 
     @Column(name = "type", nullable = false, columnDefinition = "varchar(30)")
     @Enumerated(EnumType.STRING)
@@ -39,12 +39,12 @@ public class AvatarItem {
     @Enumerated(EnumType.STRING)
     private Sex sex;
 
-    private AvatarItem(String image, String type, String sex) {
-        validateImage(image);
+    private AvatarItem(String imageUrl, String type, String sex) {
+        validateImage(imageUrl);
         validateItemType(type);
         validateSex(sex);
 
-        this.image = image;
+        this.imageUrl = imageUrl;
         this.itemType = ItemType.valueOf(type);
         this.sex = Sex.valueOf(sex);
     }
