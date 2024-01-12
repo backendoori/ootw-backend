@@ -12,7 +12,7 @@ import jakarta.validation.Payload;
 @Constraint(validatedBy = ImageAnnotationValidator.class)
 public @interface Image {
 
-    String message = "유효하지 않은 이미지를 업로드하였습니다. 다른 이미지를 업로드 해주세요";
+    String message = "유효하지 않은 이미지를 업로드하였습니다.";
 
     String message() default message;
 
