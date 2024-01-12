@@ -77,7 +77,7 @@ class PostTest {
         assertAll(() -> assertThat(createdPost).hasFieldOrPropertyWithValue("user", MOCK_USER),
             () -> assertThat(createdPost).hasFieldOrPropertyWithValue("title", request.title()),
             () -> assertThat(createdPost).hasFieldOrPropertyWithValue("content", request.content()),
-            () -> assertThat(createdPost).hasFieldOrPropertyWithValue("image", IMG_URL),
+            () -> assertThat(createdPost).hasFieldOrPropertyWithValue("imageUrl", IMG_URL),
             () -> assertThat(createdPost).hasFieldOrPropertyWithValue("temperatureArrange",
                 generateTemperatureArrange()));
     }

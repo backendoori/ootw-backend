@@ -1,6 +1,5 @@
 package com.backendoori.ootw.post.service;
 
-import static com.backendoori.ootw.post.validation.Message.NULL_POST;
 import static com.backendoori.ootw.post.validation.Message.POST_NOT_FOUND;
 
 import java.util.List;
@@ -19,6 +18,7 @@ import com.backendoori.ootw.post.dto.request.PostUpdateRequest;
 import com.backendoori.ootw.post.dto.response.PostReadResponse;
 import com.backendoori.ootw.post.dto.response.PostSaveUpdateResponse;
 import com.backendoori.ootw.post.exception.NoPostPermissionException;
+import com.backendoori.ootw.post.exception.ResourceNotExistException;
 import com.backendoori.ootw.post.repository.PostRepository;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.repository.UserRepository;
@@ -130,7 +130,7 @@ public class PostService {
         checkUserHasPostPermission(post);
 
         Assert.isTrue(Objects.nonNull(request), () -> {
-            throw new IllegalArgumentException(NULL_POST);
+            throw new ResourceNotExistException();
         });
 
         post.updateTitle(request.title());

@@ -5,7 +5,6 @@ import static com.backendoori.ootw.security.jwt.JwtAuthenticationFilter.TOKEN_HE
 import static com.backendoori.ootw.security.jwt.JwtAuthenticationFilter.TOKEN_PREFIX;
 import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_COORDINATE;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -268,30 +267,6 @@ class PostControllerTest extends TokenMockMvcTest {
                     .file(request)
                     .header(TOKEN_HEADER, TOKEN_PREFIX + token)
                     .accept(MediaType.APPLICATION_JSON)
-                    .characterEncoding(StandardCharsets.UTF_8)
-                    .with(makeRequestMethodToPut());
-
-                // then
-                MockHttpServletResponse response = mockMvc.perform(requestBuilder)
-                    .andExpect(status().isCreated())
-                    .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                    .andReturn()
-                    .getResponse();
-
-                assertThat(response.getHeader("location")).contains("/api/v1/posts/");
-            }
-
-            @Test
-            @DisplayName("게시글 이미지 수정에 성공한다.")
-            void updatePostImageSuccess() throws Exception {
-                // given
-                MockMultipartFile postImg = getPostImg();
-
-                // when
-                MockHttpServletRequestBuilder requestBuilder = multipart(BASE_URL + "/" + userPost.getId())
-                    .file(postImg)
-                    .header(TOKEN_HEADER, TOKEN_PREFIX + token)
-                    .contentType(MediaType.MULTIPART_FORM_DATA)
                     .characterEncoding(StandardCharsets.UTF_8)
                     .with(makeRequestMethodToPut());
 

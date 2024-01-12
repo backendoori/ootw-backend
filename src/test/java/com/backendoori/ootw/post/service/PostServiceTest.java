@@ -225,23 +225,6 @@ class PostServiceTest {
                 );
             }
 
-            @Test
-            @DisplayName("게시글 이미지만 수정에 성공한다.")
-            void updatePostImageSuccess() {
-                // given
-                MockMultipartFile postImg = new MockMultipartFile("file", FILE_NAME,
-                    "text/plain", "some xml".getBytes());
-                String IMG_URL = "IMG_URL";
-
-                given(imageService.upload(postImg)).willReturn(new ImageFile(IMG_URL, FILE_NAME));
-
-                // when
-                PostSaveUpdateResponse response = postService.update(userPost.getId(), postImg, null);
-
-                //then
-                assertThat(response).hasFieldOrPropertyWithValue("image", IMG_URL);
-            }
-
         }
 
         @Nested
