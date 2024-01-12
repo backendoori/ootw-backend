@@ -1,5 +1,7 @@
 package com.backendoori.ootw.post.service;
 
+import static com.backendoori.ootw.common.validation.ImageValidator.validateImage;
+import static com.backendoori.ootw.post.validation.Message.NULL_POST;
 import static com.backendoori.ootw.post.validation.Message.POST_NOT_FOUND;
 
 import java.util.List;
@@ -18,7 +20,6 @@ import com.backendoori.ootw.post.dto.request.PostSaveRequest;
 import com.backendoori.ootw.post.dto.request.PostUpdateRequest;
 import com.backendoori.ootw.post.dto.response.PostReadResponse;
 import com.backendoori.ootw.post.dto.response.PostSaveUpdateResponse;
-import com.backendoori.ootw.post.exception.ResourceRequiredException;
 import com.backendoori.ootw.post.repository.PostRepository;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.repository.UserRepository;
@@ -45,15 +46,20 @@ public class PostService {
 
     @Transactional
     public PostSaveUpdateResponse save(PostSaveRequest request, MultipartFile postImg) {
+        Assert.isTrue(Objects.nonNull(request), () -> {
+            throw new IllegalArgumentException(NULL_POST);
+        });
+
         User user = userRepository.findById(getUserId())
             .orElseThrow(UserNotFoundException::new);
         TemperatureArrange temperatureArrange = weatherService.getCurrentTemperatureArrange(request.coordinate());
 
-        if (postImg.isEmpty()) {
+        if (Objects.isNull(postImg) || postImg.isEmpty()) {
             Post savedPost = postRepository.save(Post.from(user, request, null, temperatureArrange));
             return PostSaveUpdateResponse.from(savedPost);
         }
 
+        validateImage(postImg);
         ImageFile imgFile = imageService.upload(postImg);
         try {
             Post savedPost = postRepository.save(Post.from(user, request, imgFile.url(), temperatureArrange));
@@ -130,7 +136,7 @@ public class PostService {
         checkUserHasPostPermission(post);
 
         Assert.isTrue(Objects.nonNull(request), () -> {
-            throw new ResourceRequiredException();
+            throw new IllegalArgumentException(NULL_POST);
         });
 
         post.updateTitle(request.title());
@@ -141,6 +147,7 @@ public class PostService {
             return PostSaveUpdateResponse.from(post);
         }
 
+        validateImage(postImg);
         ImageFile imgFile = imageService.upload(postImg);
         try {
             // TODO: 기존 저장된 이미지 삭제(원래 null인 경우도 있으니 주의)
