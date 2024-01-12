@@ -23,7 +23,7 @@ public class OotwMailSender {
         try {
             sendMimeMessage(receiver, title, body);
         } catch (MessagingException e) {
-            log.error("Fail to send email to {}, title: {}, body: {}", receiver, title, body, e);
+            log.error("Fail to send email, receiver: {} title: {}, body: {}", receiver, title, body, e);
         }
     }
 

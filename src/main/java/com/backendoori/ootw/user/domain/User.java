@@ -37,13 +37,13 @@ public class User extends BaseEntity {
     @Column(name = "nickname", nullable = false)
     private String nickname;
 
-    @Column(name = "image")
-    private String image;
+    @Column(name = "profile_image_url")
+    private String profileImageUrl;
 
     @Column(name = "certified", nullable = false, columnDefinition = "TINYINT(1)")
-    private Boolean certified;
+    private boolean certified;
 
-    public User(Long id, String email, String password, String nickname, String image, Boolean certified) {
+    public User(Long id, String email, String password, String nickname, String profileImageUrl, boolean certified) {
         AssertUtil.hasPattern(email, RFC5322.REGEX, Message.INVALID_EMAIL);
         AssertUtil.isTrue(email.length() <= 255, Message.TOO_LONG_EMAIL);
         AssertUtil.notBlank(password, Message.BLANK_PASSWORD);
@@ -54,7 +54,7 @@ public class User extends BaseEntity {
         this.email = email;
         this.password = password;
         this.nickname = nickname;
-        this.image = image;
+        this.profileImageUrl = profileImageUrl;
         this.certified = certified;
     }
 

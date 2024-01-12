@@ -7,7 +7,7 @@ import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.user.domain.Certificate;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.dto.CertifyDto;
-import com.backendoori.ootw.user.dto.SendCertificateDto;
+import com.backendoori.ootw.user.dto.SendCodeDto;
 import com.backendoori.ootw.user.exception.AlreadyCertifiedUserException;
 import com.backendoori.ootw.user.exception.IncorrectCertificateException;
 import com.backendoori.ootw.user.repository.CertificateRedisRepository;
@@ -28,13 +28,13 @@ public class CertificateService {
     private final CertificateRedisRepository certificateRedisRepository;
 
     @Transactional
-    public void sendCertificate(SendCertificateDto sendCertificateDto) {
-        String email = sendCertificateDto.email();
+    public void sendCode(SendCodeDto sendCodeDto) {
+        String email = sendCodeDto.email();
 
         User user = userRepository.findByEmail(email)
             .orElseThrow(UserNotFoundException::new);
 
-        AssertUtil.throwIf(user.getCertified(), AlreadyCertifiedUserException::new);
+        AssertUtil.throwIf(user.isCertified(), AlreadyCertifiedUserException::new);
 
         Certificate certificate = generateCertificate(email);
         String title = generateTitle(certificate);
@@ -48,7 +48,7 @@ public class CertificateService {
         User user = userRepository.findByEmail(certifyDto.email())
             .orElseThrow(UserNotFoundException::new);
 
-        AssertUtil.throwIf(user.getCertified(), AlreadyCertifiedUserException::new);
+        AssertUtil.throwIf(user.isCertified(), AlreadyCertifiedUserException::new);
 
         Certificate certificate = certificateRedisRepository.findById(certifyDto.email())
             .orElseThrow(UserNotFoundException::new);

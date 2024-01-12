@@ -16,7 +16,7 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 class UserTest {
 
-    static final Faker faker = new Faker();
+    static final Faker FAKER = new Faker();
 
     Long id;
     String email;
@@ -26,11 +26,11 @@ class UserTest {
 
     @BeforeEach
     void setup() {
-        id = (long) faker.number().positive();
-        email = faker.internet().emailAddress();
-        password = faker.internet().password();
-        nickname = faker.internet().username();
-        image = faker.internet().url();
+        id = (long) FAKER.number().positive();
+        email = FAKER.internet().emailAddress();
+        password = FAKER.internet().password();
+        nickname = FAKER.internet().username();
+        image = FAKER.internet().url();
     }
 
     @DisplayName("instance 생성에 성공한다.")
@@ -66,7 +66,7 @@ class UserTest {
     @Test
     void testCreateTooLongEmail() {
         // given
-        this.email = faker.natoPhoneticAlphabet().codeWord().repeat(65) + "@" + faker.internet().domainName();
+        this.email = FAKER.natoPhoneticAlphabet().codeWord().repeat(65) + "@" + FAKER.internet().domainName();
 
         // when
         ThrowingCallable createUser = this::buildUser;
@@ -113,7 +113,7 @@ class UserTest {
     @Test
     void testCreateTooLongNickname() {
         // given
-        this.nickname = faker.natoPhoneticAlphabet().codeWord().repeat(65);
+        this.nickname = FAKER.natoPhoneticAlphabet().codeWord().repeat(65);
 
         // when
         ThrowingCallable createUser = this::buildUser;
@@ -126,12 +126,12 @@ class UserTest {
 
     private static Stream<String> generateInvalidEmails() {
         return Stream.of(
-            faker.app().name(),
-            faker.name().fullName(),
-            faker.internet().url(),
-            faker.internet().domainName(),
-            faker.internet().webdomain(),
-            faker.internet().botUserAgentAny()
+            FAKER.app().name(),
+            FAKER.name().fullName(),
+            FAKER.internet().url(),
+            FAKER.internet().domainName(),
+            FAKER.internet().webdomain(),
+            FAKER.internet().botUserAgentAny()
         );
     }
 
@@ -141,7 +141,7 @@ class UserTest {
             .email(email)
             .password(password)
             .nickname(nickname)
-            .image(image)
+            .profileImageUrl(image)
             .certified(false)
             .build();
     }

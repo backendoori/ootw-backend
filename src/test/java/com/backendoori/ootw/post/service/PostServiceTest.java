@@ -405,7 +405,7 @@ class PostServiceTest {
             .email(FAKER.internet().emailAddress())
             .password(FAKER.internet().password())
             .nickname(FAKER.internet().username())
-            .image(FAKER.internet().url())
+            .profileImageUrl(FAKER.internet().url())
             .certified(true)
             .build();
     }
