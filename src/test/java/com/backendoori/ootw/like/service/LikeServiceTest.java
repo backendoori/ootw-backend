@@ -40,8 +40,6 @@ public class LikeServiceTest extends TokenMockMvcTest {
 
     static final String POST_NOT_FOUND_MESSAGE = "해당 게시글이 존재하지 않습니다.";
     static final Faker FAKER = new Faker();
-    static final int NX = 55;
-    static final int NY = 127;
 
     User user;
 
