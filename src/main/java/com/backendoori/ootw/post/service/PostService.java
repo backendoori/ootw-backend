@@ -135,7 +135,7 @@ public class PostService {
 
         checkUserHasPostPermission(post);
 
-        Assert.isTrue(Objects.nonNull(request), () -> {
+        Assert.notNull(request, () -> {
             throw new IllegalArgumentException(NULL_POST);
         });
 
