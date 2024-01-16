@@ -182,7 +182,7 @@ public class PostService {
     }
 
     private void checkUserHasPostPermission(Post post) {
-        Assert.isTrue(getUserId() == post.getUser().getId(), () -> {
+        Assert.isTrue(post.getUser().isSameId(getUserId()), () -> {
             throw new PermissionException();
         });
     }
