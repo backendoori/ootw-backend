@@ -1,7 +1,7 @@
 package com.backendoori.ootw.post.service;
 
 import static com.backendoori.ootw.common.validation.ImageValidator.validateImage;
-import static com.backendoori.ootw.post.validation.Message.NULL_POST;
+import static com.backendoori.ootw.post.validation.Message.NULL_REQUEST;
 import static com.backendoori.ootw.post.validation.Message.POST_NOT_FOUND;
 
 import java.util.List;
@@ -47,7 +47,7 @@ public class PostService {
     @Transactional
     public PostSaveUpdateResponse save(PostSaveRequest request, MultipartFile postImg) {
         Assert.isTrue(Objects.nonNull(request), () -> {
-            throw new IllegalArgumentException(NULL_POST);
+            throw new IllegalArgumentException(NULL_REQUEST);
         });
 
         User user = userRepository.findById(getUserId())
@@ -136,7 +136,7 @@ public class PostService {
         checkUserHasPostPermission(post);
 
         Assert.notNull(request, () -> {
-            throw new IllegalArgumentException(NULL_POST);
+            throw new IllegalArgumentException(NULL_REQUEST);
         });
 
         post.updateTitle(request.title());

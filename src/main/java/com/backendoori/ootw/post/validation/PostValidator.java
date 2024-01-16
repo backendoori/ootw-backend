@@ -4,7 +4,7 @@ import static com.backendoori.ootw.post.validation.Message.BLANK_POST_CONTENT;
 import static com.backendoori.ootw.post.validation.Message.BLANK_POST_TITLE;
 import static com.backendoori.ootw.post.validation.Message.INVALID_POST_CONTENT;
 import static com.backendoori.ootw.post.validation.Message.INVALID_POST_TITLE;
-import static com.backendoori.ootw.post.validation.Message.NULL_POST;
+import static com.backendoori.ootw.post.validation.Message.NULL_REQUEST;
 import static com.backendoori.ootw.post.validation.Message.NULL_TEMPERATURE_ARRANGE;
 import static com.backendoori.ootw.post.validation.Message.NULL_WRITER;
 
@@ -26,7 +26,7 @@ public final class PostValidator {
     }
 
     public static void validatePostSaveRequest(PostSaveRequest request) {
-        AssertUtil.notNull(request, NULL_POST);
+        AssertUtil.notNull(request, NULL_REQUEST);
         validateTitle(request.title());
         validateContent(request.content());
     }

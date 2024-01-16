@@ -4,7 +4,7 @@ import static com.backendoori.ootw.post.validation.Message.BLANK_POST_CONTENT;
 import static com.backendoori.ootw.post.validation.Message.BLANK_POST_TITLE;
 import static com.backendoori.ootw.post.validation.Message.INVALID_POST_CONTENT;
 import static com.backendoori.ootw.post.validation.Message.INVALID_POST_TITLE;
-import static com.backendoori.ootw.post.validation.Message.NULL_POST;
+import static com.backendoori.ootw.post.validation.Message.NULL_REQUEST;
 import static com.backendoori.ootw.post.validation.Message.POST_NOT_FOUND;
 import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_COORDINATE;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -315,7 +315,7 @@ class PostServiceTest {
                 //then
                 assertThatExceptionOfType(IllegalArgumentException.class)
                     .isThrownBy(updatePost)
-                    .withMessage(NULL_POST);
+                    .withMessage(NULL_REQUEST);
             }
 
             @ParameterizedTest(name = "[{index}] {0}")
