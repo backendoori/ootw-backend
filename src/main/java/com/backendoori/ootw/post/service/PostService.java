@@ -174,14 +174,11 @@ public class PostService {
             .getPrincipal();
     }
 
-    //TODO: 이 부분을 .equals 써야하는지 궁금하다.
-    // 세희) 위에서처럼 정의하면 constant pool에 저장이되고 중복되는 값이 있으면 비슷한 걸로 인식한다고는 들었습니다!
-    // 다만 실수를 줄이고 더 안전하게 하고 싶다면 equals를 사용하는 것이 나을 수도 있겟네여!
     private boolean isLogin() {
-        return SecurityContextHolder
+        return !ANONYMOUS_USER_PRINCIPLE.equals(SecurityContextHolder
             .getContext()
             .getAuthentication()
-            .getPrincipal() != ANONYMOUS_USER_PRINCIPLE;
+            .getPrincipal());
     }
 
     private void checkUserHasPostPermission(Post post) {
