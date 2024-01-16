@@ -1,6 +1,5 @@
 package com.backendoori.ootw.post.service;
 
-import static com.backendoori.ootw.common.validation.ImageValidator.validateImage;
 import static com.backendoori.ootw.post.validation.Message.NULL_REQUEST;
 import static com.backendoori.ootw.post.validation.Message.POST_NOT_FOUND;
 
@@ -43,7 +42,6 @@ public class PostService {
     private final WeatherService weatherService;
     private final LikeRepository likeRepository;
 
-
     @Transactional
     public PostSaveUpdateResponse save(PostSaveRequest request, MultipartFile postImg) {
         Assert.isTrue(Objects.nonNull(request), () -> {
@@ -55,22 +53,17 @@ public class PostService {
         TemperatureArrange temperatureArrange = weatherService.getCurrentTemperatureArrange(request.coordinate());
 
         if (Objects.isNull(postImg) || postImg.isEmpty()) {
-            Post savedPost = postRepository.save(Post.from(user, request, null, temperatureArrange));
-            return PostSaveUpdateResponse.from(savedPost);
+            return savePostWithImageUrl(user, request, null, temperatureArrange);
         }
 
-        validateImage(postImg);
         ImageFile imgFile = imageService.upload(postImg);
         try {
-            Post savedPost = postRepository.save(Post.from(user, request, imgFile.url(), temperatureArrange));
-
-            return PostSaveUpdateResponse.from(savedPost);
+            return savePostWithImageUrl(user, request, imgFile.url(), temperatureArrange);
         } catch (Exception e) {
             imageService.delete(imgFile.fileName());
             throw new SaveException();
         }
     }
-
 
     @Transactional(readOnly = true)
     public PostReadResponse getDetailByPostId(Long postId) {
@@ -127,7 +120,6 @@ public class PostService {
         postRepository.delete(post);
     }
 
-
     @Transactional
     public PostSaveUpdateResponse update(Long postId, MultipartFile postImg, PostUpdateRequest request) {
         Post post = postRepository.findById(postId)
@@ -143,22 +135,30 @@ public class PostService {
         post.updateContent(request.content());
 
         if (Objects.isNull(postImg) || postImg.isEmpty()) {
-            post.updateImageUrl(null);
-            return PostSaveUpdateResponse.from(post);
+            return updatePostWithImageUrl(post, null);
         }
 
-        validateImage(postImg);
         ImageFile imgFile = imageService.upload(postImg);
         try {
             // TODO: 기존 저장된 이미지 삭제(원래 null인 경우도 있으니 주의)
-            //  imageService.uploadImage(postImg)가 잘못 저장되어 null 인 경우도 있을까..?
-            post.updateImageUrl(imgFile.url());
-
-            return PostSaveUpdateResponse.from(post);
+            return updatePostWithImageUrl(post, imgFile.url());
         } catch (Exception e) {
             imageService.delete(imgFile.fileName());
             throw new SaveException();
         }
+    }
+
+    private PostSaveUpdateResponse updatePostWithImageUrl(Post post, String imgFile) {
+        post.updateImageUrl(imgFile);
+
+        return PostSaveUpdateResponse.from(post);
+    }
+
+    private PostSaveUpdateResponse savePostWithImageUrl(User user, PostSaveRequest request, String imgFile,
+                                                        TemperatureArrange temperatureArrange) {
+        Post savedPost = postRepository.save(Post.from(user, request, imgFile, temperatureArrange));
+
+        return PostSaveUpdateResponse.from(savedPost);
     }
 
     private List<Long> getLikedPostId(long userId) {
