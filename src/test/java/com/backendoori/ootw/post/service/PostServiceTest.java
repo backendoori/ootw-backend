@@ -335,10 +335,12 @@ class PostServiceTest {
             @MethodSource("provideInvalidFile")
             @DisplayName("수정할 이미지를 보냈는데 이미지 파일이 유효하지 않으면 수정에 실패한다.")
             void updateFailWithInvalidFileType(String originalFileName, String mediaType) {
-                // given // when
+                // given
                 PostUpdateRequest request = new PostUpdateRequest(TITLE, CONTENT);
                 MockMultipartFile postImg = getPostImg(originalFileName, mediaType);
+                given(imageService.upload(postImg)).willThrow(IllegalArgumentException.class);
 
+                // when
                 ThrowingCallable updatePost = () -> postService.update(userPost.getId(), postImg, request);
 
                 //then
@@ -487,7 +489,7 @@ class PostServiceTest {
 
             PostSaveRequest postSaveRequest = new PostSaveRequest(TITLE, CONTENT, VALID_COORDINATE);
             MockMultipartFile postImg = getPostImg(originalFileName, mediaType);
-            given(imageService.upload(postImg)).willReturn(new ImageFile(IMG_URL, ORIGINAL_FILE_NAME));
+            given(imageService.upload(postImg)).willThrow(IllegalArgumentException.class);
 
             // when, then
             assertThrows(IllegalArgumentException.class,
