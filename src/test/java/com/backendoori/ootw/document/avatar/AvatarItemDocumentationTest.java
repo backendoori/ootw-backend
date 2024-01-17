@@ -30,23 +30,19 @@ import net.datafaker.Faker;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.payload.JsonFieldType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.ResultActions;
 
-@WithMockUser
 @SpringBootTest
-@AutoConfigureMockMvc
 @AutoConfigureRestDocs
 class AvatarItemDocumentationTest extends TokenMockMvcTest {
 
-    static final Faker FAKER = new Faker();
     static final String API = "/api/v1/avatar-items";
+    static final Faker FAKER = new Faker();
 
     @MockBean
     AvatarItemService avatarItemService;
@@ -105,7 +101,7 @@ class AvatarItemDocumentationTest extends TokenMockMvcTest {
             );
     }
 
-    @DisplayName("[POST] getAll 200 Ok")
+    @DisplayName("[GET] getAll 200 Ok")
     @Test
     public void testGetAllOk() throws Exception {
         // given
