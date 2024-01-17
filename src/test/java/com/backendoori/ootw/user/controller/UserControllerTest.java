@@ -8,8 +8,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.stream.Stream;
 import com.backendoori.ootw.exception.UserNotFoundException;
 import com.backendoori.ootw.security.jwt.TokenProvider;
@@ -298,10 +296,6 @@ class UserControllerTest {
         String password = FAKER.internet().password(8, 30, true, true, true);
 
         return new LoginDto(email, password);
-    }
-
-    private String removeMills(LocalDateTime localDateTime) {
-        return localDateTime.truncatedTo(ChronoUnit.SECONDS).toString();
     }
 
     static class InvalidEmailProvider implements ArgumentsProvider {
