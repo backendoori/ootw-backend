@@ -161,3 +161,28 @@ include::{snippets}/like-push/response-fields.adoc[]
 ==== Response example
 
 include::{snippets}/like-push/http-response.adoc[]
+
+= Weather API
+
+'''
+== current weather
+
+NOTE: 현재 기온 조회
+
+=== Request
+
+include::{snippets}/weather/request-headers.adoc[]
+include::{snippets}/weather/query-parameters.adoc[]
+
+==== Request example
+
+include::{snippets}/weather/http-request.adoc[]
+
+=== Response
+
+include::{snippets}/weather/response-body.adoc[]
+include::{snippets}/weather/response-fields.adoc[]
+
+==== Response example
+
+include::{snippets}/weather/http-response.adoc[]
