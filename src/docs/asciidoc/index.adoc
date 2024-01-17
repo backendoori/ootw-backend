@@ -139,6 +139,30 @@ include::{snippets}/avatar-image-get-all/http-response.adoc[]
 = Post API
 
 '''
+== post create
+
+NOTE: 게시글 생성
+
+=== Request
+
+include::{snippets}/post-create/request-headers.adoc[]
+include::{snippets}/post-create/request-body.adoc[]
+include::{snippets}/post-create/request-parts.adoc[]
+include::{snippets}/post-create/request-part-request-fields.adoc[]
+
+==== Request example
+
+include::{snippets}/post-create/http-request.adoc[]
+
+=== Response
+
+include::{snippets}/post-create/response-body.adoc[]
+include::{snippets}/post-create/response-fields.adoc[]
+
+==== Response example
+
+include::{snippets}/post-create/http-response.adoc[]
+
 == like push
 
 NOTE: 게시글 좋아요
