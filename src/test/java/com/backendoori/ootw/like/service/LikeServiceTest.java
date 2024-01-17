@@ -17,7 +17,7 @@ import com.backendoori.ootw.like.dto.controller.LikeResponse;
 import com.backendoori.ootw.like.repository.LikeRepository;
 import com.backendoori.ootw.post.controller.PostController;
 import com.backendoori.ootw.post.domain.Post;
-import com.backendoori.ootw.post.dto.PostSaveRequest;
+import com.backendoori.ootw.post.dto.request.PostSaveRequest;
 import com.backendoori.ootw.post.repository.PostRepository;
 import com.backendoori.ootw.post.service.PostService;
 import com.backendoori.ootw.security.TokenMockMvcTest;
@@ -40,8 +40,6 @@ public class LikeServiceTest extends TokenMockMvcTest {
 
     static final String POST_NOT_FOUND_MESSAGE = "해당 게시글이 존재하지 않습니다.";
     static final Faker FAKER = new Faker();
-    static final int NX = 55;
-    static final int NY = 127;
 
     User user;
 

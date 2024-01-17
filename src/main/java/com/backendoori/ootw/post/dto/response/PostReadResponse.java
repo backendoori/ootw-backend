@@ -1,7 +1,6 @@
-package com.backendoori.ootw.post.dto;
+package com.backendoori.ootw.post.dto.response;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 import com.backendoori.ootw.post.domain.Post;
 import com.backendoori.ootw.weather.dto.TemperatureArrangeDto;
 import lombok.AllArgsConstructor;
@@ -28,7 +27,7 @@ public final class PostReadResponse {
             WriterDto.from(post.getUser()),
             post.getTitle(),
             post.getContent(),
-            post.getImage(),
+            post.getImageUrl(),
             post.getCreatedAt(),
             post.getUpdatedAt(),
             TemperatureArrangeDto.from(post.getTemperatureArrange()),

@@ -1,4 +1,4 @@
-package com.backendoori.ootw.post.dto;
+package com.backendoori.ootw.post.dto.response;
 
 import com.backendoori.ootw.user.domain.User;
 

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 public final class Message {
 
     public static final String POST_NOT_FOUND = "해당하는 게시글이 없습니다.";
-    public static final String NULL_POST = "게시글 생성 요청 정보가 null이어서는 안됩니다.";
+    public static final String NULL_REQUEST = "게시글 생성/수정 요청 정보가 null이어서는 안됩니다.";
 
     public static final String NULL_WRITER = "게시글 생성 요청 사용자가 null이어서는 안됩니다.";
 

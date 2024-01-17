@@ -1,11 +1,13 @@
 package com.backendoori.ootw.post.domain;
 
+import static com.backendoori.ootw.post.validation.PostValidator.validateContent;
 import static com.backendoori.ootw.post.validation.PostValidator.validatePostSaveRequest;
 import static com.backendoori.ootw.post.validation.PostValidator.validateTemperatureArrange;
+import static com.backendoori.ootw.post.validation.PostValidator.validateTitle;
 import static com.backendoori.ootw.post.validation.PostValidator.validateUser;
 
 import com.backendoori.ootw.common.BaseEntity;
-import com.backendoori.ootw.post.dto.PostSaveRequest;
+import com.backendoori.ootw.post.dto.request.PostSaveRequest;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.weather.domain.TemperatureArrange;
 import jakarta.persistence.Column;
@@ -43,8 +45,8 @@ public class Post extends BaseEntity {
     @Column(name = "content", nullable = false)
     private String content;
 
-    @Column(name = "image")
-    private String image;
+    @Column(name = "image_url")
+    private String imageUrl;
 
     @Embedded
     private TemperatureArrange temperatureArrange;
@@ -60,7 +62,7 @@ public class Post extends BaseEntity {
         this.user = user;
         this.title = request.title();
         this.content = request.content();
-        this.image = imgUrl;
+        this.imageUrl = imgUrl;
         this.temperatureArrange = temperatureArrange;
     }
 
@@ -76,4 +78,17 @@ public class Post extends BaseEntity {
         this.likeCnt--;
     }
 
+    public void updateTitle(String title) {
+        validateTitle(title);
+        this.title = title;
+    }
+
+    public void updateContent(String content) {
+        validateContent(content);
+        this.content = content;
+    }
+
+    public void updateImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }

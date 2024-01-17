@@ -15,7 +15,7 @@ import static org.mockito.Mockito.mock;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
-import com.backendoori.ootw.post.dto.PostSaveRequest;
+import com.backendoori.ootw.post.dto.request.PostSaveRequest;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.weather.domain.TemperatureArrange;
 import com.backendoori.ootw.weather.domain.forecast.ForecastCategory;
@@ -77,7 +77,7 @@ class PostTest {
         assertAll(() -> assertThat(createdPost).hasFieldOrPropertyWithValue("user", MOCK_USER),
             () -> assertThat(createdPost).hasFieldOrPropertyWithValue("title", request.title()),
             () -> assertThat(createdPost).hasFieldOrPropertyWithValue("content", request.content()),
-            () -> assertThat(createdPost).hasFieldOrPropertyWithValue("image", IMG_URL),
+            () -> assertThat(createdPost).hasFieldOrPropertyWithValue("imageUrl", IMG_URL),
             () -> assertThat(createdPost).hasFieldOrPropertyWithValue("temperatureArrange",
                 generateTemperatureArrange()));
     }

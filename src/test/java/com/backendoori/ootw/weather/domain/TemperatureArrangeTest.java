@@ -1,5 +1,6 @@
 package com.backendoori.ootw.weather.domain;
 
+import static com.backendoori.ootw.weather.validation.Message.CAN_NOT_RETRIEVE_TEMPERATURE_ARRANGE;
 import static com.backendoori.ootw.weather.validation.Message.CAN_NOT_USE_FORECAST_API;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -56,7 +57,7 @@ class TemperatureArrangeTest {
     @ParameterizedTest
     @MethodSource("provideInvalidWeatherInfoMap")
     @DisplayName("TMN, TMX가 포함되지 않은 결과 맵(map)으로부터 TemperatureArrange 생성에 실패한다.")
-    void createTemperatureArrangeFail(Map<ForecastCategory, String> weatherInfoMap) {
+    void createTemperatureArrangeFailWithInvalidValue(Map<ForecastCategory, String> weatherInfoMap) {
         // given // when
         ThrowingCallable createTemperatureArrange = () -> TemperatureArrange.from(weatherInfoMap);
 
@@ -64,6 +65,23 @@ class TemperatureArrangeTest {
         assertThatExceptionOfType(IllegalStateException.class)
             .isThrownBy(createTemperatureArrange)
             .withMessage(CAN_NOT_USE_FORECAST_API);
+    }
+
+    @Test
+    @DisplayName("유효하지 않은 TMN, TMX가 포함된 결과 맵(map)으로부터 TemperatureArrange 생성에 실패한다.")
+    void createTemperatureArrangeFailWithInvalidArrange() {
+        // given
+        Map<ForecastCategory, String> weatherInfoMap = new HashMap<>();
+        weatherInfoMap.put(ForecastCategory.TMN, "10.0");
+        weatherInfoMap.put(ForecastCategory.TMX, "0.0");
+
+        // when
+        ThrowingCallable createTemperatureArrange = () -> TemperatureArrange.from(weatherInfoMap);
+
+        // then
+        assertThatExceptionOfType(IllegalStateException.class)
+            .isThrownBy(createTemperatureArrange)
+            .withMessage(CAN_NOT_RETRIEVE_TEMPERATURE_ARRANGE);
     }
 
 }

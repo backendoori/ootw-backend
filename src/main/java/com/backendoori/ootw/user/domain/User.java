@@ -1,5 +1,6 @@
 package com.backendoori.ootw.user.domain;
 
+import java.util.Objects;
 import com.backendoori.ootw.common.AssertUtil;
 import com.backendoori.ootw.common.BaseEntity;
 import com.backendoori.ootw.user.validation.Message;
@@ -64,6 +65,10 @@ public class User extends BaseEntity {
 
     public boolean matchPassword(PasswordEncoder passwordEncoder, String decrypted) {
         return passwordEncoder.matches(decrypted, password);
+    }
+
+    public boolean isSameId(Long id) {
+        return Objects.equals(this.id, id);
     }
 
 }

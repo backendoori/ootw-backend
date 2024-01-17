@@ -14,7 +14,7 @@ import com.backendoori.ootw.like.dto.controller.LikeRequest;
 import com.backendoori.ootw.like.repository.LikeRepository;
 import com.backendoori.ootw.post.controller.PostController;
 import com.backendoori.ootw.post.domain.Post;
-import com.backendoori.ootw.post.dto.PostSaveRequest;
+import com.backendoori.ootw.post.dto.request.PostSaveRequest;
 import com.backendoori.ootw.post.repository.PostRepository;
 import com.backendoori.ootw.post.service.PostService;
 import com.backendoori.ootw.security.TokenMockMvcTest;

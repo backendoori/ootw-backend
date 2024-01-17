@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.HashMap;
 import java.util.Map;
 import com.backendoori.ootw.post.domain.Post;
-import com.backendoori.ootw.post.dto.PostSaveRequest;
+import com.backendoori.ootw.post.dto.request.PostSaveRequest;
 import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.weather.domain.TemperatureArrange;
 import com.backendoori.ootw.weather.domain.forecast.ForecastCategory;
