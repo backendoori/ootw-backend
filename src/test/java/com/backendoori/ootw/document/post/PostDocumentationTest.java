@@ -65,8 +65,10 @@ class PostDocumentationTest extends TokenMockMvcTest {
     @Test
     void testSaveCreated() throws Exception {
         // given
+        String title = FAKER.book().title();
         PostSaveRequest postSaveRequest =
-            new PostSaveRequest(FAKER.book().title(), FAKER.science().element(), VALID_COORDINATE);
+            new PostSaveRequest(title.substring(0, Math.min(title.length(), 30)), FAKER.science().element(),
+                VALID_COORDINATE);
         MockMultipartFile request = getRequestJson(postSaveRequest);
         MockMultipartFile postImg = getPostImg();
 
@@ -217,9 +219,11 @@ class PostDocumentationTest extends TokenMockMvcTest {
     void testUpdateCreated() throws Exception {
         // given
         long postId = 2;
+        String title = FAKER.book().title();
         PostUpdateRequest postUpdateRequest =
-            new PostUpdateRequest(FAKER.book().title(), FAKER.science().element());
+            new PostUpdateRequest(title.substring(0, Math.min(title.length(), 30)), FAKER.science().element());
         MockMultipartFile request = getRequestJson(postUpdateRequest);
+        MockMultipartFile postImg = getPostImg();
 
         setToken(1);
         given(postService.update(any(), any(), any()))
@@ -229,6 +233,7 @@ class PostDocumentationTest extends TokenMockMvcTest {
         ResultActions actions =
             mockMvc.perform(multipart(API_PREFIX + "/{postId}", postId)
                 .file(request)
+                .file(postImg)
                 .header(TOKEN_HEADER, TOKEN_PREFIX + token)
                 .accept(MediaType.APPLICATION_JSON)
                 .characterEncoding(StandardCharsets.UTF_8)
@@ -248,7 +253,8 @@ class PostDocumentationTest extends TokenMockMvcTest {
                         parameterWithName("postId").description("게시글 ID")
                     ),
                     requestParts(
-                        partWithName("request").description("게시글 생성 요청 정보")
+                        partWithName("request").description("게시글 생성 요청 정보"),
+                        partWithName("postImg").description("게시글 이미지 파일")
                     ),
                     requestPartFields(
                         "request",
