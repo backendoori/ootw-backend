@@ -66,7 +66,7 @@ class CertificateControllerTest {
             // given
             MockHttpServletRequestBuilder requestBuilder = patch("/api/v1/auth/certificate")
                 .with(csrf())
-                .param("email", sendCodeDto.email())
+                .queryParam("email", sendCodeDto.email())
                 .contentType(MediaType.APPLICATION_JSON);
 
             // when
@@ -82,7 +82,7 @@ class CertificateControllerTest {
             // given
             MockHttpServletRequestBuilder requestBuilder = patch("/api/v1/auth/certificate")
                 .with(csrf())
-                .param("email", sendCodeDto.email())
+                .queryParam("email", sendCodeDto.email())
                 .contentType(MediaType.APPLICATION_JSON);
 
             doThrow(AlreadyCertifiedUserException.class)
@@ -104,7 +104,7 @@ class CertificateControllerTest {
             // given
             MockHttpServletRequestBuilder requestBuilder = patch("/api/v1/auth/certificate")
                 .with(csrf())
-                .param("email", email)
+                .queryParam("email", email)
                 .contentType(MediaType.APPLICATION_JSON);
 
             // when
@@ -152,8 +152,8 @@ class CertificateControllerTest {
             // given
             MockHttpServletRequestBuilder requestBuilder = patch("/api/v1/auth/certify")
                 .with(csrf())
-                .param("email", certifyDto.email())
-                .param("code", certifyDto.code())
+                .queryParam("email", certifyDto.email())
+                .queryParam("code", certifyDto.code())
                 .contentType(MediaType.APPLICATION_JSON);
 
             // when
@@ -169,8 +169,8 @@ class CertificateControllerTest {
             // given
             MockHttpServletRequestBuilder requestBuilder = patch("/api/v1/auth/certify")
                 .with(csrf())
-                .param("email", certifyDto.email())
-                .param("code", certifyDto.code())
+                .queryParam("email", certifyDto.email())
+                .queryParam("code", certifyDto.code())
                 .contentType(MediaType.APPLICATION_JSON);
 
             doThrow(UserNotFoundException.class)
@@ -190,8 +190,8 @@ class CertificateControllerTest {
             // given
             MockHttpServletRequestBuilder requestBuilder = patch("/api/v1/auth/certify")
                 .with(csrf())
-                .param("email", certifyDto.email())
-                .param("code", certifyDto.code())
+                .queryParam("email", certifyDto.email())
+                .queryParam("code", certifyDto.code())
                 .contentType(MediaType.APPLICATION_JSON);
 
             doThrow(AlreadyCertifiedUserException.class)
@@ -211,8 +211,8 @@ class CertificateControllerTest {
             // given
             MockHttpServletRequestBuilder requestBuilder = patch("/api/v1/auth/certify")
                 .with(csrf())
-                .param("email", certifyDto.email())
-                .param("code", certifyDto.code())
+                .queryParam("email", certifyDto.email())
+                .queryParam("code", certifyDto.code())
                 .contentType(MediaType.APPLICATION_JSON);
 
             doThrow(IncorrectCertificateException.class)
