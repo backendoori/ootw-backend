@@ -10,10 +10,13 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestPartFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -23,7 +26,9 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import com.backendoori.ootw.post.dto.request.PostSaveRequest;
+import com.backendoori.ootw.post.dto.response.PostReadResponse;
 import com.backendoori.ootw.post.dto.response.PostSaveUpdateResponse;
+import com.backendoori.ootw.post.dto.response.WriterDto;
 import com.backendoori.ootw.post.service.PostService;
 import com.backendoori.ootw.security.TokenMockMvcTest;
 import com.backendoori.ootw.weather.domain.TemperatureArrange;
@@ -109,6 +114,62 @@ class PostDocumentationTest extends TokenMockMvcTest {
                     )
                 )
             );
+    }
+
+    @DisplayName("[GET] readDetailByPostId 200 Ok")
+    @Test
+    void testReadDetailByPostIdOk() throws Exception {
+        // given
+        long postId = FAKER.number().positive();
+
+        setToken(1);
+        given(postService.getDetailByPostId(postId))
+            .willReturn(generatePostReadResponse(postId));
+
+        // when
+        ResultActions actions = mockMvc.perform(get(API_PREFIX + "/{postId}", postId)
+            .header(TOKEN_HEADER, TOKEN_PREFIX + token)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        actions.andExpect(status().isOk())
+            .andDo(
+                document("post-read-detail",
+                    getDocumentRequest(),
+                    getDocumentResponse(),
+                    requestHeaders(
+                        headerWithName("Authorization").description("JWT 토큰")
+                    ),
+                    pathParameters(
+                        parameterWithName("postId").description("게시글 ID")
+                    ),
+                    responseFields(
+                        field("postId", JsonFieldType.NUMBER, "게시글 ID"),
+                        field("writer.userId", JsonFieldType.NUMBER, "게시글 작성자 ID"),
+                        field("writer.nickname", JsonFieldType.STRING, "게시글 작성자 별명"),
+                        field("writer.image", JsonFieldType.STRING, "게시글 작성자 프로필 이미지 URL"),
+                        field("title", JsonFieldType.STRING, "게시글 제목"),
+                        field("content", JsonFieldType.STRING, "게시글 내용"),
+                        field("image", JsonFieldType.STRING, "게시글 이미지 URL"),
+                        field("createdAt", JsonFieldType.STRING, "게시글 생성 일자"),
+                        field("updatedAt", JsonFieldType.STRING, "게시글 수정 일자"),
+                        field("temperatureArrange.min", JsonFieldType.NUMBER, "최저 기온"),
+                        field("temperatureArrange.max", JsonFieldType.NUMBER, "최고 기온"),
+                        field("likeCnt", JsonFieldType.NUMBER, "좋아요 개수"),
+                        field("isLike", JsonFieldType.NUMBER, "좋아요 여부")
+                    )
+                )
+            );
+    }
+
+    private PostReadResponse generatePostReadResponse(long postId) {
+        return new PostReadResponse(postId,
+            new WriterDto((long) FAKER.number().positive(), FAKER.internet().username(), FAKER.internet().url()),
+            FAKER.book().title(), FAKER.science().element(), FAKER.internet().url(), LocalDateTime.now(),
+            LocalDateTime.now(), TemperatureArrangeDto.from(generateTemperatureArrange()),
+            FAKER.number().numberBetween(1, 100), FAKER.number().numberBetween(0, 1));
     }
 
     private static TemperatureArrange generateTemperatureArrange() {
