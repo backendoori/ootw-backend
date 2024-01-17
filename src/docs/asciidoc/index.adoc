@@ -146,7 +146,6 @@ NOTE: 게시글 생성
 === Request
 
 include::{snippets}/post-create/request-headers.adoc[]
-include::{snippets}/post-create/request-body.adoc[]
 include::{snippets}/post-create/request-parts.adoc[]
 include::{snippets}/post-create/request-part-request-fields.adoc[]
 
@@ -162,6 +161,28 @@ include::{snippets}/post-create/response-fields.adoc[]
 ==== Response example
 
 include::{snippets}/post-create/http-response.adoc[]
+
+== post read detail
+
+NOTE: 게시글 상세 조회
+
+=== Request
+
+include::{snippets}/post-read-detail/request-headers.adoc[]
+include::{snippets}/post-read-detail/path-parameters.adoc[]
+
+==== Request example
+
+include::{snippets}/post-read-detail/http-request.adoc[]
+
+=== Response
+
+include::{snippets}/post-read-detail/response-body.adoc[]
+include::{snippets}/post-read-detail/response-fields.adoc[]
+
+==== Response example
+
+include::{snippets}/post-read-detail/http-response.adoc[]
 
 == like push
 
