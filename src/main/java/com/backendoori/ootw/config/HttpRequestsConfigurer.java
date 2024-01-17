@@ -14,6 +14,7 @@ public class HttpRequestsConfigurer
 
     private static final String AUTH_RESOURCE = "/api/v1/auth/**";
     private static final String POST_RESOURCE = "/api/v1/posts/**";
+    private static final String AVATAR_RESOURCE = "/api/v1/avatar-items/**";
 
     @Override
     public void customize(
@@ -22,6 +23,8 @@ public class HttpRequestsConfigurer
             .requestMatchers(AUTH_RESOURCE)
             .permitAll()
             .requestMatchers(antMatcher(HttpMethod.GET, POST_RESOURCE))
+            .permitAll()
+            .requestMatchers(antMatcher(HttpMethod.GET, AVATAR_RESOURCE))
             .permitAll()
             .anyRequest()
             .authenticated();
