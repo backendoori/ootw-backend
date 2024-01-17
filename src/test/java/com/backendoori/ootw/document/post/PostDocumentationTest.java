@@ -24,6 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import com.backendoori.ootw.post.dto.request.PostSaveRequest;
 import com.backendoori.ootw.post.dto.response.PostReadResponse;
@@ -163,6 +164,93 @@ class PostDocumentationTest extends TokenMockMvcTest {
                 )
             );
     }
+
+    @DisplayName("[GET] readAll 200 Ok")
+    @Test
+    void testReadAllOk() throws Exception {
+        // given
+        setToken(1);
+        given(postService.getAll())
+            .willReturn(List.of(generatePostReadResponse(FAKER.number().positive()),
+                generatePostReadResponse(FAKER.number().positive()),
+                generatePostReadResponse(FAKER.number().positive())
+            ));
+
+        // when
+        ResultActions actions = mockMvc.perform(get(API_PREFIX)
+            .header(TOKEN_HEADER, TOKEN_PREFIX + token)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        actions.andExpect(status().isOk())
+            .andDo(
+                document("post-read-all",
+                    getDocumentRequest(),
+                    getDocumentResponse(),
+                    requestHeaders(
+                        headerWithName("Authorization").description("JWT 토큰")
+                    ),
+                    responseFields(
+                        field("[]postId", JsonFieldType.NUMBER, "게시글 ID"),
+                        field("[]writer.userId", JsonFieldType.NUMBER, "게시글 작성자 ID"),
+                        field("[]writer.nickname", JsonFieldType.STRING, "게시글 작성자 별명"),
+                        field("[]writer.image", JsonFieldType.STRING, "게시글 작성자 프로필 이미지 URL"),
+                        field("[]title", JsonFieldType.STRING, "게시글 제목"),
+                        field("[]content", JsonFieldType.STRING, "게시글 내용"),
+                        field("[]image", JsonFieldType.STRING, "게시글 이미지 URL"),
+                        field("[]createdAt", JsonFieldType.STRING, "게시글 생성 일자"),
+                        field("[]updatedAt", JsonFieldType.STRING, "게시글 수정 일자"),
+                        field("[]temperatureArrange.min", JsonFieldType.NUMBER, "최저 기온"),
+                        field("[]temperatureArrange.max", JsonFieldType.NUMBER, "최고 기온"),
+                        field("[]likeCnt", JsonFieldType.NUMBER, "좋아요 개수"),
+                        field("[]isLike", JsonFieldType.NUMBER, "좋아요 여부")
+                    )
+                )
+            );
+    }
+//
+//    @DisplayName("[PUT] update 201 Created")
+//    @Test
+//    void testUpdateCreated() throws Exception {
+//        // given
+//        long postId = FAKER.number().positive();
+//        PostSaveRequest postSaveRequest =
+//            new PostSaveRequest(FAKER.book().title(), FAKER.science().element(), VALID_COORDINATE);
+//        MockMultipartFile request = getRequestJson(postSaveRequest);
+//
+//        // when
+//        ResultActions actions = mockMvc.perform(multipart(API_PREFIX + "/" + postId)
+//            .file(request)
+//            .header(TOKEN_HEADER, TOKEN_PREFIX + token)
+//            .accept(MediaType.APPLICATION_JSON)
+//            .characterEncoding(StandardCharsets.UTF_8)
+//            .with(setMethod("PUT"))
+//        );
+//
+//        // then
+//        actions.andExpect(status().isCreated())
+//            .andDo(
+//                null
+//            );
+//    }
+//
+//    @DisplayName("[DELETE] delete 204 NoContent")
+//    @Test
+//    void testDeleteNoContent() throws Exception {
+//        // given
+//        long postId = FAKER.number().positive();
+//
+//        // when
+//        ResultActions actions = mockMvc.perform(delete(API_PREFIX + "/" + postId)
+//            .header(TOKEN_HEADER, TOKEN_PREFIX + token)
+//        );
+//
+//        // then
+//        actions.andExpect(status().isNoContent())
+//            .andDo(null);
+//    }
 
     private PostReadResponse generatePostReadResponse(long postId) {
         return new PostReadResponse(postId,
