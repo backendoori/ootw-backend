@@ -100,6 +100,7 @@ NOTE: 아바타 이미지 업로드
 
 === Request
 
+include::{snippets}/avatar-image-upload/request-headers.adoc[]
 include::{snippets}/avatar-image-upload/request-parts.adoc[]
 include::{snippets}/avatar-image-upload/request-part-request-fields.adoc[]
 
