@@ -205,6 +205,29 @@ include::{snippets}/post-read-all/response-fields.adoc[]
 
 include::{snippets}/post-read-all/http-response.adoc[]
 
+== post update
+
+NOTE: 게시글 변경
+
+=== Request
+
+include::{snippets}/post-update/request-headers.adoc[]
+include::{snippets}/post-update/request-parts.adoc[]
+include::{snippets}/post-update/request-part-request-fields.adoc[]
+
+==== Request example
+
+include::{snippets}/post-update/http-request.adoc[]
+
+=== Response
+
+include::{snippets}/post-update/response-body.adoc[]
+include::{snippets}/post-update/response-fields.adoc[]
+
+==== Response example
+
+include::{snippets}/post-update/http-response.adoc[]
+
 == like push
 
 NOTE: 게시글 좋아요
