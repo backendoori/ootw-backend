@@ -30,16 +30,16 @@ import org.springframework.test.web.servlet.ResultActions;
 
 @SpringBootTest
 @AutoConfigureRestDocs
-class WeatherControllerTest extends TokenMockMvcTest {
+class WeatherDocumentationTest extends TokenMockMvcTest {
 
     static final String API = "/api/v1/weather";
 
     @MockBean
     WeatherService weatherService;
 
-    @DisplayName("[GET] weather 200 Ok")
+    @DisplayName("[GET] readCurrentWeather 200 Ok")
     @Test
-    void readCurrentWeatherSuccess() throws Exception {
+    void testReadCurrentWeatherOk() throws Exception {
         // given
         setToken(1);
         given(weatherService.getCurrentWeather(VALID_COORDINATE))
