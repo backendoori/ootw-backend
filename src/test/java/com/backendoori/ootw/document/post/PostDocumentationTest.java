@@ -6,11 +6,13 @@ import static com.backendoori.ootw.document.common.ApiDocumentUtil.getDocumentRe
 import static com.backendoori.ootw.security.jwt.JwtAuthenticationFilter.TOKEN_HEADER;
 import static com.backendoori.ootw.security.jwt.JwtAuthenticationFilter.TOKEN_PREFIX;
 import static com.backendoori.ootw.util.provider.ForecastApiCommonRequestSourceProvider.VALID_COORDINATE;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.multipart;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.restdocs.payload.PayloadDocumentation.requestPartFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -18,7 +20,6 @@ import static org.springframework.restdocs.request.RequestDocumentation.paramete
 import static org.springframework.restdocs.request.RequestDocumentation.partWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.restdocs.request.RequestDocumentation.requestParts;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.nio.charset.StandardCharsets;
@@ -27,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import com.backendoori.ootw.post.dto.request.PostSaveRequest;
+import com.backendoori.ootw.post.dto.request.PostUpdateRequest;
 import com.backendoori.ootw.post.dto.response.PostReadResponse;
 import com.backendoori.ootw.post.dto.response.PostSaveUpdateResponse;
 import com.backendoori.ootw.post.dto.response.WriterDto;
@@ -69,9 +71,7 @@ class PostDocumentationTest extends TokenMockMvcTest {
 
         setToken(1);
         given(postService.save(postSaveRequest, postImg))
-            .willReturn(new PostSaveUpdateResponse(1L, postSaveRequest.title(), postSaveRequest.content(),
-                FAKER.internet().url(), LocalDateTime.now(), LocalDateTime.now(),
-                TemperatureArrangeDto.from(generateTemperatureArrange())));
+            .willReturn(generatePostSaveUpdateResponse(1L, postSaveRequest.title(), postSaveRequest.content()));
 
         // when
         ResultActions actions = mockMvc.perform(multipart(API_PREFIX)
@@ -210,32 +210,64 @@ class PostDocumentationTest extends TokenMockMvcTest {
                 )
             );
     }
-//
-//    @DisplayName("[PUT] update 201 Created")
-//    @Test
-//    void testUpdateCreated() throws Exception {
-//        // given
-//        long postId = FAKER.number().positive();
-//        PostSaveRequest postSaveRequest =
-//            new PostSaveRequest(FAKER.book().title(), FAKER.science().element(), VALID_COORDINATE);
-//        MockMultipartFile request = getRequestJson(postSaveRequest);
-//
-//        // when
-//        ResultActions actions = mockMvc.perform(multipart(API_PREFIX + "/" + postId)
-//            .file(request)
-//            .header(TOKEN_HEADER, TOKEN_PREFIX + token)
-//            .accept(MediaType.APPLICATION_JSON)
-//            .characterEncoding(StandardCharsets.UTF_8)
-//            .with(setMethod("PUT"))
-//        );
-//
-//        // then
-//        actions.andExpect(status().isCreated())
-//            .andDo(
-//                null
-//            );
-//    }
-//
+
+    @DisplayName("[PUT] update 201 Created")
+    @Test
+    void testUpdateCreated() throws Exception {
+        // given
+        long postId = 2;
+        PostUpdateRequest postUpdateRequest =
+            new PostUpdateRequest(FAKER.book().title(), FAKER.science().element());
+        MockMultipartFile request = getRequestJson(postUpdateRequest);
+
+        setToken(1);
+        given(postService.update(any(), any(), any()))
+            .willReturn(generatePostSaveUpdateResponse(postId, postUpdateRequest.title(), postUpdateRequest.content()));
+
+        // when
+        ResultActions actions =
+            mockMvc.perform(multipart(API_PREFIX + "/{postId}", postId)
+                .file(request)
+                .header(TOKEN_HEADER, TOKEN_PREFIX + token)
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding(StandardCharsets.UTF_8)
+                .with(setMethod("PUT"))
+            );
+
+        // then
+        actions.andExpect(status().isCreated())
+            .andDo(
+                document("post-update",
+                    getDocumentRequest(),
+                    getDocumentResponse(),
+                    requestHeaders(
+                        headerWithName("Authorization").description("JWT 토큰")
+                    ),
+                    pathParameters(
+                        parameterWithName("postId").description("게시글 ID")
+                    ),
+                    requestParts(
+                        partWithName("request").description("게시글 생성 요청 정보")
+                    ),
+                    requestPartFields(
+                        "request",
+                        fieldWithPath("title").description("게시글 제목"),
+                        fieldWithPath("content").description("게시글 내용")
+                    ),
+                    responseFields(
+                        field("postId", JsonFieldType.NUMBER, "게시글 ID"),
+                        field("title", JsonFieldType.STRING, "게시글 제목"),
+                        field("content", JsonFieldType.STRING, "게시글 내용"),
+                        field("image", JsonFieldType.STRING, "게시글 이미지 URL"),
+                        field("createdAt", JsonFieldType.STRING, "게시글 생성 일자"),
+                        field("updatedAt", JsonFieldType.STRING, "게시글 수정 일자"),
+                        field("temperatureArrange.min", JsonFieldType.NUMBER, "최저 기온"),
+                        field("temperatureArrange.max", JsonFieldType.NUMBER, "최고 기온")
+                    )
+                )
+            );
+    }
+
 //    @DisplayName("[DELETE] delete 204 NoContent")
 //    @Test
 //    void testDeleteNoContent() throws Exception {
@@ -273,6 +305,11 @@ class PostDocumentationTest extends TokenMockMvcTest {
             objectMapper.writeValueAsBytes(postSaveRequest));
     }
 
+    private MockMultipartFile getRequestJson(PostUpdateRequest postUpdateRequest) throws JsonProcessingException {
+        return new MockMultipartFile("request", "request.json", MediaType.APPLICATION_JSON_VALUE,
+            objectMapper.writeValueAsBytes(postUpdateRequest));
+    }
+
     private MockMultipartFile getPostImg() {
         return new MockMultipartFile("postImg", "image.jpeg", MediaType.IMAGE_JPEG_VALUE, "content".getBytes());
     }
@@ -283,6 +320,11 @@ class PostDocumentationTest extends TokenMockMvcTest {
 
             return req;
         };
+    }
+
+    private PostSaveUpdateResponse generatePostSaveUpdateResponse(Long postId, String title, String content) {
+        return new PostSaveUpdateResponse(postId, title, content, FAKER.internet().url(), LocalDateTime.now(),
+            LocalDateTime.now(), TemperatureArrangeDto.from(generateTemperatureArrange()));
     }
 
 }
