@@ -90,3 +90,47 @@ include::{snippets}/certify/http-request.adoc[]
 ==== Response example
 
 include::{snippets}/certify/http-response.adoc[]
+
+= Avatar Item API
+
+'''
+== upload
+
+NOTE: 아바타 이미지 업로드
+
+=== Request
+
+include::{snippets}/avatar-image-upload/request-parts.adoc[]
+include::{snippets}/avatar-image-upload/request-part-request-fields.adoc[]
+
+==== Request example
+
+include::{snippets}/avatar-image-upload/http-request.adoc[]
+
+=== Response
+
+include::{snippets}/avatar-image-upload/response-body.adoc[]
+include::{snippets}/avatar-image-upload/response-fields.adoc[]
+
+==== Response example
+
+include::{snippets}/avatar-image-upload/http-response.adoc[]
+
+== getAll
+
+NOTE: 전체 아바타 이미지 조회
+
+=== Request
+
+==== Request example
+
+include::{snippets}/avatar-image-get-all/http-request.adoc[]
+
+=== Response
+
+include::{snippets}/avatar-image-get-all/response-body.adoc[]
+include::{snippets}/avatar-image-get-all/response-fields.adoc[]
+
+==== Response example
+
+include::{snippets}/avatar-image-get-all/http-response.adoc[]
