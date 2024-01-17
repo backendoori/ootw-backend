@@ -55,7 +55,7 @@ include::{snippets}/user-login/response-fields.adoc[]
 
 include::{snippets}/user-login/http-response.adoc[]
 
-== certficate
+== certificate
 
 NOTE: 이메일 인증 코드 발송
 
@@ -117,7 +117,7 @@ include::{snippets}/avatar-image-upload/response-fields.adoc[]
 
 include::{snippets}/avatar-image-upload/http-response.adoc[]
 
-== getAll
+== get all
 
 NOTE: 전체 아바타 이미지 조회
 
@@ -135,3 +135,29 @@ include::{snippets}/avatar-image-get-all/response-fields.adoc[]
 ==== Response example
 
 include::{snippets}/avatar-image-get-all/http-response.adoc[]
+
+= Post API
+
+'''
+== like push
+
+NOTE: 게시글 좋아요
+
+=== Request
+
+include::{snippets}/like-push/request-headers.adoc[]
+include::{snippets}/like-push/request-body.adoc[]
+include::{snippets}/like-push/request-fields.adoc[]
+
+==== Request example
+
+include::{snippets}/like-push/http-request.adoc[]
+
+=== Response
+
+include::{snippets}/like-push/response-body.adoc[]
+include::{snippets}/like-push/response-fields.adoc[]
+
+==== Response example
+
+include::{snippets}/like-push/http-response.adoc[]
