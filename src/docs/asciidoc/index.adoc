@@ -1,0 +1,59 @@
+ifndef::snippets[]
+:snippets: build/generated-snippets
+endif::[]
+
+= #OOTW API Documentation
+Doc Writers - 김현우
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+= User API
+
+'''
+== 회원가입
+
+NOTE: 사용자 회원가입
+
+=== Request
+
+include::{snippets}/user-signup/request-body.adoc[]
+include::{snippets}/user-signup/request-fields.adoc[]
+
+==== Request example
+
+include::{snippets}/user-signup/http-request.adoc[]
+
+=== Response
+
+include::{snippets}/user-signup/response-body.adoc[]
+
+==== Response example
+
+include::{snippets}/user-signup/http-response.adoc[]
+
+== 로그인
+
+NOTE: 사용자 로그인
+
+=== Request
+
+include::{snippets}/user-login/request-body.adoc[]
+include::{snippets}/user-login/request-fields.adoc[]
+
+==== Request example
+
+include::{snippets}/user-login/http-request.adoc[]
+
+=== Response
+
+include::{snippets}/user-login/response-body.adoc[]
+include::{snippets}/user-login/response-fields.adoc[]
+
+==== Response example
+
+include::{snippets}/user-login/http-response.adoc[]
+
