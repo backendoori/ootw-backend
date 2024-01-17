@@ -14,7 +14,7 @@ Doc Writers - 김현우
 = User API
 
 '''
-== 회원가입
+== signup
 
 NOTE: 사용자 회원가입
 
@@ -29,13 +29,11 @@ include::{snippets}/user-signup/http-request.adoc[]
 
 === Response
 
-include::{snippets}/user-signup/response-body.adoc[]
-
 ==== Response example
 
 include::{snippets}/user-signup/http-response.adoc[]
 
-== 로그인
+== login
 
 NOTE: 사용자 로그인
 
@@ -57,3 +55,38 @@ include::{snippets}/user-login/response-fields.adoc[]
 
 include::{snippets}/user-login/http-response.adoc[]
 
+== certficate
+
+NOTE: 이메일 인증 코드 발송
+
+=== Request
+
+include::{snippets}/certificate/query-parameters.adoc[]
+
+==== Request example
+
+include::{snippets}/certificate/http-request.adoc[]
+
+=== Response
+
+==== Response example
+
+include::{snippets}/certificate/http-response.adoc[]
+
+== certify
+
+NOTE: 이메일 인증
+
+=== Request
+
+include::{snippets}/certify/query-parameters.adoc[]
+
+==== Request example
+
+include::{snippets}/certify/http-request.adoc[]
+
+=== Response
+
+==== Response example
+
+include::{snippets}/certify/http-response.adoc[]
