@@ -4,6 +4,9 @@ spring:
     username: ${MAIN_MYSQL_USERNAME}
     password: ${MAIN_MYSQL_PASSWORD}
     url: ${MAIN_MYSQL_URL}
+    hikari:
+      maximum-pool-size: 100
+      minimum-idle: 10
   jpa:
     hibernate:
       ddl-auto: validate
