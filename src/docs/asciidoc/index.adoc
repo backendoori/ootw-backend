@@ -228,6 +228,25 @@ include::{snippets}/post-update/response-fields.adoc[]
 
 include::{snippets}/post-update/http-response.adoc[]
 
+== post delete
+
+NOTE: 게시글 삭제
+
+=== Request
+
+include::{snippets}/post-delete/request-headers.adoc[]
+include::{snippets}/post-delete/path-parameters.adoc[]
+
+==== Request example
+
+include::{snippets}/post-delete/http-request.adoc[]
+
+=== Response
+
+==== Response example
+
+include::{snippets}/post-delete/http-response.adoc[]
+
 == like push
 
 NOTE: 게시글 좋아요
