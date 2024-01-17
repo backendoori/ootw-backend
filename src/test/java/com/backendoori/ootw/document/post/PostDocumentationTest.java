@@ -11,6 +11,7 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.multipart;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -268,21 +269,34 @@ class PostDocumentationTest extends TokenMockMvcTest {
             );
     }
 
-//    @DisplayName("[DELETE] delete 204 NoContent")
-//    @Test
-//    void testDeleteNoContent() throws Exception {
-//        // given
-//        long postId = FAKER.number().positive();
-//
-//        // when
-//        ResultActions actions = mockMvc.perform(delete(API_PREFIX + "/" + postId)
-//            .header(TOKEN_HEADER, TOKEN_PREFIX + token)
-//        );
-//
-//        // then
-//        actions.andExpect(status().isNoContent())
-//            .andDo(null);
-//    }
+    @DisplayName("[DELETE] delete 204 NoContent")
+    @Test
+    void testDeleteNoContent() throws Exception {
+        // given
+        long postId = FAKER.number().positive();
+
+        setToken(1);
+
+        // when
+        ResultActions actions = mockMvc.perform(delete(API_PREFIX + "/{postId}", postId)
+            .header(TOKEN_HEADER, TOKEN_PREFIX + token)
+        );
+
+        // then
+        actions.andExpect(status().isNoContent())
+            .andDo(
+                document("post-delete",
+                    getDocumentRequest(),
+                    getDocumentResponse(),
+                    requestHeaders(
+                        headerWithName("Authorization").description("JWT 토큰")
+                    ),
+                    pathParameters(
+                        parameterWithName("postId").description("게시글 ID")
+                    )
+                )
+            );
+    }
 
     private PostReadResponse generatePostReadResponse(long postId) {
         return new PostReadResponse(postId,
