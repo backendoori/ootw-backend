@@ -1,6 +1,7 @@
 plugins {
     id 'org.springframework.boot' version '3.2.0'
     id 'io.spring.dependency-management' version '1.1.4'
+    id 'org.asciidoctor.jvm.convert' version '4.0.1'
     id 'java'
     id 'jacoco'
     id 'checkstyle'
@@ -48,15 +49,23 @@ dependencies {
     testImplementation 'com.icegreen:greenmail-junit5:2.0.1'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 }
 
 jacoco {
     toolVersion = "0.8.11"
 }
 
+ext {
+    snippetsDir = file('build/generated-snippets')
+}
+
 test {
     useJUnitPlatform()
+    outputs.dir snippetsDir
 
+    finalizedBy asciidoctor
     finalizedBy jacocoTestReport
 }
 
@@ -103,6 +112,7 @@ jacocoTestCoverageVerification {
             }
         }
     }
+
     dependsOn jacocoTestReport
 }
 
@@ -113,4 +123,23 @@ checkstyle {
             "org.checkstyle.google.suppressionfilter.config"     : "suppressions.xml",
             "org.checkstyle.google.suppressionxpathfilter.config": "suppressions.xml"
     ]
+}
+
+asciidoctor {
+    inputs.dir snippetsDir
+    outputDir 'src/docs/asciidoc'
+    sources {
+        include 'index.adoc'
+    }
+
+    dependsOn test
+}
+
+bootJar {
+    copy {
+        from "${asciidoctor.outputDir}"
+        into 'build/static/docs'
+    }
+
+    dependsOn asciidoctor
 }

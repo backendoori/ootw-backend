@@ -1,0 +1,296 @@
+ifndef::snippets[]
+:snippets: build/generated-snippets
+endif::[]
+
+= #OOTW API Documentation
+Doc Writers - 김현우
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+= User API
+
+'''
+== signup
+
+NOTE: 사용자 회원가입
+
+=== Request
+
+include::{snippets}/user-signup/request-body.adoc[]
+include::{snippets}/user-signup/request-fields.adoc[]
+
+==== Request example
+
+include::{snippets}/user-signup/http-request.adoc[]
+
+=== Response
+
+==== Response example
+
+include::{snippets}/user-signup/http-response.adoc[]
+
+== login
+
+NOTE: 사용자 로그인
+
+=== Request
+
+include::{snippets}/user-login/request-body.adoc[]
+include::{snippets}/user-login/request-fields.adoc[]
+
+==== Request example
+
+include::{snippets}/user-login/http-request.adoc[]
+
+=== Response
+
+include::{snippets}/user-login/response-body.adoc[]
+include::{snippets}/user-login/response-fields.adoc[]
+
+==== Response example
+
+include::{snippets}/user-login/http-response.adoc[]
+
+== certificate
+
+NOTE: 이메일 인증 코드 발송
+
+=== Request
+
+include::{snippets}/certificate/query-parameters.adoc[]
+
+==== Request example
+
+include::{snippets}/certificate/http-request.adoc[]
+
+=== Response
+
+==== Response example
+
+include::{snippets}/certificate/http-response.adoc[]
+
+== certify
+
+NOTE: 이메일 인증
+
+=== Request
+
+include::{snippets}/certify/query-parameters.adoc[]
+
+==== Request example
+
+include::{snippets}/certify/http-request.adoc[]
+
+=== Response
+
+==== Response example
+
+include::{snippets}/certify/http-response.adoc[]
+
+= Avatar Item API
+
+'''
+== upload
+
+NOTE: 아바타 이미지 업로드
+
+=== Request
+
+include::{snippets}/avatar-image-upload/request-headers.adoc[]
+include::{snippets}/avatar-image-upload/request-parts.adoc[]
+include::{snippets}/avatar-image-upload/request-part-request-fields.adoc[]
+
+==== Request example
+
+include::{snippets}/avatar-image-upload/http-request.adoc[]
+
+=== Response
+
+include::{snippets}/avatar-image-upload/response-body.adoc[]
+include::{snippets}/avatar-image-upload/response-fields.adoc[]
+
+==== Response example
+
+include::{snippets}/avatar-image-upload/http-response.adoc[]
+
+== get all
+
+NOTE: 전체 아바타 이미지 조회
+
+=== Request
+
+==== Request example
+
+include::{snippets}/avatar-image-get-all/http-request.adoc[]
+
+=== Response
+
+include::{snippets}/avatar-image-get-all/response-body.adoc[]
+include::{snippets}/avatar-image-get-all/response-fields.adoc[]
+
+==== Response example
+
+include::{snippets}/avatar-image-get-all/http-response.adoc[]
+
+= Post API
+
+'''
+== post create
+
+NOTE: 게시글 생성
+
+=== Request
+
+include::{snippets}/post-create/request-headers.adoc[]
+include::{snippets}/post-create/request-parts.adoc[]
+include::{snippets}/post-create/request-part-request-fields.adoc[]
+
+==== Request example
+
+include::{snippets}/post-create/http-request.adoc[]
+
+=== Response
+
+include::{snippets}/post-create/response-body.adoc[]
+include::{snippets}/post-create/response-fields.adoc[]
+
+==== Response example
+
+include::{snippets}/post-create/http-response.adoc[]
+
+== post read detail
+
+NOTE: 게시글 상세 조회
+
+=== Request
+
+include::{snippets}/post-read-detail/request-headers.adoc[]
+include::{snippets}/post-read-detail/path-parameters.adoc[]
+
+==== Request example
+
+include::{snippets}/post-read-detail/http-request.adoc[]
+
+=== Response
+
+include::{snippets}/post-read-detail/response-body.adoc[]
+include::{snippets}/post-read-detail/response-fields.adoc[]
+
+==== Response example
+
+include::{snippets}/post-read-detail/http-response.adoc[]
+
+== post read all
+
+NOTE: 게시글 전체 조회
+
+=== Request
+
+include::{snippets}/post-read-all/request-headers.adoc[]
+
+==== Request example
+
+include::{snippets}/post-read-all/http-request.adoc[]
+
+=== Response
+
+include::{snippets}/post-read-all/response-body.adoc[]
+include::{snippets}/post-read-all/response-fields.adoc[]
+
+==== Response example
+
+include::{snippets}/post-read-all/http-response.adoc[]
+
+== post update
+
+NOTE: 게시글 변경
+
+=== Request
+
+include::{snippets}/post-update/request-headers.adoc[]
+include::{snippets}/post-update/request-parts.adoc[]
+include::{snippets}/post-update/request-part-request-fields.adoc[]
+
+==== Request example
+
+include::{snippets}/post-update/http-request.adoc[]
+
+=== Response
+
+include::{snippets}/post-update/response-body.adoc[]
+include::{snippets}/post-update/response-fields.adoc[]
+
+==== Response example
+
+include::{snippets}/post-update/http-response.adoc[]
+
+== post delete
+
+NOTE: 게시글 삭제
+
+=== Request
+
+include::{snippets}/post-delete/request-headers.adoc[]
+include::{snippets}/post-delete/path-parameters.adoc[]
+
+==== Request example
+
+include::{snippets}/post-delete/http-request.adoc[]
+
+=== Response
+
+==== Response example
+
+include::{snippets}/post-delete/http-response.adoc[]
+
+== like push
+
+NOTE: 게시글 좋아요
+
+=== Request
+
+include::{snippets}/like-push/request-headers.adoc[]
+include::{snippets}/like-push/request-body.adoc[]
+include::{snippets}/like-push/request-fields.adoc[]
+
+==== Request example
+
+include::{snippets}/like-push/http-request.adoc[]
+
+=== Response
+
+include::{snippets}/like-push/response-body.adoc[]
+include::{snippets}/like-push/response-fields.adoc[]
+
+==== Response example
+
+include::{snippets}/like-push/http-response.adoc[]
+
+= Weather API
+
+'''
+== current weather
+
+NOTE: 현재 날씨 조회
+
+=== Request
+
+include::{snippets}/weather/request-headers.adoc[]
+include::{snippets}/weather/query-parameters.adoc[]
+
+==== Request example
+
+include::{snippets}/weather/http-request.adoc[]
+
+=== Response
+
+include::{snippets}/weather/response-body.adoc[]
+include::{snippets}/weather/response-fields.adoc[]
+
+==== Response example
+
+include::{snippets}/weather/http-response.adoc[]
