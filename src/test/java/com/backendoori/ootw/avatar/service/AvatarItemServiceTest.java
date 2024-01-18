@@ -10,7 +10,7 @@ import com.backendoori.ootw.avatar.domain.Sex;
 import com.backendoori.ootw.avatar.dto.AvatarItemRequest;
 import com.backendoori.ootw.avatar.dto.AvatarItemResponse;
 import com.backendoori.ootw.avatar.repository.AvatarItemRepository;
-import com.backendoori.ootw.common.image.exception.SaveException;
+import com.backendoori.ootw.image.exception.SaveException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

@@ -1,4 +1,4 @@
-package com.backendoori.ootw.common.validation;
+package com.backendoori.ootw.image.validation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,19 +7,14 @@ import java.lang.annotation.Target;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
-@Target(value = ElementType.PARAMETER)
+@Target(value = {ElementType.PARAMETER, ElementType.FIELD})
 @Retention(value = RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = ImageAnnotationValidator.class)
-public @interface Image {
+@Constraint(validatedBy = EnumValidator.class)
+public @interface Enum {
 
-    String message = "유효하지 않은 이미지를 업로드하였습니다.";
-
-    String message() default message;
-
+    String message() default "유효하지 않은 값입니다 다시 입력해주세요";
     Class<?>[] groups() default {};
-
     Class<? extends Payload>[] payload() default {};
-
-    boolean ignoreCase() default false;
+    Class<? extends java.lang.Enum<?>> enumClass();
 
 }

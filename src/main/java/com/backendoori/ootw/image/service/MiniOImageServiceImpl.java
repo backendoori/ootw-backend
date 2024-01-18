@@ -1,13 +1,12 @@
-package com.backendoori.ootw.common.image;
+package com.backendoori.ootw.image.service;
 
-import static com.backendoori.ootw.common.image.exception.ImageException.IMAGE_ROLLBACK_FAIL_MESSAGE;
-import static com.backendoori.ootw.common.image.exception.ImageException.IMAGE_UPLOAD_FAIL_MESSAGE;
-import static com.backendoori.ootw.common.validation.ImageValidator.validateImage;
+import static com.backendoori.ootw.image.validation.ImageValidator.validateImage;
 
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
-import com.backendoori.ootw.common.image.exception.ImageException;
+import com.backendoori.ootw.image.dto.ImageFile;
+import com.backendoori.ootw.image.exception.ImageException;
 import com.backendoori.ootw.config.MiniOConfig;
 import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MinioClient;
@@ -47,7 +46,7 @@ public class MiniOImageServiceImpl implements ImageService {
             minioClient.putObject(args);
             return new ImageFile(getUrl(), path.toString());
         } catch (Exception e) {
-            throw new ImageException(IMAGE_UPLOAD_FAIL_MESSAGE);
+            throw new ImageException(ImageException.IMAGE_UPLOAD_FAIL_MESSAGE);
         }
     }
 
@@ -59,7 +58,7 @@ public class MiniOImageServiceImpl implements ImageService {
                 .object(fileName)
                 .build());
         } catch (Exception e) {
-            throw new ImageException(IMAGE_ROLLBACK_FAIL_MESSAGE);
+            throw new ImageException(ImageException.IMAGE_ROLLBACK_FAIL_MESSAGE);
         }
     }
 
@@ -73,7 +72,7 @@ public class MiniOImageServiceImpl implements ImageService {
                     .expiry(DURATION, TimeUnit.HOURS)
                     .build());
         } catch (Exception e) {
-            throw new ImageException(IMAGE_UPLOAD_FAIL_MESSAGE);
+            throw new ImageException(ImageException.IMAGE_UPLOAD_FAIL_MESSAGE);
         }
     }
 

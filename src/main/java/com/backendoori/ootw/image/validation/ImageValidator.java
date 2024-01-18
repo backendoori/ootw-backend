@@ -1,4 +1,4 @@
-package com.backendoori.ootw.common.validation;
+package com.backendoori.ootw.image.validation;
 
 import io.jsonwebtoken.lang.Assert;
 import lombok.AccessLevel;

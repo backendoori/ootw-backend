@@ -1,4 +1,4 @@
-package com.backendoori.ootw.common.image;
+package com.backendoori.ootw.image.dto;
 
 public record ImageFile(
     String url,

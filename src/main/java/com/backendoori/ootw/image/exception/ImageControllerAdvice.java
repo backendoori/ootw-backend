@@ -1,4 +1,4 @@
-package com.backendoori.ootw.common.image.exception;
+package com.backendoori.ootw.image.exception;
 
 import com.backendoori.ootw.exception.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
