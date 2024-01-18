@@ -11,7 +11,7 @@ import org.springframework.data.redis.core.RedisHash;
 
 @Getter
 @Builder
-@RedisHash("certificate")
+@RedisHash(value = "certificate", timeToLive = 10 * 60L)
 public class Certificate {
 
     public static final int SIZE = 6;
