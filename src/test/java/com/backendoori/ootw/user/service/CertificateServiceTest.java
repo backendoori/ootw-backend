@@ -10,6 +10,7 @@ import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.dto.CertifyDto;
 import com.backendoori.ootw.user.dto.SendCodeDto;
 import com.backendoori.ootw.user.exception.AlreadyCertifiedUserException;
+import com.backendoori.ootw.user.exception.ExpiredCertificateException;
 import com.backendoori.ootw.user.exception.IncorrectCertificateException;
 import com.backendoori.ootw.user.repository.CertificateRedisRepository;
 import com.backendoori.ootw.user.repository.UserRepository;
@@ -173,7 +174,7 @@ class CertificateServiceTest extends MailTest {
             ThrowingCallable certify = () -> certificateService.certify(certifyDto);
 
             // then
-            assertThatExceptionOfType(UserNotFoundException.class)
+            assertThatExceptionOfType(ExpiredCertificateException.class)
                 .isThrownBy(certify);
         }
 
