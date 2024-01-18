@@ -144,7 +144,7 @@ class PostDocumentationTest extends TokenMockMvcTest {
                     getDocumentRequest(),
                     getDocumentResponse(),
                     requestHeaders(
-                        headerWithName("Authorization").description("JWT 토큰")
+                        headerWithName("Authorization").description("JWT 토큰").optional()
                     ),
                     pathParameters(
                         parameterWithName("postId").description("게시글 ID")
@@ -193,7 +193,7 @@ class PostDocumentationTest extends TokenMockMvcTest {
                     getDocumentRequest(),
                     getDocumentResponse(),
                     requestHeaders(
-                        headerWithName("Authorization").description("JWT 토큰")
+                        headerWithName("Authorization").description("JWT 토큰").optional()
                     ),
                     responseFields(
                         field("[]postId", JsonFieldType.NUMBER, "게시글 ID"),
