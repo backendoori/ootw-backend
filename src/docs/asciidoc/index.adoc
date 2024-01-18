@@ -275,7 +275,7 @@ include::{snippets}/like-push/http-response.adoc[]
 '''
 == current weather
 
-NOTE: 현재 기온 조회
+NOTE: 현재 날씨 조회
 
 === Request
 
