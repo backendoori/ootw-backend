@@ -1,6 +1,8 @@
 # outfit-of-the-weather
 [#OOTW] 그날의 날씨를 보고 오늘의 코디를 공유하는 커뮤니티 By 빽엔두리
 
+![Untitled presentation (4)](https://github.com/backendoori/ootw-backend/assets/85275893/82389480-0a14-4b3d-b8f9-af38395d64c8)
+
 ## 프로젝트 주제
 
 ### 클론 타겟
