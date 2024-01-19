@@ -57,3 +57,12 @@ CREATE TABLE likes
     FOREIGN KEY (user_id) REFERENCES users (id),
     FOREIGN KEY (post_id) REFERENCES posts (id)
 );
+
+
+CREATE TABLE images
+(
+    id         BIGINT AUTO_INCREMENT,
+    image_url  varchar(500) NOT NULL,
+    filename   varchar(255) NOT NULL,
+    CONSTRAINT images_pk PRIMARY KEY (id),
+);
