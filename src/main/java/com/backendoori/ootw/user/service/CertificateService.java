@@ -9,6 +9,7 @@ import com.backendoori.ootw.user.domain.User;
 import com.backendoori.ootw.user.dto.CertifyDto;
 import com.backendoori.ootw.user.dto.SendCodeDto;
 import com.backendoori.ootw.user.exception.AlreadyCertifiedUserException;
+import com.backendoori.ootw.user.exception.ExpiredCertificateException;
 import com.backendoori.ootw.user.exception.IncorrectCertificateException;
 import com.backendoori.ootw.user.repository.CertificateRedisRepository;
 import com.backendoori.ootw.user.repository.UserRepository;
@@ -51,7 +52,7 @@ public class CertificateService {
         AssertUtil.throwIf(user.isCertified(), AlreadyCertifiedUserException::new);
 
         Certificate certificate = certificateRedisRepository.findById(certifyDto.email())
-            .orElseThrow(UserNotFoundException::new);
+            .orElseThrow(ExpiredCertificateException::new);
         boolean isIncorrectCertificate = !certifyDto.code().equals(certificate.getCode());
 
         AssertUtil.throwIf(isIncorrectCertificate, IncorrectCertificateException::new);
