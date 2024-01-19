@@ -64,5 +64,5 @@ CREATE TABLE images
     id         BIGINT AUTO_INCREMENT,
     image_url  varchar(500) NOT NULL,
     filename   varchar(255) NOT NULL,
-    CONSTRAINT images_pk PRIMARY KEY (id),
+    CONSTRAINT images_pk PRIMARY KEY (id)
 );

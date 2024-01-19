@@ -27,7 +27,7 @@ public class Image {
     @Column(name = "image_url", unique = true)
     private String ImageUrl;
 
-    @Column(name = "fileName")
+    @Column(name = "filename")
     private String fileName;
 
 }
