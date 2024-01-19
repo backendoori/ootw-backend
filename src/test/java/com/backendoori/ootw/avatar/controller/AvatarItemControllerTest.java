@@ -8,16 +8,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.nio.charset.StandardCharsets;
+import java.util.stream.Stream;
 import com.backendoori.ootw.avatar.domain.Sex;
 import com.backendoori.ootw.avatar.dto.AvatarItemRequest;
 import com.backendoori.ootw.avatar.repository.AvatarItemRepository;
 import com.backendoori.ootw.avatar.service.AvatarItemService;
-import com.backendoori.ootw.common.image.exception.ImageException;
-import com.backendoori.ootw.common.image.exception.SaveException;
+import com.backendoori.ootw.image.exception.ImageException;
+import com.backendoori.ootw.image.exception.SaveException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +68,27 @@ class AvatarItemControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .characterEncoding(StandardCharsets.UTF_8))
             .andExpect(status().isCreated());
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideInvalidAvatarImageInfo")
+    @DisplayName("아바타 이미지를 등록 시 ItemRequest 가 잘못되면 예외가 발생한다.")
+    public void imageUploadFailWithInvalidItemRequest(String itemType, String sex) throws Exception {
+        //given
+        MockMultipartFile file = new MockMultipartFile("file", "filename.txt",
+            "image/jpeg", "some xml".getBytes());
+        AvatarItemRequest requestDto = new AvatarItemRequest(itemType, sex);
+        MockMultipartFile request = new MockMultipartFile("request", "filename.txt",
+            "application/json", objectMapper.writeValueAsBytes(requestDto));
+
+        //when, then
+        mockMvc.perform(multipart("/api/v1/avatar-items")
+                .file(file)
+                .file(request)
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding(StandardCharsets.UTF_8))
+            .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -184,5 +208,20 @@ class AvatarItemControllerTest {
         mockMvc.perform(get("/api/v1/avatar-items"))
             .andExpect(status().isOk())
             .andDo(print());
+    }
+
+    static Stream<Arguments> provideInvalidAvatarImageInfo() {
+        String validType = "HAIR";
+        String validSex = "MALE";
+        return java.util.stream.Stream.of(
+            Arguments.of(null, validSex),
+            Arguments.of(validType, null),
+            Arguments.of("", validSex),
+            Arguments.of(validType, ""),
+            Arguments.of(" ", validSex),
+            Arguments.of(validType, " "),
+            Arguments.of("hair", validSex),
+            Arguments.of(validType, "female")
+        );
     }
 }

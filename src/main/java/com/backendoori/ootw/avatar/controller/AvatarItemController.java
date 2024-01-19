@@ -4,7 +4,7 @@ import java.util.List;
 import com.backendoori.ootw.avatar.dto.AvatarItemRequest;
 import com.backendoori.ootw.avatar.dto.AvatarItemResponse;
 import com.backendoori.ootw.avatar.service.AvatarItemService;
-import com.backendoori.ootw.common.validation.Image;
+import com.backendoori.ootw.image.validation.Image;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

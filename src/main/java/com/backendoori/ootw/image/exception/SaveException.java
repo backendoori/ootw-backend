@@ -1,4 +1,4 @@
-package com.backendoori.ootw.common.image.exception;
+package com.backendoori.ootw.image.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

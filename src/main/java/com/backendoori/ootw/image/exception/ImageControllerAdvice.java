@@ -1,7 +1,9 @@
-package com.backendoori.ootw.common.image.exception;
+package com.backendoori.ootw.image.exception;
 
 import com.backendoori.ootw.exception.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
 @RestControllerAdvice
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class ImageControllerAdvice {
 
     private static final String IMAGE_RELATED_EXCEPTION = "업로드 요청 중 문제가 발생했습니다.";
@@ -30,4 +33,5 @@ public class ImageControllerAdvice {
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
             .body(errorResponse);
     }
+
 }

@@ -7,7 +7,9 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 import java.util.stream.Stream;
-import com.backendoori.ootw.common.image.exception.ImageException;
+import com.backendoori.ootw.image.service.ImageService;
+import com.backendoori.ootw.image.service.MiniOImageServiceImpl;
+import com.backendoori.ootw.image.exception.ImageException;
 import com.backendoori.ootw.config.MiniOConfig;
 import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MinioClient;
