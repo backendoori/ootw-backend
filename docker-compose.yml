@@ -8,7 +8,7 @@ services:
     ports:
       - ${MAIN_MYSQL_PORT}
     volumes:
-      - "data_volume:/var/lib/mysql-local"
+      - data_volume:/var/lib/mysql-local
     environment:
       MYSQL_ROOT_PASSWORD: ${MAIN_MYSQL_PASSWORD}
       MYSQL_DATABASE: ${MAIN_MYSQL_DATABASE}
@@ -19,7 +19,7 @@ services:
     ports:
       - ${TEST_MYSQL_PORT}
     volumes:
-      - "data_volume:/var/lib/mysql-test"
+      - data_volume:/var/lib/mysql-test
     environment:
       MYSQL_ROOT_PASSWORD: ${TEST_MYSQL_PASSWORD}
       MYSQL_DATABASE: ${TEST_MYSQL_DATABASE}
@@ -31,6 +31,18 @@ services:
       MINIO_ROOT_USER: ${MINIO_USER}
       MINIO_ROOT_PASSWORD: ${MINIO_PASSWORD}
     command: server --address ":9099" /data
+  redis-local:
+    image: redis:latest
+    container_name: redis-test
+    ports:
+      - 6379:6379
+    volumes:
+      - data_volume:/data
+      - data_volume:/usr/local/conf/redis.conf
+    labels:
+      - name=redis
+      - mode=standalone
+    command: redis-server /usr/local/conf/redis.conf
 
 volumes:
   data_volume:

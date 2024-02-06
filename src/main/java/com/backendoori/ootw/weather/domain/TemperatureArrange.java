@@ -1,5 +1,7 @@
 package com.backendoori.ootw.weather.domain;
 
+import static com.backendoori.ootw.weather.validation.Message.CAN_NOT_RETRIEVE_TEMPERATURE_ARRANGE;
+
 import java.util.Map;
 import com.backendoori.ootw.weather.domain.forecast.ForecastCategory;
 import com.backendoori.ootw.weather.exception.ForecastResultErrorManager;
@@ -20,8 +22,6 @@ import org.springframework.util.Assert;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class TemperatureArrange {
-
-    private static final String TEMPERATURE_ARRANGE_EXCEPTION = "기상청에서 제공한 일 최저 기온, 일 최고 기온 값이 유효하지 않습니다.";
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "min_temperature", nullable = false))
@@ -46,7 +46,7 @@ public class TemperatureArrange {
 
     private static void validateArrange(Temperature dayMinTemperature, Temperature dayMaxTemperature) {
         Assert.isTrue(dayMinTemperature.getValue() <= dayMaxTemperature.getValue(), () -> {
-            throw new IllegalStateException(TEMPERATURE_ARRANGE_EXCEPTION);
+            throw new IllegalStateException(CAN_NOT_RETRIEVE_TEMPERATURE_ARRANGE);
         });
     }
 

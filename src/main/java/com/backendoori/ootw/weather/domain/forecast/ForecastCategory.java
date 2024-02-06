@@ -5,7 +5,7 @@ import java.util.Objects;
 
 public enum ForecastCategory {
 
-    TMX, TMP, PTY, SKY, TMN, T1H;
+    TMX, PTY, SKY, TMN, T1H;
 
     public static boolean anyMatch(String categoryName) {
         return Arrays.stream(values()).anyMatch(category -> Objects.equals(categoryName, category.name()));

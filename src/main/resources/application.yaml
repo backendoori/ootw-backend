@@ -4,14 +4,30 @@ spring:
     username: ${MAIN_MYSQL_USERNAME}
     password: ${MAIN_MYSQL_PASSWORD}
     url: ${MAIN_MYSQL_URL}
+    hikari:
+      maximum-pool-size: 100
+      minimum-idle: 10
   jpa:
     hibernate:
       ddl-auto: validate
     open-in-view: false
   servlet:
     multipart:
-      max-file-size: 10MB
-      maxRequestSize: 10MB
+      max-file-size: 100MB
+      maxRequestSize: 100MB
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.smtp.starttls.required: true
 minio:
   url: ${MINIO_URL}
   bucket: ${MINIO_BUCKET}
@@ -27,4 +43,3 @@ openfeign:
     url: ${FORECAST_URL}
 server:
   port: 8080
-

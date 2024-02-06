@@ -11,7 +11,7 @@ import org.springframework.util.Assert;
 public final class AssertUtil extends Assert {
 
     public static void notBlank(@Nullable String string, String message) {
-        if (string == null || string.isBlank()) {
+        if (Objects.isNull(string) || string.isBlank()) {
             throw new IllegalArgumentException(message);
         }
     }

@@ -16,7 +16,7 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 class UserTest {
 
-    static final Faker faker = new Faker();
+    static final Faker FAKER = new Faker();
 
     Long id;
     String email;
@@ -26,11 +26,11 @@ class UserTest {
 
     @BeforeEach
     void setup() {
-        id = (long) faker.number().positive();
-        email = faker.internet().emailAddress();
-        password = faker.internet().password();
-        nickname = faker.internet().username();
-        image = faker.internet().url();
+        id = (long) FAKER.number().positive();
+        email = FAKER.internet().emailAddress();
+        password = FAKER.internet().password();
+        nickname = FAKER.internet().username();
+        image = FAKER.internet().url();
     }
 
     @DisplayName("instance 생성에 성공한다.")
@@ -60,6 +60,21 @@ class UserTest {
         assertThatIllegalArgumentException()
             .isThrownBy(createUser)
             .withMessage(Message.INVALID_EMAIL);
+    }
+
+    @DisplayName("이메일이 255자를 초과하는 경우 생성에 실패한다.")
+    @Test
+    void testCreateTooLongEmail() {
+        // given
+        this.email = FAKER.natoPhoneticAlphabet().codeWord().repeat(65) + "@" + FAKER.internet().domainName();
+
+        // when
+        ThrowingCallable createUser = this::buildUser;
+
+        // then
+        assertThatIllegalArgumentException()
+            .isThrownBy(createUser)
+            .withMessage(Message.TOO_LONG_EMAIL);
     }
 
     @DisplayName("비밀번호가 공백인 경우 생성에 실패한다.")
@@ -94,24 +109,40 @@ class UserTest {
             .withMessage(Message.BLANK_NICKNAME);
     }
 
+    @DisplayName("닉네임이 255자를 초과하는 경우 생성에 실패한다.")
+    @Test
+    void testCreateTooLongNickname() {
+        // given
+        this.nickname = FAKER.natoPhoneticAlphabet().codeWord().repeat(65);
+
+        // when
+        ThrowingCallable createUser = this::buildUser;
+
+        // then
+        assertThatIllegalArgumentException()
+            .isThrownBy(createUser)
+            .withMessage(Message.TOO_LONG_NICKNAME);
+    }
+
     private static Stream<String> generateInvalidEmails() {
         return Stream.of(
-            faker.app().name(),
-            faker.name().fullName(),
-            faker.internet().url(),
-            faker.internet().domainName(),
-            faker.internet().webdomain(),
-            faker.internet().botUserAgentAny()
+            FAKER.app().name(),
+            FAKER.name().fullName(),
+            FAKER.internet().url(),
+            FAKER.internet().domainName(),
+            FAKER.internet().webdomain(),
+            FAKER.internet().botUserAgentAny()
         );
     }
 
-    private User buildUser() {
-        return User.builder()
+    private void buildUser() {
+        User.builder()
             .id(id)
             .email(email)
             .password(password)
             .nickname(nickname)
-            .image(image)
+            .profileImageUrl(image)
+            .certified(false)
             .build();
     }
 

@@ -1,7 +1,6 @@
 package com.backendoori.ootw.user.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatException;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
 import static org.assertj.core.api.Assertions.assertThatNoException;
@@ -14,6 +13,8 @@ import com.backendoori.ootw.user.dto.SignupDto;
 import com.backendoori.ootw.user.dto.TokenDto;
 import com.backendoori.ootw.user.exception.AlreadyExistEmailException;
 import com.backendoori.ootw.user.exception.IncorrectPasswordException;
+import com.backendoori.ootw.user.exception.NonCertifiedUserException;
+import com.backendoori.ootw.user.repository.CertificateRedisRepository;
 import com.backendoori.ootw.user.repository.UserRepository;
 import com.backendoori.ootw.user.validation.Message;
 import net.datafaker.Faker;
@@ -26,29 +27,31 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-@SpringBootTest()
+@SpringBootTest
 @TestInstance(Lifecycle.PER_CLASS)
 class UserServiceTest {
 
-    static Faker faker = new Faker();
+    static final Faker FAKER = new Faker();
 
     @Autowired
-    UserRepository userRepository;
-    @Autowired
     PasswordEncoder passwordEncoder;
+    @Autowired
+    CertificateRedisRepository certificateRedisRepository;
+    @Autowired
+    UserRepository userRepository;
     @Autowired
     UserService userService;
 
     @BeforeAll
     @AfterEach
     void cleanup() {
+        certificateRedisRepository.deleteAll();
         userRepository.deleteAll();
     }
 
@@ -105,10 +108,10 @@ class UserServiceTest {
 
         private static Stream<String> generateInvalidPasswords() {
             return Stream.of(
-                faker.internet().password(1, 7, true, true, true),
-                faker.internet().password(31, 50, true, true, true),
-                faker.internet().password(8, 30, true, false, true),
-                faker.internet().password(8, 30, true, true, false)
+                FAKER.internet().password(1, 7, true, true, true),
+                FAKER.internet().password(31, 50, true, true, true),
+                FAKER.internet().password(8, 30, true, false, true),
+                FAKER.internet().password(8, 30, true, true, false)
             );
         }
 
@@ -122,8 +125,8 @@ class UserServiceTest {
         @Test
         void success() {
             // given
-            String password = faker.internet().password();
-            User user = userRepository.save(generateUser(password));
+            String password = FAKER.internet().password();
+            User user = userRepository.save(generateUser(password, true));
             LoginDto loginDto = new LoginDto(user.getEmail(), password);
 
             // when
@@ -140,7 +143,7 @@ class UserServiceTest {
         @Test
         void failUserNotFound() {
             // given
-            String password = faker.internet().password();
+            String password = FAKER.internet().password();
             User user = generateUser(password);
             LoginDto loginDto = new LoginDto(user.getEmail(), password + password);
 
@@ -157,8 +160,8 @@ class UserServiceTest {
         @Test
         void failIncorrectPassword() {
             // given
-            String password = faker.internet().password();
-            User user = userRepository.save(generateUser(password));
+            String password = FAKER.internet().password();
+            User user = userRepository.save(generateUser(password, true));
             LoginDto loginDto = new LoginDto(user.getEmail(), password + password);
 
             // when
@@ -170,25 +173,47 @@ class UserServiceTest {
                 .withMessage(IncorrectPasswordException.DEFAULT_MESSAGE);
         }
 
+        @DisplayName("이메일이 인증되지 않으면 로그인에 실패한다")
+        @Test
+        void failNonCertified() {
+            // given
+            String password = FAKER.internet().password();
+            User user = userRepository.save(generateUser(password, false));
+            LoginDto loginDto = new LoginDto(user.getEmail(), password + password);
+
+            // when
+            ThrowingCallable login = () -> userService.login(loginDto);
+
+            // then
+            assertThatExceptionOfType(NonCertifiedUserException.class)
+                .isThrownBy(login)
+                .withMessage(NonCertifiedUserException.DEFAULT_MESSAGE);
+        }
+
     }
 
     private SignupDto generateSignupDto() {
-        return generateSignupDto(faker.internet().password(8, 30, true, true, true));
+        return generateSignupDto(FAKER.internet().password(8, 30, true, true, true));
     }
 
     private SignupDto generateSignupDto(String password) {
-        String email = faker.internet().emailAddress();
-        String nickname = faker.internet().username();
+        String email = FAKER.internet().emailAddress();
+        String nickname = FAKER.internet().username();
 
         return new SignupDto(email, password, nickname);
     }
 
     private User generateUser(String password) {
+        return generateUser(password, false);
+    }
+
+    private User generateUser(String password, boolean certified) {
         return User.builder()
-            .email(faker.internet().emailAddress())
+            .email(FAKER.internet().emailAddress())
             .password(passwordEncoder.encode(password))
-            .nickname(faker.internet().username())
-            .image(faker.internet().url())
+            .nickname(FAKER.internet().username())
+            .profileImageUrl(FAKER.internet().url())
+            .certified(certified)
             .build();
     }
 

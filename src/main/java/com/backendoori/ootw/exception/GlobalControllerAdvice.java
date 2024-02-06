@@ -14,12 +14,22 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 @Slf4j
 @RestControllerAdvice
 public class GlobalControllerAdvice {
 
     public static final String DEFAULT_MESSAGE = "유효하지 않은 요청 입니다.";
+
+    @ExceptionHandler({MissingServletRequestPartException.class, MultipartException.class})
+    public ResponseEntity<ErrorResponse> handleMissingServletRequestPartException(Exception e) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(errorResponse);
+    }
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e) {
@@ -65,6 +75,14 @@ public class GlobalControllerAdvice {
             .body(errorResponse);
     }
 
+    @ExceptionHandler(PermissionException.class)
+    public ResponseEntity<ErrorResponse> handlePermissionException(PermissionException e) {
+        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+            .body(errorResponse);
+    }
+
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<ErrorResponse> handleNoSuchElementException(NoSuchElementException e) {
         ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
@@ -81,22 +99,12 @@ public class GlobalControllerAdvice {
             .body(errorResponse);
     }
 
-    @ExceptionHandler(ImageUploadException.class)
-    public ResponseEntity<ErrorResponse> handleImageUploadException(ImageUploadException e) {
-        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
-
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
-            .body(errorResponse);
-    }
-
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleException(Exception e) {
-        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
-
+    public ResponseEntity<Void> handleException(Exception e) {
         log.error(e.getMessage(), e);
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-            .body(errorResponse);
+            .build();
     }
 
 }

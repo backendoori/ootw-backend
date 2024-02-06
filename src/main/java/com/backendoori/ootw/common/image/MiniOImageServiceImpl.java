@@ -1,13 +1,18 @@
 package com.backendoori.ootw.common.image;
 
+import static com.backendoori.ootw.common.image.exception.ImageException.IMAGE_ROLLBACK_FAIL_MESSAGE;
+import static com.backendoori.ootw.common.image.exception.ImageException.IMAGE_UPLOAD_FAIL_MESSAGE;
+import static com.backendoori.ootw.common.validation.ImageValidator.validateImage;
+
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
+import com.backendoori.ootw.common.image.exception.ImageException;
 import com.backendoori.ootw.config.MiniOConfig;
-import com.backendoori.ootw.exception.ImageUploadException;
 import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
+import io.minio.RemoveObjectArgs;
 import io.minio.http.Method;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +32,8 @@ public class MiniOImageServiceImpl implements ImageService {
     private Path path;
 
     @Override
-    public String uploadImage(MultipartFile file) {
+    public ImageFile upload(MultipartFile file) {
+        validateImage(file);
         try {
             path = Path.of(file.getOriginalFilename());
             InputStream inputStream = file.getInputStream();
@@ -39,17 +45,27 @@ public class MiniOImageServiceImpl implements ImageService {
                 .contentType(contentType)
                 .build();
             minioClient.putObject(args);
+            return new ImageFile(getUrl(), path.toString());
         } catch (Exception e) {
-            throw new ImageUploadException();
+            throw new ImageException(IMAGE_UPLOAD_FAIL_MESSAGE);
         }
+    }
 
-        return getUrl();
+    @Override
+    public void delete(String fileName) {
+        try {
+            minioClient.removeObject(RemoveObjectArgs.builder()
+                .bucket(miniOConfig.getBucket())
+                .object(fileName)
+                .build());
+        } catch (Exception e) {
+            throw new ImageException(IMAGE_ROLLBACK_FAIL_MESSAGE);
+        }
     }
 
     private String getUrl() {
-        String url = null;
         try {
-            url = minioClient.getPresignedObjectUrl(
+            return minioClient.getPresignedObjectUrl(
                 GetPresignedObjectUrlArgs.builder()
                     .method(Method.GET)
                     .bucket(miniOConfig.getBucket())
@@ -57,10 +73,8 @@ public class MiniOImageServiceImpl implements ImageService {
                     .expiry(DURATION, TimeUnit.HOURS)
                     .build());
         } catch (Exception e) {
-            throw new ImageUploadException();
+            throw new ImageException(IMAGE_UPLOAD_FAIL_MESSAGE);
         }
-
-        return url;
     }
 
 }

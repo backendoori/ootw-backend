@@ -1,5 +1,7 @@
 package com.backendoori.ootw.weather.domain;
 
+import static com.backendoori.ootw.weather.validation.Message.CAN_NOT_RETRIEVE_TEMPERATURE_ARRANGE;
+
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -17,11 +19,12 @@ public class Temperature {
 
     private static final Double MIN_VALUE = -900.0;
     private static final Double MAX_VALUE = 900.0;
+
     private Double value;
 
     public static void validate(Double value) {
-        Assert.notNull(value, "기온 값은 null이 될 수 없습니다.");
-        Assert.isTrue(MIN_VALUE < value && value < MAX_VALUE, "기온 값은 -900 이하, 900 이상이 될 수 없습니다.");
+        Assert.notNull(value, CAN_NOT_RETRIEVE_TEMPERATURE_ARRANGE);
+        Assert.isTrue(MIN_VALUE < value && value < MAX_VALUE, CAN_NOT_RETRIEVE_TEMPERATURE_ARRANGE);
     }
 
     public static Temperature of(Double value) {
